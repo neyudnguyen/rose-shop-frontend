@@ -5,7 +5,7 @@ import WhySection from '@/components/customer/home/WhySection';
 
 const Home = () => {
 	return (
-		<div className="mx-auto py-8">
+		<div className="mx-auto py-8 lg:py-24">
 			<Carousel />
 			<WhySection />
 			<AboutSection />
