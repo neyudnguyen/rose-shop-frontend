@@ -1,8 +1,9 @@
+import Carousel from '@/components/customer/home/Carousel';
+
 const Home = () => {
 	return (
-		<div>
-			<h1>Customer Page</h1>
-			<p>This is the customer page.</p>
+		<div className="mx-auto py-8">
+			<Carousel />
 		</div>
 	);
 };
