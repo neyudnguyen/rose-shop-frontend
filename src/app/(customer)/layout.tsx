@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 
+import Footer from '@/components/customer/common/Footer';
 import Header from '@/components/customer/common/Header';
 
 export const metadata: Metadata = {
@@ -17,6 +18,7 @@ const Layout = ({
 		<div>
 			<Header />
 			{children}
+			<Footer />
 		</div>
 	);
 };
