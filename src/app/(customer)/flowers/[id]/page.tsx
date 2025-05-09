@@ -17,8 +17,8 @@ const DetailFlower = () => {
 						<Image
 							src="/images/picture/hoasen.jpg"
 							alt="Lotus Flower"
-							layout="fill"
-							objectFit="cover"
+							fill
+							style={{ objectFit: 'cover' }}
 							className="rounded-lg shadow-md"
 						/>
 					</div>

@@ -42,10 +42,10 @@ const HotFlowersSection = () => (
 						<Image
 							src={src}
 							alt={alt}
-							layout="fill"
-							objectFit="cover"
 							className="rounded-t-lg"
+							fill
 							priority={index < 4} // Preload first 4 images
+							style={{ objectFit: 'cover' }}
 						/>
 					</div>
 					<h3 className="text-xl font-semibold text-[#644A07] mt-4 text-center">
