@@ -1,5 +1,6 @@
 import AboutSection from '@/components/customer/home/AboutSection';
 import Carousel from '@/components/customer/home/Carousel';
+import HotFlowersSection from '@/components/customer/home/HotFlowersSection';
 import WhySection from '@/components/customer/home/WhySection';
 
 const Home = () => {
@@ -8,6 +9,7 @@ const Home = () => {
 			<Carousel />
 			<WhySection />
 			<AboutSection />
+			<HotFlowersSection />
 		</div>
 	);
 };
