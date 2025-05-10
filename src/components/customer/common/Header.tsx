@@ -3,7 +3,9 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
-import { FiMenu, FiSearch, FiShoppingCart, FiUser, FiX } from 'react-icons/fi';
+import { FiMenu, FiSearch, FiShoppingCart, FiX } from 'react-icons/fi';
+
+import HeaderUserComponent from '@/components/customer/common/header/HeaderUserComponent';
 
 const navItems = [
 	{ label: 'HOME', path: '/' },
@@ -60,7 +62,7 @@ const Header = () => {
 
 				{/* Icons */}
 				<div className="flex items-center space-x-4 text-[#594100]">
-					<FiUser className="w-5 h-5 cursor-pointer" />
+					<HeaderUserComponent />
 					<FiShoppingCart className="w-5 h-5 cursor-pointer" />
 					<div className="relative">
 						<span className="absolute inset-y-0 left-0 flex items-center pl-3">

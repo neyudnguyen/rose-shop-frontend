@@ -26,7 +26,7 @@ const AboutSection = () => {
 						bouquets, dried flower arrangements, houseplants, and luxury scented
 						candles to create the perfect atmosphere.
 					</p>
-					<button className="mt-4 px-6 py-2 bg-[#644A07] text-[#FFC6C6] rounded hover:bg-[#FFDBDB] transition">
+					<button className="mt-4 px-6 py-2 bg-[#FF6B81] text-white rounded hover:bg-[#FF9EAA] hover:text-white transition-colors">
 						Learn More
 					</button>
 				</div>
