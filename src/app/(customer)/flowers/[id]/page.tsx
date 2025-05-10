@@ -1,10 +1,11 @@
 import DetailFlowerForm from '@/components/customer/flowers/DetaiFlowerForm';
 
-interface PageProps {
-	params: { id: string };
-}
-const DetailFlower = ({ params }: PageProps) => {
-	return <DetailFlowerForm flowerId={params.id} />;
+type PageParams = Promise<{ id: string }>;
+
+const DetailFlower = async ({ params }: { params: PageParams }) => {
+	const { id } = await params;
+
+	return <DetailFlowerForm flowerId={id} />;
 };
 
 export default DetailFlower;
