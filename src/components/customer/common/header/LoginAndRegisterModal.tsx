@@ -12,7 +12,7 @@ const LoginAndRegisterModal = ({
 	isVisible,
 	onClose,
 }: LoginAndRegisterModalProps) => {
-	const [isSignUp, setIsSignUp] = useState(false);
+	const [isRegister, setIsRegister] = useState(false);
 	const [formData, setFormData] = useState({
 		username: '',
 		email: '',
@@ -30,7 +30,7 @@ const LoginAndRegisterModal = ({
 	};
 
 	const toggleForm = () => {
-		setIsSignUp(!isSignUp);
+		setIsRegister(!isRegister);
 		setFormData({
 			username: '',
 			email: '',
@@ -51,7 +51,7 @@ const LoginAndRegisterModal = ({
 					<FaTimes size={20} />
 				</button>
 				<h2 className="text-2xl font-bold text-center text-[#644A07] mb-6">
-					{isSignUp ? 'Sign Up' : 'Sign In'}
+					{isRegister ? 'Register' : 'Login'}
 				</h2>
 				<form onSubmit={handleSubmit} className="space-y-4">
 					<div>
@@ -67,7 +67,7 @@ const LoginAndRegisterModal = ({
 							className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring focus:ring-pink-200"
 						/>
 					</div>
-					{isSignUp && (
+					{isRegister && (
 						<div>
 							<label className="block text-sm font-medium text-[#594100] mb-1">
 								Email
@@ -95,7 +95,7 @@ const LoginAndRegisterModal = ({
 							className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring focus:ring-pink-200"
 						/>
 					</div>
-					{isSignUp && (
+					{isRegister && (
 						<div>
 							<label className="block text-sm font-medium text-[#594100] mb-1">
 								Confirm Password
@@ -110,7 +110,7 @@ const LoginAndRegisterModal = ({
 							/>
 						</div>
 					)}
-					{!isSignUp && (
+					{!isRegister && (
 						<div className="text-right">
 							<button
 								type="button"
@@ -125,7 +125,7 @@ const LoginAndRegisterModal = ({
 						type="submit"
 						className="w-full px-4 py-2 bg-[#FF6B81] text-white rounded-md hover:bg-[#FF9EAA] hover:text-white transition-colors"
 					>
-						{isSignUp ? 'Sign Up' : 'Sign In'}
+						{isRegister ? 'Register' : 'Login'}
 					</button>
 				</form>
 				<div className="mt-4 text-center">
@@ -134,9 +134,9 @@ const LoginAndRegisterModal = ({
 						className="text-sm text-[#FF6B81] hover:underline"
 						onClick={toggleForm}
 					>
-						{isSignUp
-							? 'Already have an account? Sign In'
-							: "Don't have an account? Sign Up"}
+						{isRegister
+							? 'Already have an account? Login'
+							: "Don't have an account? Register"}
 					</button>
 				</div>
 			</div>
