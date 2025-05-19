@@ -12,6 +12,8 @@ const LoginAndRegisterModal = ({
 	isVisible,
 	onClose,
 }: LoginAndRegisterModalProps) => {
+	const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL;
+
 	const [isRegister, setIsRegister] = useState(false);
 	const [formData, setFormData] = useState({
 		username: '',
@@ -24,9 +26,29 @@ const LoginAndRegisterModal = ({
 		setFormData({ ...formData, [e.target.name]: e.target.value });
 	};
 
-	const handleSubmit = (e: React.FormEvent) => {
+	const handleSubmit = async (e: React.FormEvent) => {
 		e.preventDefault();
 		console.log('Form submitted:', formData);
+
+		const url = isRegister ? `${backendUrl}/register` : `${backendUrl}/login`;
+
+		console.log('URL:', url);
+
+		try {
+			const response = await fetch(url, {
+				method: 'POST',
+				body: JSON.stringify(formData),
+			});
+
+			if (!response.ok) {
+				throw new Error(`Lỗi HTTP! Status: ${response.status}`);
+			}
+
+			const result = await response.json();
+			console.log('Kết quả:', result);
+		} catch (error) {
+			console.error('Lỗi khi đăng ký:', error);
+		}
 	};
 
 	const toggleForm = () => {
