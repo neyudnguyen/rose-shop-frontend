@@ -26,18 +26,56 @@ const LoginAndRegisterModal = ({
 		setFormData({ ...formData, [e.target.name]: e.target.value });
 	};
 
+	const validateEmail = (email: string): boolean => {
+		const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+		return emailRegex.test(email);
+	};
+
+	const validateForm = (): boolean => {
+		if (isRegister) {
+			// Check email format
+			if (!validateEmail(formData.email)) {
+				alert('Please enter a valid email address');
+				return false;
+			}
+
+			// Check password match
+			if (formData.password !== formData.confirmPassword) {
+				alert('Passwords do not match');
+				return false;
+			}
+
+			// Check password length
+			if (formData.password.length < 6) {
+				alert('Password must be at least 6 characters');
+				return false;
+			}
+		}
+
+		return true;
+	};
+
 	const handleSubmit = async (e: React.FormEvent) => {
 		e.preventDefault();
-		console.log('Form submitted:', formData);
+
+		if (!validateForm()) {
+			return;
+		}
 
 		const url = isRegister ? `${backendUrl}/register` : `${backendUrl}/login`;
-
 		console.log('URL:', url);
+
+		const data = new FormData();
+		data.append('username', formData.username);
+		if (isRegister) {
+			data.append('email', formData.email);
+		}
+		data.append('password', formData.password);
 
 		try {
 			const response = await fetch(url, {
 				method: 'POST',
-				body: JSON.stringify(formData),
+				body: data,
 			});
 
 			if (!response.ok) {
