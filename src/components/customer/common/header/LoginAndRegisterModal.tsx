@@ -1,5 +1,6 @@
 'use client';
 
+import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { FaTimes } from 'react-icons/fa';
 
@@ -13,15 +14,17 @@ const LoginAndRegisterModal = ({
 	onClose,
 }: LoginAndRegisterModalProps) => {
 	const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL;
-
 	const [isRegister, setIsRegister] = useState(false);
 	const [isLoading, setIsLoading] = useState(false);
+	const [errorMessage, setErrorMessage] = useState<string | null>(null);
 	const [formData, setFormData] = useState({
 		username: '',
 		email: '',
 		password: '',
 		confirmPassword: '',
 	});
+
+	const router = useRouter();
 
 	const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 		setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -31,24 +34,25 @@ const LoginAndRegisterModal = ({
 		const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 		return emailRegex.test(email);
 	};
-
 	const validateForm = (): boolean => {
+		setErrorMessage(null);
+
 		if (isRegister) {
 			// Check email format
 			if (!validateEmail(formData.email)) {
-				alert('Please enter a valid email address');
+				setErrorMessage('Please enter a valid email address');
 				return false;
 			}
 
 			// Check password match
 			if (formData.password !== formData.confirmPassword) {
-				alert('Passwords do not match');
+				setErrorMessage('Passwords do not match');
 				return false;
 			}
 
 			// Check password length
 			if (formData.password.length < 6) {
-				alert('Password must be at least 6 characters');
+				setErrorMessage('Password must be at least 6 characters');
 				return false;
 			}
 		}
@@ -81,20 +85,53 @@ const LoginAndRegisterModal = ({
 			});
 
 			if (!response.ok) {
-				throw new Error(`Lỗi HTTP! Status: ${response.status}`);
+				try {
+					const errorJson = await response.json();
+					setErrorMessage(
+						errorJson.message || 'An error occurred with your request',
+					);
+				} catch {
+					// If response is not JSON, use status text
+					setErrorMessage(
+						`Error: ${response.statusText || 'Something went wrong'}`,
+					);
+				}
+				throw new Error(`HTTP Error! Status: ${response.status}`);
 			}
 
 			const result = await response.json();
-			console.log('Kết quả:', result);
+			console.log('Result:', result);
+
+			if (isRegister) {
+				toggleForm();
+
+				setFormData({
+					username: '',
+					email: '',
+					password: '',
+					confirmPassword: '',
+				});
+
+				setErrorMessage('Registration successful! Please log in.');
+
+				setTimeout(() => {
+					onClose();
+					// window.location.href = '/';
+					router.push('/');
+				}, 500);
+			}
 		} catch (error) {
-			console.error('Lỗi khi đăng ký:', error);
+			console.error('Error during authentication:', error);
+			if (!errorMessage) {
+				setErrorMessage('An error occurred. Please try again later.');
+			}
 		} finally {
 			setIsLoading(false);
 		}
 	};
-
 	const toggleForm = () => {
 		setIsRegister(!isRegister);
+		setErrorMessage(null);
 		setFormData({
 			username: '',
 			email: '',
@@ -173,7 +210,7 @@ const LoginAndRegisterModal = ({
 								className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring focus:ring-pink-200"
 							/>
 						</div>
-					)}
+					)}{' '}
 					{!isRegister && (
 						<div className="text-right">
 							<button
@@ -185,6 +222,11 @@ const LoginAndRegisterModal = ({
 							</button>
 						</div>
 					)}{' '}
+					{errorMessage && (
+						<div className="px-3 py-2 text-sm text-white bg-red-500 rounded-md">
+							{errorMessage}
+						</div>
+					)}
 					<button
 						type="submit"
 						className="w-full px-4 py-2 bg-[#FF6B81] text-white rounded-md hover:bg-[#FF9EAA] hover:text-white transition-colors relative"
