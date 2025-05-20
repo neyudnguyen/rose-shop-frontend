@@ -15,6 +15,7 @@ const LoginAndRegisterModal = ({
 	const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL;
 
 	const [isRegister, setIsRegister] = useState(false);
+	const [isLoading, setIsLoading] = useState(false);
 	const [formData, setFormData] = useState({
 		username: '',
 		email: '',
@@ -73,6 +74,7 @@ const LoginAndRegisterModal = ({
 		data.append('password', formData.password);
 
 		try {
+			setIsLoading(true);
 			const response = await fetch(url, {
 				method: 'POST',
 				body: data,
@@ -86,6 +88,8 @@ const LoginAndRegisterModal = ({
 			console.log('Kết quả:', result);
 		} catch (error) {
 			console.error('Lỗi khi đăng ký:', error);
+		} finally {
+			setIsLoading(false);
 		}
 	};
 
@@ -180,12 +184,22 @@ const LoginAndRegisterModal = ({
 								Forgot password?
 							</button>
 						</div>
-					)}
+					)}{' '}
 					<button
 						type="submit"
-						className="w-full px-4 py-2 bg-[#FF6B81] text-white rounded-md hover:bg-[#FF9EAA] hover:text-white transition-colors"
+						className="w-full px-4 py-2 bg-[#FF6B81] text-white rounded-md hover:bg-[#FF9EAA] hover:text-white transition-colors relative"
+						disabled={isLoading}
 					>
-						{isRegister ? 'Register' : 'Login'}
+						{isLoading ? (
+							<div className="flex items-center justify-center">
+								<div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin mr-2"></div>
+								<span>Loading...</span>
+							</div>
+						) : isRegister ? (
+							'Register'
+						) : (
+							'Login'
+						)}
 					</button>
 				</form>
 				<div className="mt-4 text-center">

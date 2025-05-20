@@ -62,8 +62,8 @@ const Header = () => {
 
 				{/* Icons */}
 				<div className="flex items-center text-[#594100]">
-					<HeaderUserComponent />
 					<FiShoppingCart className="w-5 h-5 cursor-pointer" />
+					<HeaderUserComponent />
 					<div className="relative mx-4">
 						<span className="absolute inset-y-0 left-0 flex items-center pl-3">
 							<FiSearch className="w-4 h-4" />
