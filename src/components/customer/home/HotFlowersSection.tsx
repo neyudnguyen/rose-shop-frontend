@@ -1,4 +1,8 @@
-import Image from 'next/image';
+'use client';
+
+import { Image as AntImage, Button, Card, Col, Row, Typography } from 'antd';
+
+const { Title } = Typography;
 
 const products = [
 	{
@@ -29,34 +33,49 @@ const products = [
 
 const HotFlowersSection = () => (
 	<section className="py-12 px-4 bg-white">
-		<h2 className="text-3xl font-bold text-center text-[#644A07] mb-8">
+		<Title
+			level={2}
+			className="text-center text-[#644A07] mb-8 font-bold text-3xl"
+		>
 			HOT FLOWERS IN SHOP
-		</h2>
-		<div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-6">
+		</Title>
+		<Row gutter={[24, 24]}>
 			{products.map(({ src, alt, name }, index) => (
-				<div
-					key={index}
-					className="bg-[#FFDBDB] p-4 rounded-lg shadow-lg hover:shadow-xl transition-shadow"
-				>
-					<div className="relative w-full h-48">
-						<Image
-							src={src}
-							alt={alt}
-							className="rounded-t-lg"
-							fill
-							priority={index < 4} // Preload first 4 images
-							style={{ objectFit: 'cover' }}
-						/>
-					</div>
-					<h3 className="text-xl font-semibold text-[#644A07] mt-4 text-center">
-						{name}
-					</h3>
-					<button className="mt-2 px-4 py-2 bg-[#FF6B81] text-white rounded-full w-full hover:bg-[#FF9EAA] hover:text-white transition-colors">
-						View Details
-					</button>
-				</div>
+				<Col key={index} xs={12} sm={8} lg={6}>
+					<Card
+						className="bg-[#FFDBDB] rounded-lg hover:shadow-xl transition-shadow h-full"
+						cover={
+							<div className="relative h-48 w-full overflow-hidden">
+								<AntImage
+									src={src}
+									alt={alt}
+									className="rounded-t-lg"
+									preview={false}
+									height={192}
+									width="100%"
+									style={{ objectFit: 'cover' }}
+								/>
+							</div>
+						}
+						variant={'outlined'}
+						styles={{ body: { padding: '16px' } }}
+					>
+						<Title
+							level={5}
+							className="text-center text-[#644A07] font-semibold"
+						>
+							{name}
+						</Title>
+						<Button
+							type="primary"
+							className="mt-2 w-full bg-[#FF6B81] hover:bg-[#FF9EAA] border-none rounded-full"
+						>
+							View Details
+						</Button>
+					</Card>
+				</Col>
 			))}
-		</div>
+		</Row>
 	</section>
 );
 

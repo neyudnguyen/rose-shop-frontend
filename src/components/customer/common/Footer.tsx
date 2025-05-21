@@ -1,113 +1,163 @@
+'use client';
+
 import {
-	FaFacebook,
-	FaInstagram,
-	FaPinterest,
-	FaTwitter,
-} from 'react-icons/fa';
+	EnvironmentOutlined,
+	FacebookOutlined,
+	InstagramOutlined,
+	MailOutlined,
+	PhoneOutlined,
+	PinterestOutlined,
+	TwitterOutlined,
+} from '@ant-design/icons';
+import { Col, Divider, Layout, Row, Space, Typography } from 'antd';
+import React from 'react';
 
-const Footer = () => {
+const { Footer: AntFooter } = Layout;
+const { Title, Text, Link } = Typography;
+
+const Footer: React.FC = () => {
 	return (
-		<footer className="bg-gray-800 text-white py-8">
-			<div className="container mx-auto px-4 grid grid-cols-1 md:grid-cols-5 gap-8">
-				{/* Contact Section */}
-				<div className="footer-section">
-					<h3 className="font-bold text-lg mb-4">Contact Us</h3>
-					<p className="text-gray-400">Address</p>
-					<p className="mb-2">FPT Quy Nhơn University</p>
-					<p className="text-gray-400">Phone</p>
-					<p className="mb-2">+380980099777</p>
-					<p className="text-gray-400">General Enquiry</p>
-					<p>Kiev.Florist.Studio@gmail.com</p>
-				</div>
+		<AntFooter
+			style={{ background: '#001529', color: '#fff', padding: '40px 0 20px' }}
+		>
+			<Row justify="center">
+				<Col xs={24} md={20}>
+					<Row gutter={[48, 32]}>
+						{/* Contact Section */}
+						<Col xs={24} sm={12} md={4}>
+							<Title level={4} style={{ color: '#fff', marginBottom: 16 }}>
+								Contact Us
+							</Title>
+							<Space direction="vertical" size="small">
+								<Text type="secondary">Address</Text>
+								<Space>
+									<EnvironmentOutlined />
+									<Text style={{ color: '#fff' }}>FPT Quy Nhơn University</Text>
+								</Space>
+								<Text type="secondary">Phone</Text>
+								<Space>
+									<PhoneOutlined />
+									<Text style={{ color: '#fff' }}>+380980099777</Text>
+								</Space>
+								<Text type="secondary">General Enquiry</Text>
+								<Space>
+									<MailOutlined />
+									<Text style={{ color: '#fff' }}>
+										Kiev.Florist.Studio@gmail.com
+									</Text>
+								</Space>
+							</Space>
+						</Col>
 
-				{/* Follow Us Section */}
-				<div className="footer-section">
-					<h3 className="font-bold text-lg mb-4">Follow Us</h3>
-					<div className="flex space-x-4">
-						<a href="#" className="hover:text-pink-400 transition duration-300">
-							<FaFacebook size={24} />
-						</a>
-						<a href="#" className="hover:text-pink-400 transition duration-300">
-							<FaInstagram size={24} />
-						</a>
-						<a href="#" className="hover:text-pink-400 transition duration-300">
-							<FaTwitter size={24} />
-						</a>
-						<a href="#" className="hover:text-pink-400 transition duration-300">
-							<FaPinterest size={24} />
-						</a>
-					</div>
-				</div>
+						{/* Follow Us Section */}
+						<Col xs={24} sm={12} md={4}>
+							<Title level={4} style={{ color: '#fff', marginBottom: 16 }}>
+								Follow Us
+							</Title>
+							<Space size="middle">
+								<Link
+									href="#"
+									style={{ color: '#fff', fontSize: '24px' }}
+									className="social-link"
+								>
+									<FacebookOutlined />
+								</Link>
+								<Link
+									href="#"
+									style={{ color: '#fff', fontSize: '24px' }}
+									className="social-link"
+								>
+									<InstagramOutlined />
+								</Link>
+								<Link
+									href="#"
+									style={{ color: '#fff', fontSize: '24px' }}
+									className="social-link"
+								>
+									<TwitterOutlined />
+								</Link>
+								<Link
+									href="#"
+									style={{ color: '#fff', fontSize: '24px' }}
+									className="social-link"
+								>
+									<PinterestOutlined />
+								</Link>
+							</Space>
+						</Col>
 
-				{/* Shop Section */}
-				<div className="footer-section">
-					<h3 className="font-bold text-lg mb-4">Shop</h3>
-					<ul className="space-y-2">
-						<li className="hover:text-pink-400 cursor-pointer transition duration-300">
-							All Products
-						</li>
-						<li className="hover:text-pink-400 cursor-pointer transition duration-300">
-							Fresh Flowers
-						</li>
-						<li className="hover:text-pink-400 cursor-pointer transition duration-300">
-							Dried Flowers
-						</li>
-						<li className="hover:text-pink-400 cursor-pointer transition duration-300">
-							Live Plants
-						</li>
-						<li className="hover:text-pink-400 cursor-pointer transition duration-300">
-							Designer Vases
-						</li>
-						<li className="hover:text-pink-400 cursor-pointer transition duration-300">
-							Aroma Candles
-						</li>
-						<li className="hover:text-pink-400 cursor-pointer transition duration-300">
-							Freshener Diffuser
-						</li>
-					</ul>
-				</div>
+						{/* Shop Section */}
+						<Col xs={24} sm={12} md={5}>
+							<Title level={4} style={{ color: '#fff', marginBottom: 16 }}>
+								Shop
+							</Title>
+							<Space direction="vertical" size="small">
+								<Link className="footer-link">All Products</Link>
+								<Link className="footer-link">Fresh Flowers</Link>
+								<Link className="footer-link">Dried Flowers</Link>
+								<Link className="footer-link">Live Plants</Link>
+								<Link className="footer-link">Designer Vases</Link>
+								<Link className="footer-link">Aroma Candles</Link>
+								<Link className="footer-link">Freshener Diffuser</Link>
+							</Space>
+						</Col>
 
-				{/* Service Section */}
-				<div className="footer-section">
-					<h3 className="font-bold text-lg mb-4">Service</h3>
-					<ul className="space-y-2">
-						<li className="hover:text-pink-400 cursor-pointer transition duration-300">
-							Flower Subscription
-						</li>
-						<li className="hover:text-pink-400 cursor-pointer transition duration-300">
-							Wedding & Event Decor
-						</li>
-					</ul>
-				</div>
+						{/* Service Section */}
+						<Col xs={24} sm={12} md={5}>
+							<Title level={4} style={{ color: '#fff', marginBottom: 16 }}>
+								Service
+							</Title>
+							<Space direction="vertical" size="small">
+								<Link className="footer-link">Flower Subscription</Link>
+								<Link className="footer-link">Wedding & Event Decor</Link>
+							</Space>
+						</Col>
 
-				{/* About Us Section */}
-				<div className="footer-section">
-					<h3 className="font-bold text-lg mb-4">About Us</h3>
-					<ul className="space-y-2">
-						<li className="hover:text-pink-400 cursor-pointer transition duration-300">
-							Our Story
-						</li>
-						<li className="hover:text-pink-400 cursor-pointer transition duration-300">
-							Blog
-						</li>
-						<li className="hover:text-pink-400 cursor-pointer transition duration-300">
-							Shipping & Returns
-						</li>
-						<li className="hover:text-pink-400 cursor-pointer transition duration-300">
-							Terms & Conditions
-						</li>
-						<li className="hover:text-pink-400 cursor-pointer transition duration-300">
-							Privacy Policy
-						</li>
-					</ul>
-				</div>
-			</div>
+						{/* About Us Section */}
+						<Col xs={24} sm={12} md={6}>
+							<Title level={4} style={{ color: '#fff', marginBottom: 16 }}>
+								About Us
+							</Title>
+							<Space direction="vertical" size="small">
+								<Link className="footer-link">Our Story</Link>
+								<Link className="footer-link">Blog</Link>
+								<Link className="footer-link">Shipping & Returns</Link>
+								<Link className="footer-link">Terms & Conditions</Link>
+								<Link className="footer-link">Privacy Policy</Link>
+							</Space>
+						</Col>
+					</Row>
 
-			{/* Copyright section */}
-			<div className="container mx-auto text-center mt-8 pt-8 border-t border-gray-700">
-				<p>&copy; {new Date().getFullYear()} Rose Shop. All rights reserved.</p>
-			</div>
-		</footer>
+					{/* Copyright Section */}
+					<Divider
+						style={{
+							borderColor: 'rgba(255, 255, 255, 0.2)',
+							margin: '32px 0 16px',
+						}}
+					/>
+					<Row justify="center">
+						<Col>
+							<Text style={{ color: 'rgba(255, 255, 255, 0.6)' }}>
+								&copy; {new Date().getFullYear()} Rose Shop. All rights
+								reserved.
+							</Text>
+						</Col>
+					</Row>
+				</Col>
+			</Row>
+
+			<style jsx global>{`
+				.footer-link {
+					color: rgba(255, 255, 255, 0.8) !important;
+				}
+				.footer-link:hover {
+					color: #ff85c0 !important;
+				}
+				.social-link:hover {
+					color: #ff85c0 !important;
+				}
+			`}</style>
+		</AntFooter>
 	);
 };
 
