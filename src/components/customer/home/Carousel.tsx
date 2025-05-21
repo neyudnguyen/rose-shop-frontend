@@ -2,22 +2,20 @@
 
 import Image from 'next/image';
 import 'swiper/css';
-import 'swiper/css/pagination';
-import { Autoplay, Pagination } from 'swiper/modules';
+import { Autoplay } from 'swiper/modules';
 import { Swiper, SwiperSlide } from 'swiper/react';
 
 const Carousel = () => {
 	return (
 		<div className="w-full max-w-[100vw] overflow-hidden">
 			<Swiper
-				modules={[Pagination, Autoplay]}
+				modules={[Autoplay]}
 				spaceBetween={10}
 				slidesPerView={1}
 				autoplay={{
 					delay: 3500,
 					disableOnInteraction: false,
 				}}
-				pagination={true}
 				loop
 				className="w-full h-[60vh]"
 			>
