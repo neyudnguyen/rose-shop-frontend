@@ -32,26 +32,22 @@ const products = [
 ];
 
 const HotFlowersSection = () => (
-	<section className="py-12 px-4 bg-white">
-		<Title
-			level={2}
-			className="text-center text-[#644A07] mb-8 font-bold text-3xl"
-		>
+	<section className="py-12 px-4">
+		<Title level={2} className="text-center mb-8 font-bold text-3xl">
 			HOT FLOWERS IN SHOP
 		</Title>
 		<Row gutter={[24, 24]}>
 			{products.map(({ src, alt, name }, index) => (
 				<Col key={index} xs={12} sm={8} lg={6}>
 					<Card
-						className="bg-[#FFDBDB] rounded-lg hover:shadow-xl transition-shadow h-full"
+						className="rounded-lg hover:shadow-xl transition-shadow h-full"
 						cover={
 							<div className="relative h-48 w-full overflow-hidden">
 								<AntImage
 									src={src}
 									alt={alt}
-									className="rounded-t-lg"
-									preview={false}
-									height={192}
+									preview={true}
+									height="100%"
 									width="100%"
 									style={{ objectFit: 'cover' }}
 								/>
@@ -60,15 +56,12 @@ const HotFlowersSection = () => (
 						variant={'outlined'}
 						styles={{ body: { padding: '16px' } }}
 					>
-						<Title
-							level={5}
-							className="text-center text-[#644A07] font-semibold"
-						>
+						<Title level={5} className="text-center font-semibold">
 							{name}
 						</Title>
 						<Button
 							type="primary"
-							className="mt-2 w-full bg-[#FF6B81] hover:bg-[#FF9EAA] border-none rounded-full"
+							className="mt-2 w-full border-none rounded-full"
 						>
 							View Details
 						</Button>
