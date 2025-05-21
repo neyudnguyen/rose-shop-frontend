@@ -8,27 +8,27 @@ const { Title, Paragraph } = Typography;
 
 const features = [
 	{
-		icon: <FaShippingFast size={48} className="text-[#FF6B81]" />,
+		icon: <FaShippingFast size={48} className="text-[#F759AB]" />,
 		title: 'Fast Delivery',
 		description:
 			'Extremely fast shipping times and available across all cities and provinces nationwide.',
 	},
 	{
-		icon: <FaTruck size={48} className="text-[#FF6B81]" />,
+		icon: <FaTruck size={48} className="text-[#F759AB]" />,
 		title: 'Free Shipping',
 		description: 'Free shipping for first-time buyers and V.I.P. members.',
 	},
 	{
-		icon: <FaStar size={48} className="text-[#FF6B81]" />,
+		icon: <FaStar size={48} className="text-[#F759AB]" />,
 		title: 'High Quality',
 		description:
 			'Safe quality, no additives, suitable for newborns and pregnant women.',
 	},
 ];
 
-const WhySection: React.FC = () => {
+const WhySection = () => {
 	return (
-		<section className="py-16 bg-white">
+		<section className="py-16">
 			<div className="container mx-auto px-4">
 				<div className="text-center mb-12">
 					<Title level={2} className="font-bold">
@@ -54,9 +54,7 @@ const WhySection: React.FC = () => {
 								<Title level={5} className="mb-2 font-semibold">
 									{feature.title}
 								</Title>
-								<Paragraph className="text-gray-600">
-									{feature.description}
-								</Paragraph>
+								<Paragraph>{feature.description}</Paragraph>
 							</Card>
 						</Col>
 					))}
