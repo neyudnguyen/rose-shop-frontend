@@ -7,6 +7,7 @@ const theme: ThemeConfig = {
 		colorSuccess: '#95DE64',
 		colorError: '#FF7875',
 		colorWarning: '#FFC069',
+		colorLink: '#9E1068',
 		borderRadius: 16,
 	},
 };
