@@ -13,9 +13,14 @@ interface LoginFormValues {
 interface LoginFormModalProps {
 	isVisible: boolean;
 	onCancel: () => void;
+	onRegisterClick?: () => void;
 }
 
-const LoginFormModal: FC<LoginFormModalProps> = ({ isVisible, onCancel }) => {
+const LoginFormModal: FC<LoginFormModalProps> = ({
+	isVisible,
+	onCancel,
+	onRegisterClick,
+}) => {
 	const [form] = Form.useForm();
 
 	const handleLogin = (values: LoginFormValues) => {
@@ -79,8 +84,7 @@ const LoginFormModal: FC<LoginFormModalProps> = ({ isVisible, onCancel }) => {
 					<a href="#" style={{ float: 'right' }}>
 						Forgot password
 					</a>
-				</Form.Item>
-
+				</Form.Item>{' '}
 				<Form.Item>
 					<Button
 						type="primary"
@@ -90,6 +94,19 @@ const LoginFormModal: FC<LoginFormModalProps> = ({ isVisible, onCancel }) => {
 					>
 						Log in
 					</Button>
+					<div style={{ textAlign: 'center', marginTop: 16 }}>
+						Don&apos;t have an account?{' '}
+						<Button
+							type="link"
+							onClick={() => {
+								onCancel();
+								if (onRegisterClick) onRegisterClick();
+							}}
+							style={{ padding: 0 }}
+						>
+							Register now
+						</Button>
+					</div>
 				</Form.Item>
 			</Form>
 		</Modal>

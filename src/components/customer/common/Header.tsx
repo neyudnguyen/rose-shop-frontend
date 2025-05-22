@@ -24,6 +24,7 @@ import Link from 'next/link';
 import React, { useState } from 'react';
 
 import LoginFormModal from '@/components/customer/common/header/LoginFormModal';
+import RegisterFormModal from '@/components/customer/common/header/RegisterFormModal';
 
 const { Header: AntHeader } = Layout;
 const { Search } = Input;
@@ -31,22 +32,35 @@ const { Search } = Input;
 const Header = () => {
 	const [drawerVisible, setDrawerVisible] = useState(false);
 	const [loginModalVisible, setLoginModalVisible] = useState(false);
+	const [registerModalVisible, setRegisterModalVisible] = useState(false);
 
 	const showDrawer = () => setDrawerVisible(true);
 	const onClose = () => setDrawerVisible(false);
 
-	const showLoginModal = () => setLoginModalVisible(true);
+	const showLoginModal = () => {
+		setLoginModalVisible(true);
+		setRegisterModalVisible(false);
+	};
+
 	const hideLoginModal = () => {
 		setLoginModalVisible(false);
 	};
 
+	const showRegisterModal = () => {
+		setRegisterModalVisible(true);
+		setLoginModalVisible(false);
+	};
+
+	const hideRegisterModal = () => {
+		setRegisterModalVisible(false);
+	};
 	const accountMenu = (
 		<Menu>
 			<Menu.Item key="login" onClick={showLoginModal}>
 				Login
 			</Menu.Item>
-			<Menu.Item key="register">
-				<Link href="/register">Register</Link>
+			<Menu.Item key="register" onClick={showRegisterModal}>
+				Register
 			</Menu.Item>
 		</Menu>
 	);
@@ -123,7 +137,6 @@ const Header = () => {
 					<Button type="text" icon={<MenuOutlined />} onClick={showDrawer} />
 				</Col>
 			</Row>
-
 			<Drawer
 				title="Menu"
 				placement="right"
@@ -151,10 +164,19 @@ const Header = () => {
 						/>
 					</Badge>
 				</div>
-			</Drawer>
-
+			</Drawer>{' '}
 			{/* Login Modal */}
-			<LoginFormModal isVisible={loginModalVisible} onCancel={hideLoginModal} />
+			<LoginFormModal
+				isVisible={loginModalVisible}
+				onCancel={hideLoginModal}
+				onRegisterClick={showRegisterModal}
+			/>
+			{/* Register Modal */}
+			<RegisterFormModal
+				isVisible={registerModalVisible}
+				onCancel={hideRegisterModal}
+				onLoginClick={showLoginModal}
+			/>
 		</AntHeader>
 	);
 };
