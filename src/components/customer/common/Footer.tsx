@@ -21,7 +21,6 @@ const Footer = () => {
 			<Row justify="center">
 				<Col xs={24} md={20}>
 					<Row gutter={[48, 32]}>
-						{/* Contact Section */}
 						<Col xs={24} sm={12} md={4}>
 							<Title level={4}>Contact Us</Title>
 							<Space direction="vertical" size="small">
@@ -97,7 +96,7 @@ const Footer = () => {
 					<Divider />
 					<Row justify="center">
 						<Col>
-							<Text style={{ color: 'rgba(255, 255, 255, 0.6)' }}>
+							<Text>
 								&copy; {new Date().getFullYear()} Rose Shop. All rights
 								reserved.
 							</Text>
