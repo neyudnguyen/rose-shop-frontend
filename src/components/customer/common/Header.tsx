@@ -23,19 +23,31 @@ import {
 import Link from 'next/link';
 import React, { useState } from 'react';
 
+import LoginFormModal from '@/components/customer/common/header/LoginFormModal';
+
 const { Header: AntHeader } = Layout;
 const { Search } = Input;
 
 const Header = () => {
 	const [drawerVisible, setDrawerVisible] = useState(false);
+	const [loginModalVisible, setLoginModalVisible] = useState(false);
 
 	const showDrawer = () => setDrawerVisible(true);
 	const onClose = () => setDrawerVisible(false);
 
+	const showLoginModal = () => setLoginModalVisible(true);
+	const hideLoginModal = () => {
+		setLoginModalVisible(false);
+	};
+
 	const accountMenu = (
 		<Menu>
-			<Menu.Item key="login">Login</Menu.Item>
-			<Menu.Item key="register">Register</Menu.Item>
+			<Menu.Item key="login" onClick={showLoginModal}>
+				Login
+			</Menu.Item>
+			<Menu.Item key="register">
+				<Link href="/register">Register</Link>
+			</Menu.Item>
 		</Menu>
 	);
 
@@ -116,7 +128,7 @@ const Header = () => {
 				title="Menu"
 				placement="right"
 				onClose={onClose}
-				visible={drawerVisible}
+				open={drawerVisible}
 			>
 				{navigationMenu}
 				<div style={{ marginTop: 20 }}>
@@ -127,7 +139,9 @@ const Header = () => {
 				</div>
 				<div style={{ marginTop: 20 }}>
 					<Dropdown overlay={accountMenu} placement="bottomLeft">
-						<Button icon={<UserOutlined />}>Account</Button>
+						<Button icon={<UserOutlined />} onClick={(e) => e.preventDefault()}>
+							Account
+						</Button>
 					</Dropdown>
 				</div>
 				<div style={{ marginTop: 20 }}>
@@ -138,6 +152,9 @@ const Header = () => {
 					</Badge>
 				</div>
 			</Drawer>
+
+			{/* Login Modal */}
+			<LoginFormModal isVisible={loginModalVisible} onCancel={hideLoginModal} />
 		</AntHeader>
 	);
 };
