@@ -1,118 +1,131 @@
 'use client';
 
+import {
+	AppstoreOutlined,
+	HomeOutlined,
+	MenuOutlined,
+	ShoppingCartOutlined,
+	UserOutlined,
+} from '@ant-design/icons';
+import {
+	Avatar,
+	Badge,
+	Button,
+	Col,
+	Drawer,
+	Dropdown,
+	Input,
+	Layout,
+	Menu,
+	Row,
+	Space,
+} from 'antd';
 import Image from 'next/image';
 import Link from 'next/link';
-import { useEffect, useState } from 'react';
-import { FiMenu, FiSearch, FiShoppingCart, FiX } from 'react-icons/fi';
+import React, { useState } from 'react';
 
-import HeaderUserComponent from '@/components/customer/common/header/HeaderUserComponent';
-
-const navItems = [
-	{ label: 'HOME', path: '/' },
-	{ label: 'ROSES', path: '/flowers/rose' },
-	{ label: 'WEDDING FLOWERS', path: '/flowers/wedding' },
-	{ label: 'CONGRATULATORY FLOWERS', path: '/flowers/congratulatory' },
-	{ label: 'BIRTHDAY FLOWERS', path: '/flowers/birthday' },
-	{ label: 'HOLIDAY FLOWERS', path: '/flowers/holiday' },
-	{ label: 'ORCHIDS', path: '/flowers/orchids' },
-	{ label: 'TABLE FLOWERS', path: '/flowers/table' },
-];
+const { Header: AntHeader } = Layout;
+const { Search } = Input;
 
 const Header = () => {
-	const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+	const [drawerVisible, setDrawerVisible] = useState(false);
 
-	useEffect(() => {
-		const handleResize = () => {
-			if (window.innerWidth >= 768) {
-				setIsMobileMenuOpen(false);
-			}
-		};
-		window.addEventListener('resize', handleResize);
-		return () => window.removeEventListener('resize', handleResize);
-	}, []);
+	const showDrawer = () => setDrawerVisible(true);
+	const onClose = () => setDrawerVisible(false);
+
+	const accountMenu = (
+		<Menu>
+			<Menu.Item key="login">Login</Menu.Item>
+			<Menu.Item key="register">Register</Menu.Item>
+		</Menu>
+	);
+
+	const navigationMenu = (
+		<Menu mode="horizontal" defaultSelectedKeys={['home']}>
+			<Menu.Item key="home" icon={<HomeOutlined />}>
+				Home
+			</Menu.Item>
+			<Menu.Item key="top-flow-1" icon={<AppstoreOutlined />}>
+				Flow 1
+			</Menu.Item>
+			<Menu.Item key="top-flow-2" icon={<AppstoreOutlined />}>
+				Flow 2
+			</Menu.Item>
+			<Menu.Item key="top-flow-3" icon={<AppstoreOutlined />}>
+				Flow 3
+			</Menu.Item>
+		</Menu>
+	);
 
 	return (
-		<header className="bg-[#FFDBDB] shadow-md fixed w-full z-50">
-			<div className="container mx-auto flex items-center justify-between px-4 py-3">
-				{/* Logo */}
-				<div className="flex items-center ms:hidden">
+		<AntHeader style={{ backgroundColor: '#FFFFFF', padding: '0 20px' }}>
+			<Row justify="space-between" align="middle">
+				<Col xs={6} sm={4} md={4} className="text-center">
 					<Link href="/">
-						<Image
-							src="/images/picture/logo2.png"
-							width={80}
-							height={40}
-							alt="Logo"
-							className="cursor-pointer"
-						/>
+						<div style={{ fontWeight: 'bold' }}>Rose Shop</div>
 					</Link>
-				</div>
+				</Col>
 
-				{/* Desktop Navigation */}
-				<nav className="hidden md:block">
-					<ul className="flex space-x-6 text-[#644A07] font-semibold text-sm items-center">
-						{navItems.map(({ label, path }) => (
-							<li key={label}>
-								<Link href={path} className="hover:text-[#000000]">
-									{label}
-								</Link>
-							</li>
-						))}
-					</ul>
-				</nav>
+				<Col xs={0} sm={0} md={12} className="flex justify-center">
+					{navigationMenu}
+				</Col>
 
-				{/* Icons */}
-				<div className="flex items-center text-[#594100]">
-					<FiShoppingCart className="w-5 h-5 cursor-pointer" />
-					<HeaderUserComponent />
-					<div className="relative mx-4">
-						<span className="absolute inset-y-0 left-0 flex items-center pl-3">
-							<FiSearch className="w-4 h-4" />
-						</span>
-						<input
-							type="text"
-							placeholder="Search..."
-							className="pl-9 pr-4 py-1 rounded border border-[#FFC6C6] bg-[#FFFFFF] text-sm text-[#644A07]"
-						/>
-					</div>
-				</div>
+				<Col xs={0} sm={0} md={8} className="text-center">
+					<Space size="middle" direction="horizontal">
+						<div className="flex justify-center">
+							<Search
+								placeholder="Search..."
+								onSearch={(value) => console.log(value)}
+								style={{ width: 200 }}
+							/>
+						</div>
+						<div className="flex justify-center">
+							<Dropdown overlay={accountMenu} placement="bottomRight">
+								<Avatar icon={<UserOutlined />} style={{ cursor: 'pointer' }} />
+							</Dropdown>
+						</div>
+						<div className="flex justify-center">
+							<Badge count={3} offset={[0, 0]}>
+								<ShoppingCartOutlined
+									style={{ fontSize: '1.5em', cursor: 'pointer' }}
+								/>
+							</Badge>
+						</div>
+					</Space>
+				</Col>
 
-				{/* Mobile Menu Toggle */}
-				<div className="md:hidden text-[#594100] cursor-pointer mx-4">
-					{isMobileMenuOpen ? (
-						<FiX
-							className="w-6 h-6"
-							onClick={() => setIsMobileMenuOpen(false)}
-						/>
-					) : (
-						<FiMenu
-							className="w-6 h-6"
-							onClick={() => setIsMobileMenuOpen(true)}
-						/>
-					)}
-				</div>
-			</div>
+				<Col xs={6} sm={4} md={0} style={{ textAlign: 'right' }}>
+					<Button type="text" icon={<MenuOutlined />} onClick={showDrawer} />
+				</Col>
+			</Row>
 
-			{/* Mobile Navigation */}
-			<div
-				className={`md:hidden bg-[#FFC6C6] text-[#644A07] font-semibold text-sm transition-all duration-300 ease-in-out overflow-hidden ${
-					isMobileMenuOpen ? 'max-h-screen py-4' : 'max-h-0'
-				}`}
+			<Drawer
+				title="Menu"
+				placement="right"
+				onClose={onClose}
+				visible={drawerVisible}
 			>
-				<ul className="flex flex-col items-center space-y-4">
-					{navItems.map(({ label, path }) => (
-						<li key={label}>
-							<Link
-								href={path}
-								className="hover:text-[#000000]"
-								onClick={() => setIsMobileMenuOpen(false)}
-							>
-								{label}
-							</Link>
-						</li>
-					))}
-				</ul>
-			</div>
-		</header>
+				{navigationMenu}
+				<div style={{ marginTop: 20 }}>
+					<Search
+						placeholder="Search..."
+						onSearch={(value) => console.log(value)}
+					/>
+				</div>
+				<div style={{ marginTop: 20 }}>
+					<Dropdown overlay={accountMenu} placement="bottomLeft">
+						<Button icon={<UserOutlined />}>Account</Button>
+					</Dropdown>
+				</div>
+				<div style={{ marginTop: 20 }}>
+					<Badge count={3} offset={[0, 0]}>
+						<ShoppingCartOutlined
+							style={{ fontSize: '1.5em', cursor: 'pointer' }}
+						/>
+					</Badge>
+				</div>
+			</Drawer>
+		</AntHeader>
 	);
 };
 
