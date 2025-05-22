@@ -47,16 +47,16 @@ const Header = () => {
 			style={{ backgroundColor: '#F0EEED' }}
 		>
 			<Menu.Item key="home" icon={<HomeOutlined />}>
-				Home
+				<Link href="/">Home</Link>
 			</Menu.Item>
 			<Menu.Item key="top-flow-1" icon={<AppstoreOutlined />}>
-				Flow 1
+				<Link href="/flowers/top-flow-1">Flow 1</Link>
 			</Menu.Item>
 			<Menu.Item key="top-flow-2" icon={<AppstoreOutlined />}>
-				Flow 2
+				<Link href="/flowers/top-flow-2">Flow 2</Link>
 			</Menu.Item>
 			<Menu.Item key="top-flow-3" icon={<AppstoreOutlined />}>
-				Flow 3
+				<Link href="/flowers/top-flow-3">Flow 3</Link>
 			</Menu.Item>
 		</Menu>
 	);
