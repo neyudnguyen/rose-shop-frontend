@@ -1,100 +1,157 @@
 'use client';
 
-import Image from 'next/image';
-import { useEffect } from 'react';
 import {
-	FaFlag,
-	FaMinus,
-	FaMoneyBillWave,
-	FaPlus,
-	FaShoppingCart,
-} from 'react-icons/fa';
+	DollarOutlined,
+	FlagOutlined,
+	HomeOutlined,
+	MinusOutlined,
+	PlusOutlined,
+	ShoppingCartOutlined,
+} from '@ant-design/icons';
+import {
+	Breadcrumb,
+	Button,
+	Card,
+	Descriptions,
+	Divider,
+	InputNumber,
+	Space,
+	Typography,
+} from 'antd';
+import Image from 'next/image';
+import Link from 'next/link';
+import { useEffect, useState } from 'react';
+
+const { Title, Text, Paragraph } = Typography;
 
 interface DetaiFlowerFormProps {
 	flowerId: string | number;
 }
 
 const DetaiFlowerForm = ({ flowerId }: DetaiFlowerFormProps) => {
+	const [quantity, setQuantity] = useState(1);
+
 	useEffect(() => {
 		console.log(`Fetching details for flower ID: ${flowerId}`);
 	}, [flowerId]);
 
+	const handleIncrement = () => {
+		setQuantity((prev) => prev + 1);
+	};
+
+	const handleDecrement = () => {
+		setQuantity((prev) => (prev > 1 ? prev - 1 : 1));
+	};
+
 	return (
 		<div className="max-w-6xl mx-auto px-4 py-8 lg:py-24">
-			<div className="flex flex-col lg:flex-row gap-10 pt-18">
+			<Breadcrumb
+				items={[
+					{
+						title: (
+							<Link href="/">
+								<HomeOutlined />
+							</Link>
+						),
+					},
+					{
+						title: <Link href="/flowers">Flowers</Link>,
+					},
+					{
+						title: <Link href="/flowers/spiritual">Spiritual Flowers</Link>,
+					},
+					{
+						title: 'Lotus Flower',
+					},
+				]}
+			/>
+			<div className="flex flex-col lg:flex-row gap-10">
 				<div className="flex-1">
-					<div className="relative w-full h-96 lg:h-[500px]">
-						<Image
-							src="/images/picture/hoasen.jpg"
-							alt="Lotus Flower"
-							fill
-							style={{ objectFit: 'cover' }}
-							className="rounded-lg shadow-md"
-						/>
-					</div>
+					<Card variant="borderless" className="h-full">
+						<div className="relative w-full h-96 lg:h-[500px]">
+							<Image
+								src="/images/picture/hoasen.jpg"
+								alt="Lotus Flower"
+								fill
+								style={{ objectFit: 'cover' }}
+								className="rounded-lg"
+							/>
+						</div>
+					</Card>
 				</div>
 
 				<div className="flex-1 flex flex-col justify-between">
 					<div>
-						<h1 className="text-3xl font-bold text-[#644A07] mb-4">
+						<Title level={2} style={{ color: '#644A07', marginBottom: '16px' }}>
 							Lotus Flower
-						</h1>
-						<p className="text-xl text-[#594100] font-semibold mb-6">
+						</Title>
+						<Title level={4} style={{ color: '#594100', marginBottom: '24px' }}>
 							300,000 VND
-						</p>
-						<p className="text-[#644A07] mb-4">
+						</Title>
+						<Paragraph style={{ color: '#644A07', marginBottom: '16px' }}>
 							A symbol of purity and enlightenment, the lotus flower blooms in
 							murky waters yet remains untouched by impurities. It is perfect
 							for home decoration or as a spiritual gift.
-						</p>
-						<div className="text-sm text-[#594100] space-y-1">
-							<p>
-								<strong>Origin:</strong> Da Lat
-							</p>
-							<p>
-								<strong>Category:</strong> Spiritual Flowers
-							</p>
-							<p>
-								<strong>Shop:</strong> Floral Delight
-							</p>
-						</div>
+						</Paragraph>
+
+						<Descriptions column={1} size="small">
+							<Descriptions.Item label={<Text strong>Origin</Text>}>
+								Da Lat
+							</Descriptions.Item>
+							<Descriptions.Item label={<Text strong>Category</Text>}>
+								Spiritual Flowers
+							</Descriptions.Item>
+							<Descriptions.Item label={<Text strong>Shop</Text>}>
+								Floral Delight
+							</Descriptions.Item>
+						</Descriptions>
 					</div>
 
-					<div className="mt-6 flex items-center space-x-4">
-						<span className="text-[#644A07] font-medium">Quantity:</span>
-						<div className="flex items-center border border-[#644A07] rounded">
-							<button className="p-2 hover:bg-[#FFDBDB]">
-								<FaMinus />
-							</button>
-							<input
-								type="number"
-								min="1"
-								value="1"
-								readOnly
-								className="w-12 text-center border-l border-r border-[#644A07]"
+					<Divider />
+
+					<div className="flex items-center space-x-4">
+						<Text strong style={{ color: '#644A07' }}>
+							Quantity:
+						</Text>
+						<Space>
+							<Button icon={<MinusOutlined />} onClick={handleDecrement} />
+							<InputNumber
+								min={1}
+								value={quantity}
+								onChange={(value) => setQuantity(Number(value))}
+								controls={false}
+								style={{ width: '60px' }}
 							/>
-							<button className="p-2 hover:bg-[#FFDBDB]">
-								<FaPlus />
-							</button>
-						</div>
+							<Button icon={<PlusOutlined />} onClick={handleIncrement} />
+						</Space>
 					</div>
 
 					<div className="mt-6 flex flex-col sm:flex-row sm:items-center sm:space-x-4 space-y-4 sm:space-y-0">
-						<button className="flex items-center justify-center bg-[#FFDBDB] hover:bg-[#FFC6C6] text-[#644A07] px-6 py-3 rounded-md shadow-md transition">
-							<FaShoppingCart className="mr-2" />
+						<Button
+							type="primary"
+							size="large"
+							icon={<ShoppingCartOutlined />}
+							style={{ backgroundColor: '#FFDBDB', color: '#644A07' }}
+						>
 							Add to Cart
-						</button>
-						<button className="flex items-center justify-center bg-[#FFC6C6] hover:bg-[#FFDBDB] text-[#644A07] px-6 py-3 rounded-md shadow-md transition">
-							<FaMoneyBillWave className="mr-2" />
+						</Button>
+						<Button
+							type="primary"
+							size="large"
+							icon={<DollarOutlined />}
+							style={{ backgroundColor: '#FFC6C6', color: '#644A07' }}
+						>
 							Buy Now
-						</button>
+						</Button>
 					</div>
 
 					<div className="mt-8">
-						<button className="flex items-center justify-center text-[#644A07] hover:text-[#594100] border border-[#644A07] hover:border-[#594100] px-4 py-2 rounded-md transition">
-							<FaFlag className="mr-2" />
+						<Button
+							icon={<FlagOutlined />}
+							style={{ color: '#644A07', borderColor: '#644A07' }}
+						>
 							Report to Admin
-						</button>
+						</Button>
 					</div>
 				</div>
 			</div>
