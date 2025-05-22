@@ -41,7 +41,11 @@ const Header = () => {
 	);
 
 	const navigationMenu = (
-		<Menu mode="horizontal" defaultSelectedKeys={['home']}>
+		<Menu
+			mode="horizontal"
+			defaultSelectedKeys={['home']}
+			style={{ backgroundColor: '#F0EEED' }}
+		>
 			<Menu.Item key="home" icon={<HomeOutlined />}>
 				Home
 			</Menu.Item>
@@ -58,7 +62,17 @@ const Header = () => {
 	);
 
 	return (
-		<AntHeader style={{ backgroundColor: '#FFFFFF', padding: '0 20px' }}>
+		<AntHeader
+			style={{
+				position: 'fixed',
+				top: 0,
+				left: 0,
+				width: '100%',
+				zIndex: 1000,
+				backgroundColor: '#F0EEED',
+				padding: '0 20px',
+			}}
+		>
 			<Row justify="space-between" align="middle">
 				<Col xs={6} sm={4} md={4} className="text-center">
 					<Link href="/">
