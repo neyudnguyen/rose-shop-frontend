@@ -1,6 +1,6 @@
 'use client';
 
-import { Button, Form, Input, Typography } from 'antd';
+import { Button, Form, Input, Select, Typography } from 'antd';
 import { useState } from 'react';
 
 const { Title } = Typography;
@@ -9,6 +9,7 @@ interface SellerFormValues {
 	ShopName: string;
 	Introduction: string;
 	AddressSeller: string;
+	SellerType: string;
 }
 
 const SellerRegisterForm = () => {
@@ -74,6 +75,19 @@ const SellerRegisterForm = () => {
 					]}
 				>
 					<Input placeholder="Enter your shop address" />
+				</Form.Item>
+
+				<Form.Item
+					name="SellerType"
+					label="Seller Type"
+					rules={[
+						{ required: true, message: 'Please select your seller type!' },
+					]}
+				>
+					<Select placeholder="Select your seller type">
+						<Select.Option value="individual">Individual</Select.Option>
+						<Select.Option value="enterprise">Enterprise</Select.Option>
+					</Select>
 				</Form.Item>
 
 				<Form.Item>
