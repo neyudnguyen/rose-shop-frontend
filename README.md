@@ -1,6 +1,6 @@
 # Rose Shop
 
-#### 1. **Distribute Vouchers** (`src/app/seller/distribute-vouchers.tsx`)
+#### 1. **Distribute Vouchers** (`src/app/seller/distribute-vouchers/page.tsx`)
 - Filter vouchers by status (all / available / distributed)
 - Select a voucher and assign to a user
 - Displays confirmation messages upon successful distribution
