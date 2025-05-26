@@ -19,16 +19,16 @@ Admin Pages
 
 ---
 
-# Clone the repository
+1. Clone the repository
 
-# Install dependencies
+2. Install dependencies
 npm install
 
-# Run in development mode
+3. Run in development mode
 npm run dev
 
-# Open in browser
+4. Open in browser
 http://localhost:3000
-URL: `http://localhost:3000/seller/distribute-vouchers`
-URL: `http://localhost:3000/admin/dashboard`
-`http://localhost:3000/users/user-management`
+-URL: `http://localhost:3000/seller/distribute-vouchers`
+-URL: `http://localhost:3000/admin/dashboard`
+-URL:`http://localhost:3000/users/user-management`
