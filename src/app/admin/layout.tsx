@@ -16,7 +16,7 @@ export default function AdminLayout({
 					<ul className="space-y-3">
 						<li>
 							<Link
-								href="/admin"
+								href="/admin/dashboard"
 								className="block p-2 hover:bg-purple-700 rounded-md"
 							>
 								Dashboard
