@@ -40,7 +40,7 @@ export default function SellerLayout({
 						</li>
 						<li>
 							<Link
-								href="/seller/vouchers"
+								href="/seller/distribute-vouchers"
 								className="block p-2 hover:bg-pink-600 rounded-md"
 							>
 								Distribute Vouchers
