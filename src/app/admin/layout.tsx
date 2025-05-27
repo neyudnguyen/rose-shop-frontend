@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import React from 'react';
 
 export default function AdminLayout({
@@ -22,12 +23,12 @@ export default function AdminLayout({
 							</a>
 						</li>
 						<li>
-							<a
+							<Link
 								href="/admin/users"
 								className="block p-2 hover:bg-purple-700 rounded-md"
 							>
 								User Management
-							</a>
+							</Link>
 						</li>
 						<li>
 							<a
@@ -38,20 +39,20 @@ export default function AdminLayout({
 							</a>
 						</li>
 						<li>
-							<a
+							<Link
 								href="/admin/reports"
 								className="block p-2 hover:bg-purple-700 rounded-md"
 							>
 								Report Management
-							</a>
+							</Link>
 						</li>
 						<li>
-							<a
+							<Link
 								href="/admin/statistics"
 								className="block p-2 hover:bg-purple-700 rounded-md"
 							>
 								System Statistics
-							</a>
+							</Link>
 						</li>
 					</ul>
 				</nav>

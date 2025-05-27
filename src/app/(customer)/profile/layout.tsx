@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import React from 'react';
 
 export default function ProfileLayout({
@@ -26,9 +27,9 @@ export default function ProfileLayout({
 								</a>
 							</li>
 							<li>
-								<a href="/profile/orders" className="block hover:text-pink-500">
+								<Link href="/profile/orders" className="block hover:text-pink-500">
 									Order History
-								</a>
+								</Link>
 							</li>
 							<li>
 								<a

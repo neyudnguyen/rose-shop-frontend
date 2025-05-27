@@ -27,13 +27,13 @@ export default function ProductManagementPage() {
 				</div>
 
 				<div className="p-6 text-gray-500">
-					You haven't added any products yet.
+					You have not added any products yet.
 				</div>
 			</div>
 
 			{/* Modal */}
 			{isModalOpen && (
-				<div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
+				<div className="fixed inset-0 bg-opacity-50 flex justify-center items-center">
 					<div className="bg-white rounded-lg shadow-lg p-6 w-96">
 						<h2 className="text-lg font-bold mb-4">Add New Product</h2>
 						<form>

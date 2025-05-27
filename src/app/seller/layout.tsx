@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import React from 'react';
 
 export default function SellerLayout({
@@ -30,12 +31,12 @@ export default function SellerLayout({
 							</a>
 						</li>
 						<li>
-							<a
+							<Link
 								href="/seller/orders"
 								className="block p-2 hover:bg-pink-600 rounded-md"
 							>
 								Manage Orders
-							</a>
+							</Link>
 						</li>
 						<li>
 							<a
