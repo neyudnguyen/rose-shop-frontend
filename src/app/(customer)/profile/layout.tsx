@@ -11,33 +11,36 @@ export default function ProfileLayout({
 			<div className="flex flex-wrap">
 				<div className="w-full md:w-1/4 p-4">
 					<div className="bg-white rounded-lg shadow p-4">
-						<h3 className="text-lg font-semibold mb-4">Profile Menu</h3>
+						<h3 className="text-lg font-semibold mb-4">Profile Menu</h3>{' '}
 						<ul className="space-y-2">
 							<li>
-								<a href="/profile" className="block hover:text-pink-500">
+								<Link href="/profile" className="block hover:text-pink-500">
 									Personal Information
-								</a>
+								</Link>
 							</li>
 							<li>
-								<a
+								<Link
 									href="/profile/addresses"
 									className="block hover:text-pink-500"
 								>
 									My Addresses
-								</a>
+								</Link>
 							</li>
 							<li>
-								<Link href="/profile/orders" className="block hover:text-pink-500">
+								<Link
+									href="/profile/orders"
+									className="block hover:text-pink-500"
+								>
 									Order History
 								</Link>
 							</li>
 							<li>
-								<a
+								<Link
 									href="/profile/vouchers"
 									className="block hover:text-pink-500"
 								>
 									My Vouchers
-								</a>
+								</Link>
 							</li>
 						</ul>
 					</div>

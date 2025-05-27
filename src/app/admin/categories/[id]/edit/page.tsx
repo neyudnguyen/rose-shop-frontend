@@ -1,13 +1,9 @@
 import React from 'react';
 
-export default function EditCategoryPage({
-	params,
-}: {
-	params: { id: string };
-}) {
+export default function EditCategoryPage() {
 	return (
 		<div>
-			<h1 className="text-2xl font-bold mb-6">Edit Category #{params.id}</h1>
+			<h1 className="text-2xl font-bold mb-6">Edit Category #1</h1>
 
 			<div className="bg-white rounded-lg shadow-md p-6">
 				<form>
