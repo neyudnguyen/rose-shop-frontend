@@ -24,7 +24,7 @@ export default function AdminLayout({
 						</li>
 						<li>
 							<Link
-								href="/admin/users"
+								href="/admin/users/user-management"
 								className="block p-2 hover:bg-purple-700 rounded-md"
 							>
 								User Management
