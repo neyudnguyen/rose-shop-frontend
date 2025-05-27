@@ -13,10 +13,9 @@ export default function SellerVouchersPage() {
 			<div className="bg-white rounded-lg shadow-md overflow-hidden">
 				<div className="p-4 border-b">
 					<h2 className="font-semibold">Your Vouchers</h2>
-				</div>
-
+				</div>{' '}
 				<div className="p-6 text-gray-500">
-					You haven't created any vouchers yet.
+					You haven&apos;t created any vouchers yet.
 				</div>
 			</div>
 		</div>

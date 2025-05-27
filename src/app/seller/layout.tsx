@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import React from 'react';
 
 export default function SellerLayout({
@@ -10,40 +11,40 @@ export default function SellerLayout({
 			<div className="w-64 bg-gradient-to-b from-pink-500 to-pink-700 text-white p-5">
 				<div className="mb-8">
 					<h1 className="text-2xl font-bold">Seller Dashboard</h1>
-				</div>
+				</div>{' '}
 				<nav>
 					<ul className="space-y-3">
 						<li>
-							<a
+							<Link
 								href="/seller"
 								className="block p-2 hover:bg-pink-600 rounded-md"
 							>
 								Dashboard
-							</a>
+							</Link>
 						</li>
 						<li>
-							<a
+							<Link
 								href="/seller/products"
 								className="block p-2 hover:bg-pink-600 rounded-md"
 							>
 								Product Management
-							</a>
+							</Link>
 						</li>
 						<li>
-							<a
+							<Link
 								href="/seller/orders"
 								className="block p-2 hover:bg-pink-600 rounded-md"
 							>
 								Manage Orders
-							</a>
+							</Link>
 						</li>
 						<li>
-							<a
+							<Link
 								href="/seller/vouchers"
 								className="block p-2 hover:bg-pink-600 rounded-md"
 							>
 								Distribute Vouchers
-							</a>
+							</Link>
 						</li>
 					</ul>
 				</nav>
