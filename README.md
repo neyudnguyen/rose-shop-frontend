@@ -31,4 +31,4 @@ npm run dev
 http://localhost:3000
 -URL: `http://localhost:3000/seller/distribute-vouchers`
 -URL: `http://localhost:3000/admin/dashboard`
--URL:`http://localhost:3000/users/user-management`
+-URL:`http://localhost:3000/admin/users/user-management`
