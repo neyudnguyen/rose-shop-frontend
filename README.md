@@ -1,14 +1,34 @@
 # Rose Shop
 
-## How to develop
+#### 1. **Distribute Vouchers** (`src/app/seller/distribute-vouchers/page.tsx`)
+- Filter vouchers by status (all / available / distributed)
+- Select a voucher and assign to a user
+- Displays confirmation messages upon successful distribution
+- Allows manual voucher entry
 
-### Setup Environment Variables
+Admin Pages
 
-1. Create a `.env.local` file in the root of the project
-2. Set your backend URL:
+#### 2. **Admin Dashboard** (`src/app/admin/dashboard/page.tsx`)
+- Overview of system metrics
+- Placeholder for charts, user activities, and quick stats
 
-```
-NEXT_PUBLIC_BACKEND_URL=your_backend_url
-```
+#### 3. **User Management** (`src/app/users/user-management/page.tsx`)
+- List all registered users
+- Placeholder for user roles, actions, and status
+- Foundation for editing, banning, or promoting users
 
-Replace `your_backend_url` with the actual URL of your backend service.
+---
+
+1. Clone the repository
+
+2. Install dependencies
+npm install
+
+3. Run in development mode
+npm run dev
+
+4. Open in browser
+http://localhost:3000
+-URL: `http://localhost:3000/seller/distribute-vouchers`
+-URL: `http://localhost:3000/admin/dashboard`
+-URL:`http://localhost:3000/admin/users/user-management`
