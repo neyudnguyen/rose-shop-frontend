@@ -1,13 +1,14 @@
 import React from 'react';
 
-export default function EditProductPage({
+export default async function EditProductPage({
 	params,
 }: {
-	params: { id: string };
+	params: Promise<{ id: string }>;
 }) {
+	const { id } = await params;
 	return (
 		<div>
-			<h1 className="text-2xl font-bold mb-6">Edit Product #{params.id}</h1>
+			<h1 className="text-2xl font-bold mb-6">Edit Product #{id}</h1>
 
 			<div className="bg-white rounded-lg shadow-md p-6">
 				<form>

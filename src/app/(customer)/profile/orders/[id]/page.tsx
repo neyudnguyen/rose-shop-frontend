@@ -1,14 +1,14 @@
-import React from 'react';
-
-export default function OrderDetailPage({
-	params,
-}: {
-	params: { id: string };
+export default async function OrderDetailPage({ 
+  params 
+}: { 
+  params: Promise<{ id: string }> 
 }) {
-	return (
-		<div className="bg-white rounded-lg shadow p-6">
-			<h1 className="text-2xl font-bold mb-6">Order #{params.id}</h1>
-			<p>Order details will be displayed here</p>
-		</div>
-	);
+  const { id } = await params;
+  
+  return (
+    <div className="bg-white rounded-lg shadow p-6">
+      <h1 className="text-2xl font-bold mb-6">Order #{id}</h1>
+      <p>Order details will be displayed here</p>
+    </div>
+  );
 }
