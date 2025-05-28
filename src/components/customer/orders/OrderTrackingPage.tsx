@@ -1,10 +1,10 @@
 'use client';
 
-import { 
-  ShoppingOutlined, 
-  ClockCircleOutlined, 
-  CheckCircleOutlined, 
-  CloseCircleOutlined, 
+import {
+  ShoppingOutlined,
+  ClockCircleOutlined,
+  CheckCircleOutlined,
+  CloseCircleOutlined,
   CarOutlined,
   SearchOutlined,
   InfoCircleOutlined,
@@ -12,18 +12,18 @@ import {
   EnvironmentOutlined,
   PhoneOutlined
 } from '@ant-design/icons';
-import { 
-  Tabs, 
-  Card, 
-  Typography, 
-  Tag, 
-  Button, 
-  Divider, 
-  Steps, 
-  Empty, 
-  List, 
-  Avatar, 
-  Space, 
+import {
+  Tabs,
+  Card,
+  Typography,
+  Tag,
+  Button,
+  Divider,
+  Steps,
+  Empty,
+  List,
+  Avatar,
+  Space,
   Input,
   Tooltip,
   Modal,
@@ -254,25 +254,25 @@ const OrderTrackingPage = () => {
   const [selectedOrder, setSelectedOrder] = useState<any>(null);
 
   // Filter orders based on search text
-  const filteredOrders = mockOrders.filter(order => 
+  const filteredOrders = mockOrders.filter(order =>
     order.order_id.toString().includes(searchText) ||
-    order.items.some(item => 
+    order.items.some(item =>
       item.flower_name.toLowerCase().includes(searchText.toLowerCase())
     )
   );
 
   // Group orders by status for tabs
   const allOrders = filteredOrders;
-  const pendingOrders = filteredOrders.filter(order => 
+  const pendingOrders = filteredOrders.filter(order =>
     order.items.some(item => item.status === 'pending' || item.status === 'accepted')
   );
-  const shippingOrders = filteredOrders.filter(order => 
+  const shippingOrders = filteredOrders.filter(order =>
     order.items.some(item => item.status === 'pending delivery')
   );
-  const deliveredOrders = filteredOrders.filter(order => 
+  const deliveredOrders = filteredOrders.filter(order =>
     order.items.every(item => item.status === 'delivered')
   );
-  const canceledOrders = filteredOrders.filter(order => 
+  const canceledOrders = filteredOrders.filter(order =>
     order.items.every(item => item.status === 'canceled')
   );
 
@@ -290,9 +290,9 @@ const OrderTrackingPage = () => {
           <List.Item>
             <List.Item.Meta
               avatar={
-                <Avatar 
-                  shape="square" 
-                  size={64} 
+                <Avatar
+                  shape="square"
+                  size={64}
                   src={item.image_url}
                   style={{ borderRadius: '8px' }}
                 />
@@ -326,18 +326,18 @@ const OrderTrackingPage = () => {
   const renderOrderCard = (order: any) => {
     // Determine overall order status
     let overallStatus = 'pending';
-    if (order.items.every(item => item.status === 'delivered')) {
+    if (order.items.every((item: { status: string }) => item.status === 'delivered')) {
       overallStatus = 'delivered';
-    } else if (order.items.every(item => item.status === 'canceled')) {
+    } else if (order.items.every((item: { status: string }) => item.status === 'delivered')) {
       overallStatus = 'canceled';
-    } else if (order.items.some(item => item.status === 'pending delivery')) {
+    } else if (order.items.some((item: { status: string }) => item.status === 'delivered')) {
       overallStatus = 'pending delivery';
-    } else if (order.items.some(item => item.status === 'accepted')) {
+    } else if (order.items.some((item: { status: string }) => item.status === 'delivered')) {
       overallStatus = 'accepted';
     }
 
     return (
-      <Card 
+      <Card
         key={order.order_id}
         className="mb-6 shadow-sm hover:shadow-md transition-shadow"
         style={{ borderRadius: '12px' }}
@@ -384,8 +384,8 @@ const OrderTrackingPage = () => {
               {order.status_payment === 'paid' ? 'Paid' : 'Payment Pending'}
             </Tag>
           </div>
-          <Button 
-            type="primary" 
+          <Button
+            type="primary"
             onClick={() => showOrderDetail(order)}
             className="bg-[#644A07] hover:bg-[#8B6914] border-none"
           >
@@ -425,66 +425,66 @@ const OrderTrackingPage = () => {
         />
       </div>
 
-      <Tabs 
-        defaultActiveKey="all" 
+      <Tabs
+        defaultActiveKey="all"
         className="order-tracking-tabs"
         tabBarStyle={{ marginBottom: '24px', borderBottom: '2px solid #f0f0f0' }}
       >
-        <TabPane 
+        <TabPane
           tab={
             <span>
               <ShoppingOutlined />
               All Orders ({allOrders.length})
             </span>
-          } 
+          }
           key="all"
         >
           {allOrders.length > 0 ? allOrders.map(renderOrderCard) : renderEmptyState()}
         </TabPane>
-        
-        <TabPane 
+
+        <TabPane
           tab={
             <span>
               <ClockCircleOutlined />
               Pending ({pendingOrders.length})
             </span>
-          } 
+          }
           key="pending"
         >
           {pendingOrders.length > 0 ? pendingOrders.map(renderOrderCard) : renderEmptyState()}
         </TabPane>
-        
-        <TabPane 
+
+        <TabPane
           tab={
             <span>
               <CarOutlined />
               Shipping ({shippingOrders.length})
             </span>
-          } 
+          }
           key="shipping"
         >
           {shippingOrders.length > 0 ? shippingOrders.map(renderOrderCard) : renderEmptyState()}
         </TabPane>
-        
-        <TabPane 
+
+        <TabPane
           tab={
             <span>
               <CheckCircleOutlined />
               Delivered ({deliveredOrders.length})
             </span>
-          } 
+          }
           key="delivered"
         >
           {deliveredOrders.length > 0 ? deliveredOrders.map(renderOrderCard) : renderEmptyState()}
         </TabPane>
-        
-        <TabPane 
+
+        <TabPane
           tab={
             <span>
               <CloseCircleOutlined />
               Canceled ({canceledOrders.length})
             </span>
-          } 
+          }
           key="canceled"
         >
           {canceledOrders.length > 0 ? canceledOrders.map(renderOrderCard) : renderEmptyState()}
@@ -533,7 +533,7 @@ const OrderTrackingPage = () => {
                   </Descriptions>
                 </Card>
               </Col>
-              
+
               <Col xs={24} md={12}>
                 <Card title="Shipping Information" bordered={false}>
                   <Space direction="vertical" size="small">
@@ -546,7 +546,7 @@ const OrderTrackingPage = () => {
                         {selectedOrder.address.address_detail}
                       </div>
                     </div>
-                    
+
                     <div className="mt-2">
                       <Space>
                         <PhoneOutlined />
@@ -569,9 +569,9 @@ const OrderTrackingPage = () => {
               {selectedOrder.items.map((item: any) => (
                 <div key={item.order_detail_id} className="mb-6">
                   <div className="flex items-center mb-3">
-                    <Avatar 
-                      shape="square" 
-                      size={40} 
+                    <Avatar
+                      shape="square"
+                      size={40}
                       src={item.image_url}
                       style={{ borderRadius: '4px', marginRight: '12px' }}
                     />
@@ -579,15 +579,15 @@ const OrderTrackingPage = () => {
                       <Text strong>{item.flower_name}</Text>
                       <div>
                         <Text type="secondary">
-                          <ShopOutlined className="mr-1" /> 
+                          <ShopOutlined className="mr-1" />
                           {item.seller.shop_name}
                         </Text>
                       </div>
                     </div>
                   </div>
-                  
-                  <Steps 
-                    current={getCurrentStep(item.status)} 
+
+                  <Steps
+                    current={getCurrentStep(item.status)}
                     status={item.status === 'canceled' ? 'error' : 'process'}
                     size="small"
                     className="ml-2"
