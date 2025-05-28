@@ -1,4 +1,5 @@
 import React from 'react';
+import Link from 'next/link';
 
 export default function SellerLayout({
 	children,
@@ -14,36 +15,24 @@ export default function SellerLayout({
 				<nav>
 					<ul className="space-y-3">
 						<li>
-							<a
-								href="/seller"
-								className="block p-2 hover:bg-pink-600 rounded-md"
-							>
+							<Link href="/seller" className="block p-2 hover:bg-pink-600 rounded-md">
 								Dashboard
-							</a>
+							</Link>
 						</li>
 						<li>
-							<a
-								href="/seller/products"
-								className="block p-2 hover:bg-pink-600 rounded-md"
-							>
+							<Link href="/seller/products" className="block p-2 hover:bg-pink-600 rounded-md">
 								Product Management
-							</a>
+							</Link>
 						</li>
 						<li>
-							<a
-								href="/seller/orders"
-								className="block p-2 hover:bg-pink-600 rounded-md"
-							>
+							<Link href="/seller/orders" className="block p-2 hover:bg-pink-600 rounded-md">
 								Manage Orders
-							</a>
+							</Link>
 						</li>
 						<li>
-							<a
-								href="/seller/vouchers"
-								className="block p-2 hover:bg-pink-600 rounded-md"
-							>
+							<Link href="/seller/distribute-vouchers" className="block p-2 hover:bg-pink-600 rounded-md">
 								Distribute Vouchers
-							</a>
+							</Link>
 						</li>
 					</ul>
 				</nav>

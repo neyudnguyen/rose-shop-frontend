@@ -16,7 +16,7 @@ export default function ProductManagementPage() {
 				</div>
 
 				<div className="p-6 text-gray-500">
-					You haven't added any products yet.
+					{"You haven't added any products yet."}
 				</div>
 			</div>
 		</div>

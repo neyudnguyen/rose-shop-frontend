@@ -16,8 +16,9 @@ export default function SellerVouchersPage() {
 				</div>
 
 				<div className="p-6 text-gray-500">
-					You haven't created any vouchers yet.
+ 						{"You haven't created any vouchers yet."}
 				</div>
+
 			</div>
 		</div>
 	);
