@@ -5,8 +5,9 @@ import { Button, Form, Input, DatePicker, Select, Upload, message, Card, Avatar,
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import dayjs from 'dayjs';
+import { UploadChangeParam, UploadFile } from 'antd/es/upload';
 
-const { Title, Text } = Typography;
+const { Title } = Typography;
 const { Option } = Select;
 
 interface UserProfileFormValues {
@@ -14,13 +15,13 @@ interface UserProfileFormValues {
   address: string;
   birth_date: dayjs.Dayjs;
   sex: 'male' | 'female' | 'other';
-  avatar?: any;
+  avatar?: File;
 }
 
 const UserProfileEditForm = () => {
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
-  const [avatarUrl, setAvatarUrl] = useState<string>('/images/default-avatar.jpg');
+  const [avatarUrl] = useState<string>('/images/default-avatar.jpg');
   const router = useRouter();
 
   // In a real app, you would fetch user data here
@@ -54,10 +55,8 @@ const UserProfileEditForm = () => {
     }
   };
 
-  const handleAvatarChange = (info: any) => {
+  const handleAvatarChange = (info: UploadChangeParam<UploadFile>) => {
     if (info.file.status === 'done') {
-      // In a real app, you would get the URL from the server response
-      // setAvatarUrl(info.file.response.url);
       message.success(`${info.file.name} uploaded successfully`);
     } else if (info.file.status === 'error') {
       message.error(`${info.file.name} upload failed.`);
@@ -199,5 +198,3 @@ const UserProfileEditForm = () => {
 };
 
 export default UserProfileEditForm;
-
-

@@ -29,7 +29,7 @@ const ProfilePage = () => {
     <div className="min-h-screen bg-gradient-to-br from-purple-50 to-pink-50 p-4">
       <div className="max-w-4xl mx-auto">
         <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold text-gray-800 mb-2">Cuong's Profile</h1>
+          <h1 className="text-4xl font-bold text-gray-800 mb-2">Cuong&apos;s Profile</h1>
           <p className="text-gray-600">Co-Founder & Lead Developer of Rose Shop</p>
           <div className="mt-4">
             <Badge variant="default" className="text-sm px-4 py-2 bg-gradient-to-r from-purple-500 to-pink-500">
@@ -187,7 +187,7 @@ const ProfilePage = () => {
             <CardHeader>
               <CardTitle>Project Statistics</CardTitle>
               <CardDescription>
-                Cuong's impact on the Rose Shop project
+                Cuong&apos;s impact on the Rose Shop project
               </CardDescription>
             </CardHeader>
             <CardContent>

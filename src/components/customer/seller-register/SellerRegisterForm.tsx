@@ -7,7 +7,6 @@ import {
   Typography, 
   Radio, 
   Card, 
-  Divider, 
   message, 
   Alert,
   Row,
@@ -15,7 +14,8 @@ import {
 } from 'antd';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { ShopOutlined, UserOutlined, HomeOutlined, InfoCircleOutlined } from '@ant-design/icons';
+import { ShopOutlined, HomeOutlined } from '@ant-design/icons';
+import Image from 'next/image';
 
 const { Title, Text } = Typography;
 const { TextArea } = Input;
@@ -97,14 +97,13 @@ const SellerRegisterForm = () => {
                 style={{ borderRadius: '8px', backgroundColor: '#FFF1F0', border: '1px solid #FFCCC7' }}
               />
               
-              <div className="mt-6">
-                <img 
+              <div className="mt-6 relative w-full h-[200px]">
+                <Image 
                   src="/images/picture/seller-illustration.png" 
                   alt="Become a Seller" 
-                  className="w-full h-auto rounded-lg"
-                  onError={(e) => {
-                    e.currentTarget.src = "https://via.placeholder.com/300x200?text=Become+a+Seller";
-                  }}
+                  fill
+                  style={{ objectFit: 'cover' }}
+                  className="rounded-lg"
                 />
               </div>
             </Card>

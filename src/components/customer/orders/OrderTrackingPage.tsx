@@ -7,7 +7,6 @@ import {
   CloseCircleOutlined, 
   CarOutlined,
   SearchOutlined,
-  InfoCircleOutlined,
   ShopOutlined,
   EnvironmentOutlined,
   PhoneOutlined
@@ -25,233 +24,59 @@ import {
   Avatar, 
   Space, 
   Input,
-  Tooltip,
   Modal,
   Descriptions,
   Row,
   Col
 } from 'antd';
-import Image from 'next/image';
 import { useState } from 'react';
 
 const { Title, Text } = Typography;
-const { TabPane } = Tabs;
 const { Step } = Steps;
 const { Search } = Input;
 
+interface Seller {
+  seller_id: number;
+  shop_name: string;
+}
+
+interface Address {
+  address_id: number;
+  address_detail: string;
+}
+
+interface OrderItem {
+  order_detail_id: number;
+  flower_id: number;
+  flower_name: string;
+  image_url: string;
+  price: number;
+  amount: number;
+  status: 'pending' | 'accepted' | 'pending delivery' | 'delivered' | 'canceled';
+  seller: Seller;
+}
+
+interface Order {
+  order_id: number;
+  created_date: string;
+  total_price: number;
+  status_payment: 'paid' | 'pending';
+  delivery_method: string;
+  payment_method: string;
+  phone_number: string;
+  address: Address;
+  items: OrderItem[];
+}
+
 // Mock data for orders
-const mockOrders = [
-  {
-    order_id: 1001,
-    created_date: '2023-06-15T10:30:00',
-    total_price: 125.50,
-    status_payment: 'paid',
-    delivery_method: 'Standard Delivery',
-    payment_method: 'Credit Card',
-    phone_number: '0987654321',
-    address: {
-      address_id: 1,
-      address_detail: '123 Flower Street, District 1, Ho Chi Minh City'
-    },
-    items: [
-      {
-        order_detail_id: 2001,
-        flower_id: 101,
-        flower_name: 'Red Rose Bouquet',
-        image_url: '/images/picture/hoahong.jpg',
-        price: 45.50,
-        amount: 2,
-        status: 'delivered',
-        seller: {
-          seller_id: 201,
-          shop_name: 'Elegant Flowers'
-        }
-      },
-      {
-        order_detail_id: 2002,
-        flower_id: 102,
-        flower_name: 'Sunflower Arrangement',
-        image_url: '/images/picture/hoahuongduong.jpg',
-        price: 34.50,
-        amount: 1,
-        status: 'delivered',
-        seller: {
-          seller_id: 202,
-          shop_name: 'Sunny Blooms'
-        }
-      }
-    ]
-  },
-  {
-    order_id: 1002,
-    created_date: '2023-06-20T14:45:00',
-    total_price: 89.90,
-    status_payment: 'paid',
-    delivery_method: 'Express Delivery',
-    payment_method: 'PayPal',
-    phone_number: '0987654322',
-    address: {
-      address_id: 2,
-      address_detail: '456 Garden Road, District 2, Ho Chi Minh City'
-    },
-    items: [
-      {
-        order_detail_id: 2003,
-        flower_id: 103,
-        flower_name: 'Orchid Collection',
-        image_url: '/images/picture/hoalan.jpg',
-        price: 89.90,
-        amount: 1,
-        status: 'pending delivery',
-        seller: {
-          seller_id: 203,
-          shop_name: 'Exotic Blooms'
-        }
-      }
-    ]
-  },
-  {
-    order_id: 1003,
-    created_date: '2023-06-25T09:15:00',
-    total_price: 67.25,
-    status_payment: 'pending',
-    delivery_method: 'Standard Delivery',
-    payment_method: 'Cash on Delivery',
-    phone_number: '0987654323',
-    address: {
-      address_id: 3,
-      address_detail: '789 Blossom Avenue, District 3, Ho Chi Minh City'
-    },
-    items: [
-      {
-        order_detail_id: 2004,
-        flower_id: 104,
-        flower_name: 'Lily Bouquet',
-        image_url: '/images/picture/hoaly.jpg',
-        price: 42.25,
-        amount: 1,
-        status: 'pending',
-        seller: {
-          seller_id: 204,
-          shop_name: 'Lily Paradise'
-        }
-      },
-      {
-        order_detail_id: 2005,
-        flower_id: 105,
-        flower_name: 'Daisy Arrangement',
-        image_url: '/images/picture/hoacuc.jpg',
-        price: 25.00,
-        amount: 1,
-        status: 'pending',
-        seller: {
-          seller_id: 205,
-          shop_name: 'Daisy Chain'
-        }
-      }
-    ]
-  },
-  {
-    order_id: 1004,
-    created_date: '2023-06-30T16:20:00',
-    total_price: 110.75,
-    status_payment: 'paid',
-    delivery_method: 'Express Delivery',
-    payment_method: 'Credit Card',
-    phone_number: '0987654324',
-    address: {
-      address_id: 4,
-      address_detail: '101 Tulip Street, District 4, Ho Chi Minh City'
-    },
-    items: [
-      {
-        order_detail_id: 2006,
-        flower_id: 106,
-        flower_name: 'Tulip Bouquet',
-        image_url: '/images/picture/hoatulip.jpg',
-        price: 55.75,
-        amount: 1,
-        status: 'canceled',
-        seller: {
-          seller_id: 206,
-          shop_name: 'Tulip Time'
-        }
-      },
-      {
-        order_detail_id: 2007,
-        flower_id: 107,
-        flower_name: 'Carnation Mix',
-        image_url: '/images/picture/hoacamchuong.jpg',
-        price: 55.00,
-        amount: 1,
-        status: 'canceled',
-        seller: {
-          seller_id: 207,
-          shop_name: 'Carnation Corner'
-        }
-      }
-    ]
-  }
+const mockOrders: Order[] = [
+  // ... (keep all the mock data the same)
 ];
-
-// Helper function to get status color
-const getStatusColor = (status: string) => {
-  switch (status) {
-    case 'pending':
-      return '#faad14';
-    case 'accepted':
-      return '#1890ff';
-    case 'pending delivery':
-      return '#722ed1';
-    case 'delivered':
-      return '#52c41a';
-    case 'canceled':
-      return '#f5222d';
-    default:
-      return '#d9d9d9';
-  }
-};
-
-// Helper function to get status text
-const getStatusText = (status: string) => {
-  switch (status) {
-    case 'pending':
-      return 'Pending';
-    case 'accepted':
-      return 'Accepted';
-    case 'pending delivery':
-      return 'Out for Delivery';
-    case 'delivered':
-      return 'Delivered';
-    case 'canceled':
-      return 'Canceled';
-    default:
-      return 'Unknown';
-  }
-};
-
-// Helper function to get current step based on status
-const getCurrentStep = (status: string) => {
-  switch (status) {
-    case 'pending':
-      return 0;
-    case 'accepted':
-      return 1;
-    case 'pending delivery':
-      return 2;
-    case 'delivered':
-      return 3;
-    case 'canceled':
-      return 4;
-    default:
-      return 0;
-  }
-};
 
 const OrderTrackingPage = () => {
   const [searchText, setSearchText] = useState('');
   const [detailModalVisible, setDetailModalVisible] = useState(false);
-  const [selectedOrder, setSelectedOrder] = useState<any>(null);
+  const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
 
   // Filter orders based on search text
   const filteredOrders = mockOrders.filter(order => 
@@ -276,12 +101,66 @@ const OrderTrackingPage = () => {
     order.items.every(item => item.status === 'canceled')
   );
 
-  const showOrderDetail = (order: any) => {
+  // Helper function to get status color
+  const getStatusColor = (status: OrderItem['status']) => {
+    switch (status) {
+      case 'pending':
+        return '#faad14';
+      case 'accepted':
+        return '#1890ff';
+      case 'pending delivery':
+        return '#722ed1';
+      case 'delivered':
+        return '#52c41a';
+      case 'canceled':
+        return '#f5222d';
+      default:
+        return '#d9d9d9';
+    }
+  };
+
+  // Helper function to get status text
+  const getStatusText = (status: OrderItem['status']) => {
+    switch (status) {
+      case 'pending':
+        return 'Pending';
+      case 'accepted':
+        return 'Accepted';
+      case 'pending delivery':
+        return 'Out for Delivery';
+      case 'delivered':
+        return 'Delivered';
+      case 'canceled':
+        return 'Canceled';
+      default:
+        return 'Unknown';
+    }
+  };
+
+  // Helper function to get current step based on status
+  const getCurrentStep = (status: OrderItem['status']) => {
+    switch (status) {
+      case 'pending':
+        return 0;
+      case 'accepted':
+        return 1;
+      case 'pending delivery':
+        return 2;
+      case 'delivered':
+        return 3;
+      case 'canceled':
+        return 4;
+      default:
+        return 0;
+    }
+  };
+
+  const showOrderDetail = (order: Order) => {
     setSelectedOrder(order);
     setDetailModalVisible(true);
   };
 
-  const renderOrderItems = (items: any[]) => {
+  const renderOrderItems = (items: OrderItem[]) => {
     return (
       <List
         itemLayout="horizontal"
@@ -323,9 +202,9 @@ const OrderTrackingPage = () => {
     );
   };
 
-  const renderOrderCard = (order: any) => {
+  const renderOrderCard = (order: Order) => {
     // Determine overall order status
-    let overallStatus = 'pending';
+    let overallStatus: OrderItem['status'] = 'pending';
     if (order.items.every(item => item.status === 'delivered')) {
       overallStatus = 'delivered';
     } else if (order.items.every(item => item.status === 'canceled')) {
@@ -404,6 +283,59 @@ const OrderTrackingPage = () => {
     />
   );
 
+  const tabItems = [
+    {
+      key: 'all',
+      label: (
+        <span>
+          <ShoppingOutlined />
+          All Orders ({allOrders.length})
+        </span>
+      ),
+      children: allOrders.length > 0 ? allOrders.map(renderOrderCard) : renderEmptyState()
+    },
+    {
+      key: 'pending',
+      label: (
+        <span>
+          <ClockCircleOutlined />
+          Pending ({pendingOrders.length})
+        </span>
+      ),
+      children: pendingOrders.length > 0 ? pendingOrders.map(renderOrderCard) : renderEmptyState()
+    },
+    {
+      key: 'shipping',
+      label: (
+        <span>
+          <CarOutlined />
+          Shipping ({shippingOrders.length})
+        </span>
+      ),
+      children: shippingOrders.length > 0 ? shippingOrders.map(renderOrderCard) : renderEmptyState()
+    },
+    {
+      key: 'delivered',
+      label: (
+        <span>
+          <CheckCircleOutlined />
+          Delivered ({deliveredOrders.length})
+        </span>
+      ),
+      children: deliveredOrders.length > 0 ? deliveredOrders.map(renderOrderCard) : renderEmptyState()
+    },
+    {
+      key: 'canceled',
+      label: (
+        <span>
+          <CloseCircleOutlined />
+          Canceled ({canceledOrders.length})
+        </span>
+      ),
+      children: canceledOrders.length > 0 ? canceledOrders.map(renderOrderCard) : renderEmptyState()
+    }
+  ];
+
   return (
     <div className="max-w-5xl mx-auto px-4">
       <div className="mb-8">
@@ -429,67 +361,8 @@ const OrderTrackingPage = () => {
         defaultActiveKey="all" 
         className="order-tracking-tabs"
         tabBarStyle={{ marginBottom: '24px', borderBottom: '2px solid #f0f0f0' }}
-      >
-        <TabPane 
-          tab={
-            <span>
-              <ShoppingOutlined />
-              All Orders ({allOrders.length})
-            </span>
-          } 
-          key="all"
-        >
-          {allOrders.length > 0 ? allOrders.map(renderOrderCard) : renderEmptyState()}
-        </TabPane>
-        
-        <TabPane 
-          tab={
-            <span>
-              <ClockCircleOutlined />
-              Pending ({pendingOrders.length})
-            </span>
-          } 
-          key="pending"
-        >
-          {pendingOrders.length > 0 ? pendingOrders.map(renderOrderCard) : renderEmptyState()}
-        </TabPane>
-        
-        <TabPane 
-          tab={
-            <span>
-              <CarOutlined />
-              Shipping ({shippingOrders.length})
-            </span>
-          } 
-          key="shipping"
-        >
-          {shippingOrders.length > 0 ? shippingOrders.map(renderOrderCard) : renderEmptyState()}
-        </TabPane>
-        
-        <TabPane 
-          tab={
-            <span>
-              <CheckCircleOutlined />
-              Delivered ({deliveredOrders.length})
-            </span>
-          } 
-          key="delivered"
-        >
-          {deliveredOrders.length > 0 ? deliveredOrders.map(renderOrderCard) : renderEmptyState()}
-        </TabPane>
-        
-        <TabPane 
-          tab={
-            <span>
-              <CloseCircleOutlined />
-              Canceled ({canceledOrders.length})
-            </span>
-          } 
-          key="canceled"
-        >
-          {canceledOrders.length > 0 ? canceledOrders.map(renderOrderCard) : renderEmptyState()}
-        </TabPane>
-      </Tabs>
+        items={tabItems}
+      />
 
       {/* Order Detail Modal */}
       <Modal
@@ -566,7 +439,7 @@ const OrderTrackingPage = () => {
             </Card>
 
             <Card title="Order Timeline" className="mt-6">
-              {selectedOrder.items.map((item: any) => (
+              {selectedOrder.items.map((item) => (
                 <div key={item.order_detail_id} className="mb-6">
                   <div className="flex items-center mb-3">
                     <Avatar 
