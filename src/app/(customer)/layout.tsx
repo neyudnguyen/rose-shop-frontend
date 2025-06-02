@@ -17,7 +17,7 @@ const Layout = ({
 	return (
 		<div>
 			<Header />
-			{children}
+			<div className="py-15">{children}</div>
 			<Footer />
 		</div>
 	);
