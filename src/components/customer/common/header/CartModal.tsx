@@ -15,6 +15,7 @@ import {
 	Typography,
 	message,
 } from 'antd';
+import { useRouter } from 'next/navigation';
 import React, { FC, useState } from 'react';
 
 const { Title, Text } = Typography;
@@ -89,12 +90,13 @@ const CartModal: FC<CartModalProps> = ({ isVisible, onCancel }) => {
 		setCartItems(cartItems.filter((item) => item.cart_id !== cartId));
 		message.success('Item removed from cart');
 	};
-
 	// Proceed to checkout
+	const router = useRouter();
+	
 	const handleCheckout = () => {
 		message.info('Proceeding to checkout...');
-		// In a real app, you would redirect to checkout page here
 		onCancel();
+		router.push('/checkout');
 	};
 
 	return (
