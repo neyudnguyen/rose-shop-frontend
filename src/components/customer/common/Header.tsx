@@ -23,6 +23,7 @@ import {
 import Link from 'next/link';
 import React, { useState } from 'react';
 
+import CartModal from '@/components/customer/common/header/CartModal';
 import LoginFormModal from '@/components/customer/common/header/LoginFormModal';
 import RegisterFormModal from '@/components/customer/common/header/RegisterFormModal';
 
@@ -33,6 +34,7 @@ const Header = () => {
 	const [drawerVisible, setDrawerVisible] = useState(false);
 	const [loginModalVisible, setLoginModalVisible] = useState(false);
 	const [registerModalVisible, setRegisterModalVisible] = useState(false);
+	const [cartModalVisible, setCartModalVisible] = useState(false);
 
 	const showDrawer = () => setDrawerVisible(true);
 	const onClose = () => setDrawerVisible(false);
@@ -53,6 +55,14 @@ const Header = () => {
 
 	const hideRegisterModal = () => {
 		setRegisterModalVisible(false);
+	};
+
+	const showCartModal = () => {
+		setCartModalVisible(true);
+	};
+
+	const hideCartModal = () => {
+		setCartModalVisible(false);
 	};
 	const accountMenu = (
 		<Menu>
@@ -122,11 +132,12 @@ const Header = () => {
 							<Dropdown overlay={accountMenu} placement="bottomRight">
 								<Avatar icon={<UserOutlined />} style={{ cursor: 'pointer' }} />
 							</Dropdown>
-						</div>
+						</div>{' '}
 						<div className="flex justify-center">
 							<Badge count={3} offset={[0, 0]}>
 								<ShoppingCartOutlined
 									style={{ fontSize: '1.5em', cursor: 'pointer' }}
+									onClick={showCartModal}
 								/>
 							</Badge>
 						</div>
@@ -156,11 +167,12 @@ const Header = () => {
 							Account
 						</Button>
 					</Dropdown>
-				</div>
+				</div>{' '}
 				<div style={{ marginTop: 20 }}>
 					<Badge count={3} offset={[0, 0]}>
 						<ShoppingCartOutlined
 							style={{ fontSize: '1.5em', cursor: 'pointer' }}
+							onClick={showCartModal}
 						/>
 					</Badge>
 				</div>
@@ -171,12 +183,14 @@ const Header = () => {
 				onCancel={hideLoginModal}
 				onRegisterClick={showRegisterModal}
 			/>
-			{/* Register Modal */}
+			{/* Register Modal */}{' '}
 			<RegisterFormModal
 				isVisible={registerModalVisible}
 				onCancel={hideRegisterModal}
 				onLoginClick={showLoginModal}
 			/>
+			{/* Cart Modal */}
+			<CartModal isVisible={cartModalVisible} onCancel={hideCartModal} />
 		</AntHeader>
 	);
 };
