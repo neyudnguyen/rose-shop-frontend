@@ -4,6 +4,7 @@ import { ConfigProvider } from 'antd';
 import React from 'react';
 
 import '@/app/globals.css';
+import { AuthProvider } from '@/contexts/AuthContext';
 import theme from '@/theme/themeConfig';
 
 const RootLayout = ({
@@ -16,7 +17,9 @@ const RootLayout = ({
 			<body>
 				<React.StrictMode>
 					<ConfigProvider theme={theme}>
-						<AntdRegistry>{children}</AntdRegistry>
+						<AuthProvider>
+							<AntdRegistry>{children}</AntdRegistry>
+						</AuthProvider>
 					</ConfigProvider>
 				</React.StrictMode>
 			</body>
