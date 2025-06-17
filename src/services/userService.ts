@@ -33,6 +33,40 @@ class UserService {
 			throw error;
 		}
 	}
+	async updateProfile(profileData: {
+		fullName: string;
+		address: string;
+		birthDate: string; // DateOnly format: YYYY-MM-DD
+		sex: string;
+		isSeller: boolean;
+		avatar?: File;
+	}): Promise<ProfileResponse> {
+		try {
+			const formData = new FormData();
+			formData.append('FullName', profileData.fullName);
+			formData.append('Address', profileData.address);
+			formData.append('BirthDate', profileData.birthDate);
+			formData.append('Sex', profileData.sex);
+			formData.append('IsSeller', profileData.isSeller.toString());
+
+			if (profileData.avatar) {
+				formData.append('Avatar', profileData.avatar);
+			}
+
+			const response = await fetch(`${API_BASE_URL}/user/profile`, {
+				method: 'PUT',
+				headers: {
+					...authService.getAuthHeader(),
+				},
+				body: formData,
+			});
+
+			return await this.handleResponse<ProfileResponse>(response);
+		} catch (error) {
+			console.error('Update profile error:', error);
+			throw error;
+		}
+	}
 }
 
 export const userService = new UserService();
