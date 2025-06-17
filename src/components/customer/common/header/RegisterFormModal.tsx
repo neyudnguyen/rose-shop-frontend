@@ -2,7 +2,13 @@
 
 import { LockOutlined, MailOutlined, UserOutlined } from '@ant-design/icons';
 import { Button, Form, Input, Modal, message } from 'antd';
-import { FC } from 'react';
+import { FC, useState } from 'react';
+
+import { useAuth } from '@/contexts/AuthContext';
+import { authService } from '@/services/authService';
+import { RegisterRequest } from '@/types/auth';
+import { handleAPIError } from '@/utils/errorHandler';
+import NProgress from '@/utils/nprogress';
 
 interface RegisterFormValues {
 	username: string;
@@ -23,13 +29,43 @@ const RegisterFormModal: FC<RegisterFormModalProps> = ({
 	onLoginClick,
 }) => {
 	const [form] = Form.useForm();
+	const [loading, setLoading] = useState(false);
+	const { login } = useAuth();
 
-	const handleRegister = (values: RegisterFormValues) => {
-		console.log('Register form values:', values);
-		// Here you would handle registration logic
-		message.success(`Registration successful for ${values.username}!`);
-		onCancel();
-		form.resetFields();
+	const handleRegister = async (values: RegisterFormValues) => {
+		setLoading(true);
+		NProgress.start();
+		try {
+			// Prepare the data in the format expected by the API
+			const registerData: RegisterRequest = {
+				username: values.username,
+				email: values.email,
+				password: values.password,
+			};
+
+			// Call the registration API
+			const response = await authService.register(registerData);
+
+			if (response.success) {
+				message.success(response.message || 'Registration successful!');
+
+				// Log the user in automatically
+				login(response.data.user);
+
+				// Close modal and reset form
+				onCancel();
+				form.resetFields();
+			} else {
+				message.error(response.message || 'Registration failed');
+			}
+		} catch (error) {
+			console.error('Registration error:', error);
+			const errorMessage = handleAPIError(error);
+			message.error(errorMessage);
+		} finally {
+			setLoading(false);
+			NProgress.done();
+		}
 	};
 
 	return (
@@ -76,7 +112,6 @@ const RegisterFormModal: FC<RegisterFormModalProps> = ({
 						size="large"
 					/>
 				</Form.Item>
-
 				<Form.Item
 					name="email"
 					rules={[
@@ -96,7 +131,6 @@ const RegisterFormModal: FC<RegisterFormModalProps> = ({
 						size="large"
 					/>
 				</Form.Item>
-
 				<Form.Item
 					name="password"
 					rules={[
@@ -117,7 +151,6 @@ const RegisterFormModal: FC<RegisterFormModalProps> = ({
 						size="large"
 					/>
 				</Form.Item>
-
 				<Form.Item
 					name="confirmPassword"
 					dependencies={['password']}
@@ -144,14 +177,14 @@ const RegisterFormModal: FC<RegisterFormModalProps> = ({
 						placeholder="Confirm Password"
 						size="large"
 					/>
-				</Form.Item>
-
+				</Form.Item>{' '}
 				<Form.Item>
 					<Button
 						type="primary"
 						htmlType="submit"
 						style={{ width: '100%' }}
 						size="large"
+						loading={loading}
 					>
 						Register
 					</Button>

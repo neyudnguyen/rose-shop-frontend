@@ -3,6 +3,7 @@
 import {
 	AppstoreOutlined,
 	HomeOutlined,
+	LogoutOutlined,
 	MenuOutlined,
 	ShoppingCartOutlined,
 	UserOutlined,
@@ -26,6 +27,7 @@ import React, { useState } from 'react';
 import CartModal from '@/components/customer/common/header/CartModal';
 import LoginFormModal from '@/components/customer/common/header/LoginFormModal';
 import RegisterFormModal from '@/components/customer/common/header/RegisterFormModal';
+import { useAuth } from '@/contexts/AuthContext';
 
 const { Header: AntHeader } = Layout;
 const { Search } = Input;
@@ -35,6 +37,7 @@ const Header = () => {
 	const [loginModalVisible, setLoginModalVisible] = useState(false);
 	const [registerModalVisible, setRegisterModalVisible] = useState(false);
 	const [cartModalVisible, setCartModalVisible] = useState(false);
+	const { user, isAuthenticated, logout } = useAuth();
 
 	const showDrawer = () => setDrawerVisible(true);
 	const onClose = () => setDrawerVisible(false);
@@ -60,11 +63,32 @@ const Header = () => {
 	const showCartModal = () => {
 		setCartModalVisible(true);
 	};
-
 	const hideCartModal = () => {
 		setCartModalVisible(false);
 	};
-	const accountMenu = (
+
+	const handleLogout = () => {
+		logout();
+	};
+
+	// Menu for authenticated users
+	const authenticatedMenu = (
+		<Menu>
+			<Menu.Item key="profile" icon={<UserOutlined />}>
+				<Link href="/profile">Profile</Link>
+			</Menu.Item>
+			<Menu.Item key="orders" icon={<AppstoreOutlined />}>
+				<Link href="/orders">My Orders</Link>
+			</Menu.Item>
+			<Menu.Divider />
+			<Menu.Item key="logout" icon={<LogoutOutlined />} onClick={handleLogout}>
+				Logout
+			</Menu.Item>
+		</Menu>
+	);
+
+	// Menu for unauthenticated users
+	const unauthenticatedMenu = (
 		<Menu>
 			<Menu.Item key="login" onClick={showLoginModal}>
 				Login
@@ -74,6 +98,8 @@ const Header = () => {
 			</Menu.Item>
 		</Menu>
 	);
+
+	const accountMenu = isAuthenticated ? authenticatedMenu : unauthenticatedMenu;
 
 	const navigationMenu = (
 		<Menu
@@ -127,10 +153,18 @@ const Header = () => {
 								onSearch={(value) => console.log(value)}
 								style={{ width: 200 }}
 							/>
-						</div>
+						</div>{' '}
 						<div className="flex justify-center">
 							<Dropdown overlay={accountMenu} placement="bottomRight">
-								<Avatar icon={<UserOutlined />} style={{ cursor: 'pointer' }} />
+								<Avatar
+									icon={<UserOutlined />}
+									style={{ cursor: 'pointer' }}
+									src={(user?.userInfo as { avatar?: string })?.avatar}
+								>
+									{isAuthenticated && user?.username
+										? user.username.charAt(0).toUpperCase()
+										: undefined}
+								</Avatar>
 							</Dropdown>
 						</div>{' '}
 						<div className="flex justify-center">
@@ -160,13 +194,34 @@ const Header = () => {
 						placeholder="Search..."
 						onSearch={(value) => console.log(value)}
 					/>
-				</div>
+				</div>{' '}
 				<div style={{ marginTop: 20 }}>
-					<Dropdown overlay={accountMenu} placement="bottomLeft">
-						<Button icon={<UserOutlined />} onClick={(e) => e.preventDefault()}>
-							Account
-						</Button>
-					</Dropdown>
+					{isAuthenticated ? (
+						<>
+							<div style={{ marginBottom: 10 }}>
+								<span>Welcome, {user?.username}!</span>
+							</div>
+							<Button
+								icon={<UserOutlined />}
+								block
+								style={{ marginBottom: 10 }}
+							>
+								<Link href="/profile">Profile</Link>
+							</Button>
+							<Button icon={<LogoutOutlined />} block onClick={handleLogout}>
+								Logout
+							</Button>
+						</>
+					) : (
+						<Dropdown overlay={accountMenu} placement="bottomLeft">
+							<Button
+								icon={<UserOutlined />}
+								onClick={(e) => e.preventDefault()}
+							>
+								Account
+							</Button>
+						</Dropdown>
+					)}
 				</div>{' '}
 				<div style={{ marginTop: 20 }}>
 					<Badge count={3} offset={[0, 0]}>

@@ -2,7 +2,12 @@
 
 import { LockOutlined, UserOutlined } from '@ant-design/icons';
 import { Button, Checkbox, Form, Input, Modal, message } from 'antd';
-import { FC } from 'react';
+import { FC, useState } from 'react';
+
+import { useAuth } from '@/contexts/AuthContext';
+import { authService } from '@/services/authService';
+import { LoginRequest } from '@/types/auth';
+import { handleAPIError } from '@/utils/errorHandler';
 
 interface LoginFormValues {
 	username: string;
@@ -22,13 +27,40 @@ const LoginFormModal: FC<LoginFormModalProps> = ({
 	onRegisterClick,
 }) => {
 	const [form] = Form.useForm();
+	const [loading, setLoading] = useState(false);
+	const { login } = useAuth();
 
-	const handleLogin = (values: LoginFormValues) => {
-		console.log('Login form values:', values);
-		// Here you would handle authentication logic
-		message.success(`Welcome back, ${values.username}!`);
-		onCancel();
-		form.resetFields();
+	const handleLogin = async (values: LoginFormValues) => {
+		setLoading(true);
+		try {
+			// Prepare the data in the format expected by the API
+			const loginData: LoginRequest = {
+				username: values.username,
+				password: values.password,
+			};
+
+			// Call the login API
+			const response = await authService.login(loginData);
+
+			if (response.success) {
+				message.success(response.message || 'Login successful!');
+
+				// Log the user in
+				login(response.data.user);
+
+				// Close modal and reset form
+				onCancel();
+				form.resetFields();
+			} else {
+				message.error(response.message || 'Login failed');
+			}
+		} catch (error) {
+			console.error('Login error:', error);
+			const errorMessage = handleAPIError(error);
+			message.error(errorMessage);
+		} finally {
+			setLoading(false);
+		}
 	};
 
 	return (
@@ -91,6 +123,7 @@ const LoginFormModal: FC<LoginFormModalProps> = ({
 						htmlType="submit"
 						style={{ width: '100%' }}
 						size="large"
+						loading={loading}
 					>
 						Log in
 					</Button>
