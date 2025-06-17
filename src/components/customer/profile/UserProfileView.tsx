@@ -7,18 +7,18 @@ import {
 	Card,
 	Descriptions,
 	Divider,
+	Image,
 	Spin,
 	Tag,
 	Typography,
 } from 'antd';
-import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
 import { userService } from '@/services/userService';
 import { UserProfile } from '@/types/user';
 
-const { Title, Text } = Typography;
+const { Title } = Typography;
 
 const UserProfileView = () => {
 	const router = useRouter();
@@ -124,10 +124,9 @@ const UserProfileView = () => {
 		}
 	};
 	return (
-		<div className="max-w-3xl mx-auto px-4 py-8">
+		<div className="w-full">
 			<Card className="shadow-md">
 				<div className="flex flex-col md:flex-row items-center md:items-start gap-6 mb-6">
-					{' '}
 					<div className="w-24 h-24 md:w-28 md:h-28 bg-gray-300 rounded-full flex items-center justify-center text-white text-4xl overflow-hidden">
 						{profileData.userInfo?.avatar ? (
 							<Image
@@ -135,7 +134,8 @@ const UserProfileView = () => {
 								alt="Avatar"
 								width={112}
 								height={112}
-								className="w-full h-full rounded-full object-cover"
+								className="rounded-full object-cover"
+								style={{ width: '100%', height: '100%' }}
 							/>
 						) : (
 							<span>
@@ -155,10 +155,10 @@ const UserProfileView = () => {
 								</Tag>
 							)}
 						</div>
-						<Text className="text-gray-500 block mb-4">
+						<Typography.Text className="text-gray-500 block mb-4">
 							Member since{' '}
 							{new Date(profileData.createdDate).toLocaleDateString()}
-						</Text>
+						</Typography.Text>
 						<div className="flex flex-wrap gap-2 justify-center md:justify-start">
 							<Button
 								type="primary"
@@ -171,13 +171,11 @@ const UserProfileView = () => {
 						</div>
 					</div>
 				</div>
-
-				<Divider />
-
+				<Divider />{' '}
 				<Descriptions
 					title="User Information"
 					bordered
-					column={{ xs: 1, sm: 2 }}
+					column={1}
 					labelStyle={{ fontWeight: 'bold', color: '#644A07' }}
 				>
 					<Descriptions.Item label="Username">
@@ -195,11 +193,11 @@ const UserProfileView = () => {
 					<Descriptions.Item label="Birth Date">
 						{formatBirthDate(profileData.userInfo?.birthDate)}
 					</Descriptions.Item>
-					<Descriptions.Item label="Address" span={2}>
-						{profileData.userInfo?.address || 'Not specified'}
-					</Descriptions.Item>
 					<Descriptions.Item label="Account Type">
-						{profileData.type}
+						<Tag color="blue">{profileData.type}</Tag>
+					</Descriptions.Item>
+					<Descriptions.Item label="Address">
+						{profileData.userInfo?.address || 'Not specified'}
 					</Descriptions.Item>
 					<Descriptions.Item label="Status">
 						<Tag color={profileData.status === 'active' ? 'green' : 'red'}>
@@ -207,11 +205,13 @@ const UserProfileView = () => {
 						</Tag>
 					</Descriptions.Item>
 					<Descriptions.Item label="Seller Status">
-						{profileData.userInfo?.isSeller ? 'Seller' : 'Customer'}
+						<Tag color={profileData.userInfo?.isSeller ? 'gold' : 'default'}>
+							{profileData.userInfo?.isSeller ? 'Seller' : 'Customer'}
+						</Tag>
 					</Descriptions.Item>
 					{profileData.userInfo && (
 						<Descriptions.Item label="Points">
-							{profileData.userInfo.points}
+							<Tag color="#644A07">{profileData.userInfo.points} Points</Tag>
 						</Descriptions.Item>
 					)}
 				</Descriptions>

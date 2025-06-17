@@ -4,7 +4,7 @@ import UserProfileView from '@/components/customer/profile/UserProfileView';
 const UserProfile = () => {
 	return (
 		<ProtectedRoute>
-			<div className="mx-auto pt-24">
+			<div className="mx-auto">
 				<UserProfileView />
 			</div>
 		</ProtectedRoute>
