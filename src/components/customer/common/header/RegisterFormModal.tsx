@@ -8,6 +8,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { authService } from '@/services/authService';
 import { RegisterRequest } from '@/types/auth';
 import { handleAPIError } from '@/utils/errorHandler';
+import NProgress from '@/utils/nprogress';
 
 interface RegisterFormValues {
 	username: string;
@@ -33,6 +34,7 @@ const RegisterFormModal: FC<RegisterFormModalProps> = ({
 
 	const handleRegister = async (values: RegisterFormValues) => {
 		setLoading(true);
+		NProgress.start();
 		try {
 			// Prepare the data in the format expected by the API
 			const registerData: RegisterRequest = {
@@ -62,6 +64,7 @@ const RegisterFormModal: FC<RegisterFormModalProps> = ({
 			message.error(errorMessage);
 		} finally {
 			setLoading(false);
+			NProgress.done();
 		}
 	};
 
