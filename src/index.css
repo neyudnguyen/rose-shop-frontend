@@ -1,1 +1,33 @@
 @import 'tailwindcss';
+
+/* Custom styles */
+.line-clamp-2 {
+	display: -webkit-box;
+	-webkit-line-clamp: 2;
+	-webkit-box-orient: vertical;
+	overflow: hidden;
+}
+
+.line-clamp-3 {
+	display: -webkit-box;
+	-webkit-line-clamp: 3;
+	-webkit-box-orient: vertical;
+	overflow: hidden;
+}
+
+/* Ant Design customizations */
+.ant-layout-header {
+	padding: 0;
+}
+
+.ant-menu-horizontal {
+	border-bottom: none;
+}
+
+.ant-carousel .slick-dots li button {
+	background: rgba(255, 255, 255, 0.7);
+}
+
+.ant-carousel .slick-dots li.slick-active button {
+	background: #ff6b6b;
+}

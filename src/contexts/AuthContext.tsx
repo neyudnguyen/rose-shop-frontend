@@ -1,0 +1,91 @@
+import { authService } from '../services/authService';
+import type { User } from '../types';
+import React, { createContext, useEffect, useState } from 'react';
+import type { ReactNode } from 'react';
+
+interface AuthContextType {
+	user: User | null;
+	loading: boolean;
+	login: (email: string, password: string) => Promise<void>;
+	register: (userData: {
+		email: string;
+		password: string;
+		fullName: string;
+		phone?: string;
+	}) => Promise<void>;
+	logout: () => void;
+	updateUser: (userData: Partial<User>) => Promise<void>;
+}
+
+const AuthContext = createContext<AuthContextType | undefined>(undefined);
+
+export { AuthContext };
+
+interface AuthProviderProps {
+	children: ReactNode;
+}
+
+export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
+	const [user, setUser] = useState<User | null>(null);
+	const [loading, setLoading] = useState(true);
+
+	useEffect(() => {
+		const initializeAuth = async () => {
+			const token = localStorage.getItem('token');
+			if (token) {
+				try {
+					const userData = await authService.getCurrentUser();
+					setUser(userData);
+				} catch {
+					localStorage.removeItem('token');
+					localStorage.removeItem('user');
+				}
+			}
+			setLoading(false);
+		};
+
+		initializeAuth();
+	}, []);
+
+	const login = async (email: string, password: string) => {
+		const { user: userData, token } = await authService.login(email, password);
+		localStorage.setItem('token', token);
+		localStorage.setItem('user', JSON.stringify(userData));
+		setUser(userData);
+	};
+
+	const register = async (userData: {
+		email: string;
+		password: string;
+		fullName: string;
+		phone?: string;
+	}) => {
+		const { user: newUser, token } = await authService.register(userData);
+		localStorage.setItem('token', token);
+		localStorage.setItem('user', JSON.stringify(newUser));
+		setUser(newUser);
+	};
+
+	const logout = () => {
+		localStorage.removeItem('token');
+		localStorage.removeItem('user');
+		setUser(null);
+	};
+
+	const updateUser = async (userData: Partial<User>) => {
+		const updatedUser = await authService.updateProfile(userData);
+		setUser(updatedUser);
+		localStorage.setItem('user', JSON.stringify(updatedUser));
+	};
+
+	const value = {
+		user,
+		loading,
+		login,
+		register,
+		logout,
+		updateUser,
+	};
+
+	return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+};
