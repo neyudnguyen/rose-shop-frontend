@@ -1,3 +1,4 @@
+import { COLORS } from '../constants/colors';
 import { useAuth } from '../hooks/useAuth';
 import {
 	AppstoreOutlined,
@@ -70,7 +71,7 @@ export const Navbar: React.FC = () => {
 		<Menu
 			mode="horizontal"
 			selectedKeys={[location.pathname]}
-			style={{ backgroundColor: '#F0EEED' }}
+			style={{ backgroundColor: COLORS.background }}
 		>
 			<Menu.Item key="/" icon={<HomeOutlined />}>
 				<Link to="/">Home</Link>
@@ -89,7 +90,7 @@ export const Navbar: React.FC = () => {
 				left: 0,
 				width: '100%',
 				zIndex: 1000,
-				backgroundColor: '#F0EEED',
+				backgroundColor: COLORS.background,
 				padding: '0 20px',
 			}}
 			className="shadow-md"

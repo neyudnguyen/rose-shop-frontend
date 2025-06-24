@@ -1,4 +1,5 @@
 import { FlowerCard } from '../components/FlowerCard';
+import { COLORS } from '../constants/colors';
 import apiClient from '../services/api';
 import type { Flower } from '../types';
 import {
@@ -68,20 +69,22 @@ const hotFlowers = [
 
 const features = [
 	{
-		icon: <TruckOutlined style={{ fontSize: 48, color: '#F759AB' }} />,
+		icon: <TruckOutlined style={{ fontSize: 48, color: COLORS.primary }} />,
 		title: 'Fast Delivery',
 		description:
 			'Extremely fast shipping times and available across all cities and provinces nationwide.',
 	},
 	{
 		icon: (
-			<SafetyCertificateOutlined style={{ fontSize: 48, color: '#52C41A' }} />
+			<SafetyCertificateOutlined
+				style={{ fontSize: 48, color: COLORS.primary }}
+			/>
 		),
 		title: 'Free Shipping',
 		description: 'Free shipping for first-time buyers and V.I.P. members.',
 	},
 	{
-		icon: <StarOutlined style={{ fontSize: 48, color: '#1890FF' }} />,
+		icon: <StarOutlined style={{ fontSize: 48, color: COLORS.primary }} />,
 		title: 'High Quality',
 		description:
 			'Safe quality, no additives, suitable for newborns and pregnant women.',

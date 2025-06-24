@@ -4,6 +4,7 @@
 .line-clamp-2 {
 	display: -webkit-box;
 	-webkit-line-clamp: 2;
+	line-clamp: 2;
 	-webkit-box-orient: vertical;
 	overflow: hidden;
 }
@@ -11,6 +12,7 @@
 .line-clamp-3 {
 	display: -webkit-box;
 	-webkit-line-clamp: 3;
+	line-clamp: 3;
 	-webkit-box-orient: vertical;
 	overflow: hidden;
 }
@@ -29,5 +31,36 @@
 }
 
 .ant-carousel .slick-dots li.slick-active button {
-	background: #ff6b6b;
+	background: #f759ab;
+}
+
+/* Custom color scheme */
+.ant-btn-primary {
+	background-color: #f759ab;
+	border-color: #f759ab;
+}
+
+.ant-btn-primary:hover {
+	background-color: #d03386;
+	border-color: #d03386;
+}
+
+.ant-menu-item-selected {
+	color: #f759ab !important;
+}
+
+.ant-menu-item:hover {
+	color: #f759ab !important;
+}
+
+/* Custom hover effects */
+.footer-link:hover {
+	color: #f759ab !important;
+	text-decoration: none;
+}
+
+.social-link:hover {
+	color: #d03386 !important;
+	transform: scale(1.1);
+	transition: all 0.3s ease;
 }
