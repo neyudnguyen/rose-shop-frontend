@@ -4,23 +4,22 @@ import apiClient from './api';
 
 export const authService = {
 	login: async (
-		email: string,
+		username: string,
 		password: string,
 	): Promise<{ user: User; token: string }> => {
 		const response = await apiClient.post<
 			ApiResponse<{ user: User; token: string }>
 		>('/auth/login', {
-			email,
+			username,
 			password,
 		});
 		return response.data.data;
 	},
 
 	register: async (userData: {
+		username: string;
 		email: string;
 		password: string;
-		fullName: string;
-		phone?: string;
 	}): Promise<{ user: User; token: string }> => {
 		const response = await apiClient.post<
 			ApiResponse<{ user: User; token: string }>

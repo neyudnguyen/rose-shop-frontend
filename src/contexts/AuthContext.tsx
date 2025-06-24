@@ -6,12 +6,11 @@ import type { ReactNode } from 'react';
 interface AuthContextType {
 	user: User | null;
 	loading: boolean;
-	login: (email: string, password: string) => Promise<void>;
+	login: (username: string, password: string) => Promise<void>;
 	register: (userData: {
+		username: string;
 		email: string;
 		password: string;
-		fullName: string;
-		phone?: string;
 	}) => Promise<void>;
 	logout: () => void;
 	updateUser: (userData: Partial<User>) => Promise<void>;
@@ -46,19 +45,19 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
 		initializeAuth();
 	}, []);
-
-	const login = async (email: string, password: string) => {
-		const { user: userData, token } = await authService.login(email, password);
+	const login = async (username: string, password: string) => {
+		const { user: userData, token } = await authService.login(
+			username,
+			password,
+		);
 		localStorage.setItem('token', token);
 		localStorage.setItem('user', JSON.stringify(userData));
 		setUser(userData);
 	};
-
 	const register = async (userData: {
+		username: string;
 		email: string;
 		password: string;
-		fullName: string;
-		phone?: string;
 	}) => {
 		const { user: newUser, token } = await authService.register(userData);
 		localStorage.setItem('token', token);

@@ -1,9 +1,9 @@
+import { COLORS } from '../constants/colors';
 import { useAuth } from '../hooks/useAuth';
 import {
 	ArrowLeftOutlined,
 	LockOutlined,
 	MailOutlined,
-	PhoneOutlined,
 	UserOutlined,
 } from '@ant-design/icons';
 import { Alert, Button, Card, Divider, Form, Input, Typography } from 'antd';
@@ -13,11 +13,10 @@ import { Link, useNavigate } from 'react-router-dom';
 const { Title, Text } = Typography;
 
 interface RegisterForm {
+	username: string;
 	email: string;
 	password: string;
 	confirmPassword: string;
-	fullName: string;
-	phone?: string;
 }
 
 export const Register: React.FC = () => {
@@ -25,17 +24,15 @@ export const Register: React.FC = () => {
 	const [error, setError] = useState<string | null>(null);
 	const { register } = useAuth();
 	const navigate = useNavigate();
-
 	const onFinish = async (values: RegisterForm) => {
 		setLoading(true);
 		setError(null);
 
 		try {
 			await register({
+				username: values.username,
 				email: values.email,
 				password: values.password,
-				fullName: values.fullName,
-				phone: values.phone,
 			});
 			navigate('/');
 		} catch (err: unknown) {
@@ -48,29 +45,34 @@ export const Register: React.FC = () => {
 		}
 	};
 	return (
-		<div className="min-h-screen bg-gray-50 flex items-center justify-center py-12 px-4">
+		<div
+			className="min-h-screen flex items-center justify-center py-12 px-4"
+			style={{ backgroundColor: COLORS.background }}
+		>
 			<div className="max-w-md w-full">
 				<div className="mb-4">
 					<Link to="/">
 						<Button
 							type="text"
 							icon={<ArrowLeftOutlined />}
-							className="text-gray-600 hover:text-gray-800"
+							style={{ color: COLORS.textPrimary }}
+							className="hover:text-gray-800"
 						>
 							Back to Home
 						</Button>
 					</Link>
 				</div>
 				<Card className="shadow-lg">
-					{' '}
 					<div className="text-center mb-6">
 						<img
 							src="/favicon.ico"
-							alt="PlatformFlower"
+							alt="Rose Shop"
 							className="h-16 w-auto mx-auto mb-4"
 						/>
-						<Title level={2}>Create Account</Title>
-						<Text className="text-gray-600">
+						<Title level={2} style={{ color: COLORS.textPrimary }}>
+							Create Account
+						</Title>
+						<Text style={{ color: COLORS.textSecondary }}>
 							Join us to discover beautiful flowers
 						</Text>
 					</div>
@@ -84,16 +86,22 @@ export const Register: React.FC = () => {
 						size="large"
 					>
 						<Form.Item
-							name="fullName"
-							label="Full Name"
+							name="username"
+							label="Username"
 							rules={[
-								{ required: true, message: 'Please input your full name!' },
-								{ min: 2, message: 'Full name must be at least 2 characters!' },
+								{ required: true, message: 'Please input your username!' },
+								{ min: 3, message: 'Username must be at least 3 characters!' },
+								{ max: 20, message: 'Username must not exceed 20 characters!' },
+								{
+									pattern: /^[a-zA-Z0-9_]+$/,
+									message:
+										'Username can only contain letters, numbers, and underscores!',
+								},
 							]}
 						>
 							<Input
-								prefix={<UserOutlined />}
-								placeholder="Enter your full name"
+								prefix={<UserOutlined style={{ color: COLORS.primary }} />}
+								placeholder="Enter your username"
 							/>
 						</Form.Item>
 
@@ -105,22 +113,9 @@ export const Register: React.FC = () => {
 								{ type: 'email', message: 'Please enter a valid email!' },
 							]}
 						>
-							<Input prefix={<MailOutlined />} placeholder="Enter your email" />
-						</Form.Item>
-
-						<Form.Item
-							name="phone"
-							label="Phone Number (Optional)"
-							rules={[
-								{
-									pattern: /^[0-9+\-\s()]+$/,
-									message: 'Please enter a valid phone number!',
-								},
-							]}
-						>
 							<Input
-								prefix={<PhoneOutlined />}
-								placeholder="Enter your phone number"
+								prefix={<MailOutlined style={{ color: COLORS.primary }} />}
+								placeholder="Enter your email"
 							/>
 						</Form.Item>
 
@@ -133,7 +128,7 @@ export const Register: React.FC = () => {
 							]}
 						>
 							<Input.Password
-								prefix={<LockOutlined />}
+								prefix={<LockOutlined style={{ color: COLORS.primary }} />}
 								placeholder="Enter your password"
 							/>
 						</Form.Item>
@@ -157,7 +152,7 @@ export const Register: React.FC = () => {
 							]}
 						>
 							<Input.Password
-								prefix={<LockOutlined />}
+								prefix={<LockOutlined style={{ color: COLORS.primary }} />}
 								placeholder="Confirm your password"
 							/>
 						</Form.Item>
@@ -168,6 +163,11 @@ export const Register: React.FC = () => {
 								htmlType="submit"
 								className="w-full"
 								loading={loading}
+								style={{
+									backgroundColor: COLORS.primary,
+									borderColor: COLORS.primary,
+									height: '40px',
+								}}
 							>
 								Create Account
 							</Button>
@@ -175,9 +175,21 @@ export const Register: React.FC = () => {
 					</Form>
 					<Divider>Or</Divider>
 					<div className="text-center">
-						<Text>
+						<Text style={{ color: COLORS.textSecondary }}>
 							Already have an account?{' '}
-							<Link to="/login" className="text-blue-600 hover:text-blue-800">
+							<Link
+								to="/login"
+								style={{
+									color: COLORS.primary,
+									textDecoration: 'none',
+								}}
+								onMouseEnter={(e) =>
+									(e.currentTarget.style.color = COLORS.primaryDark)
+								}
+								onMouseLeave={(e) =>
+									(e.currentTarget.style.color = COLORS.primary)
+								}
+							>
 								Sign in
 							</Link>
 						</Text>
