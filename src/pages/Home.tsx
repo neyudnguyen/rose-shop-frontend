@@ -138,6 +138,7 @@ export const Home: React.FC = () => {
 			{/* Hero Carousel */}
 			<section className="relative">
 				<div className="w-full max-w-[100vw] overflow-hidden">
+					{' '}
 					<Carousel
 						autoplay
 						autoplaySpeed={3500}
@@ -145,11 +146,14 @@ export const Home: React.FC = () => {
 						className="w-full h-[60vh]"
 					>
 						<div className="w-full h-full relative">
+							{' '}
 							<div
 								className="h-[60vh] bg-cover bg-center relative"
-								style={{ backgroundImage: 'url(/images/picture/1.jpg)' }}
+								style={{
+									backgroundImage: 'url(/images/picture/hoahongdep.jpg)',
+								}}
 							>
-								<div className="absolute inset-0 bg-black bg-opacity-30 flex items-center justify-center">
+								<div className="absolute inset-0 bg-opacity-100 flex items-center justify-center">
 									<div className="text-white text-center p-8">
 										<Title level={1} className="text-white !mb-4">
 											Beautiful Flowers for Every Occasion
@@ -171,11 +175,14 @@ export const Home: React.FC = () => {
 							</div>
 						</div>
 						<div className="w-full h-full relative">
+							{' '}
 							<div
 								className="h-[60vh] bg-cover bg-center relative"
-								style={{ backgroundImage: 'url(/images/picture/2.jpg)' }}
+								style={{
+									backgroundImage: 'url(/images/picture/weddingflower.jpg)',
+								}}
 							>
-								<div className="absolute inset-0 bg-black bg-opacity-30 flex items-center justify-center">
+								<div className="absolute inset-0 bg-opacity-20 flex items-center justify-center">
 									<div className="text-white text-center p-8">
 										<Title level={1} className="text-white !mb-4">
 											Wedding Flowers
@@ -199,9 +206,11 @@ export const Home: React.FC = () => {
 						<div className="w-full h-full relative">
 							<div
 								className="h-[60vh] bg-cover bg-center relative"
-								style={{ backgroundImage: 'url(/images/picture/3.png)' }}
+								style={{
+									backgroundImage: 'url(/images/picture/hoahuongduong.jpg)',
+								}}
 							>
-								<div className="absolute inset-0 bg-black bg-opacity-30 flex items-center justify-center">
+								<div className="absolute inset-0 bg-opacity-30 flex items-center justify-center">
 									<div className="text-white text-center p-8">
 										<Title level={1} className="text-white !mb-4">
 											Premium Quality
