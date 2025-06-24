@@ -1,26 +1,24 @@
-'use client';
-
-import React, {
-	ReactNode,
-	createContext,
-	useContext,
-	useEffect,
-	useState,
-} from 'react';
-
-import { authService } from '@/services/authService';
-import { User } from '@/types/auth';
+import { authService } from '../services/authService';
+import type { User } from '../types';
+import React, { createContext, useEffect, useState } from 'react';
+import type { ReactNode } from 'react';
 
 interface AuthContextType {
 	user: User | null;
-	isAuthenticated: boolean;
-	isLoading: boolean;
-	login: (user: User) => void;
+	loading: boolean;
+	login: (username: string, password: string) => Promise<void>;
+	register: (userData: {
+		username: string;
+		email: string;
+		password: string;
+	}) => Promise<void>;
 	logout: () => void;
-	updateUser: (user: User) => void;
+	updateUser: (userData: FormData | Partial<User>) => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
+
+export { AuthContext };
 
 interface AuthProviderProps {
 	children: ReactNode;
@@ -28,54 +26,64 @@ interface AuthProviderProps {
 
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 	const [user, setUser] = useState<User | null>(null);
-	const [isLoading, setIsLoading] = useState(true);
+	const [loading, setLoading] = useState(true);
 
 	useEffect(() => {
-		// Check for existing authentication on mount
-		const initializeAuth = () => {
-			const token = authService.getToken();
-			const userData = authService.getUser();
-
-			if (token && userData) {
-				setUser(userData);
+		const initializeAuth = async () => {
+			const token = localStorage.getItem('token');
+			if (token) {
+				try {
+					const userData = await authService.getCurrentUser();
+					setUser(userData);
+				} catch {
+					localStorage.removeItem('token');
+					localStorage.removeItem('user');
+				}
 			}
-
-			setIsLoading(false);
+			setLoading(false);
 		};
 
 		initializeAuth();
 	}, []);
-	const login = (userData: User) => {
+	const login = async (username: string, password: string) => {
+		const { user: userData, token } = await authService.login(
+			username,
+			password,
+		);
+		localStorage.setItem('token', token);
+		localStorage.setItem('user', JSON.stringify(userData));
 		setUser(userData);
+	};
+	const register = async (userData: {
+		username: string;
+		email: string;
+		password: string;
+	}) => {
+		const { user: newUser, token } = await authService.register(userData);
+		localStorage.setItem('token', token);
+		localStorage.setItem('user', JSON.stringify(newUser));
+		setUser(newUser);
 	};
 
 	const logout = () => {
-		authService.logout();
+		localStorage.removeItem('token');
+		localStorage.removeItem('user');
 		setUser(null);
 	};
-	const updateUser = (userData: User) => {
-		setUser(userData);
-		if (typeof window !== 'undefined') {
-			localStorage.setItem('user_data', JSON.stringify(userData));
-		}
+	const updateUser = async (userData: FormData | Partial<User>) => {
+		const updatedUser = await authService.updateProfile(userData);
+		setUser(updatedUser);
+		localStorage.setItem('user', JSON.stringify(updatedUser));
 	};
 
-	const value: AuthContextType = {
+	const value = {
 		user,
-		isAuthenticated: !!user,
-		isLoading,
+		loading,
 		login,
+		register,
 		logout,
 		updateUser,
 	};
 
 	return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
-};
-
-export const useAuth = (): AuthContextType => {
-	const context = useContext(AuthContext);
-	if (context === undefined) {
-		throw new Error('useAuth must be used within an AuthProvider');
-	}
-	return context;
 };
