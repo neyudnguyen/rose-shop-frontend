@@ -26,16 +26,21 @@ export const authService = {
 		>('/auth/register', userData);
 		return response.data.data;
 	},
-
 	getCurrentUser: async (): Promise<User> => {
 		const response = await apiClient.get<ApiResponse<User>>('/user/profile');
 		return response.data.data;
 	},
-
-	updateProfile: async (userData: Partial<User>): Promise<User> => {
+	updateProfile: async (userData: FormData | Partial<User>): Promise<User> => {
 		const response = await apiClient.put<ApiResponse<User>>(
 			'/user/profile',
 			userData,
+			userData instanceof FormData
+				? {
+						headers: {
+							'Content-Type': 'multipart/form-data',
+						},
+					}
+				: undefined,
 		);
 		return response.data.data;
 	},

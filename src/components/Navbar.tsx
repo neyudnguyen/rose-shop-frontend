@@ -120,15 +120,23 @@ export const Navbar: React.FC = () => {
 								}
 								style={{ width: 200 }}
 							/>
-						</div>
+						</div>{' '}
 						<div className="flex justify-center">
 							<Dropdown
 								overlay={user ? userMenu : guestMenu}
 								placement="bottomRight"
 							>
-								<Avatar icon={<UserOutlined />} style={{ cursor: 'pointer' }}>
-									{user?.fullName
-										? user.fullName.charAt(0).toUpperCase()
+								<Avatar
+									src={user?.userInfo?.avatar || user?.avatar}
+									icon={<UserOutlined />}
+									style={{ cursor: 'pointer' }}
+								>
+									{!user?.userInfo?.avatar &&
+									!user?.avatar &&
+									(user?.userInfo?.fullName || user?.fullName)
+										? (user?.userInfo?.fullName || user?.fullName)
+												?.charAt(0)
+												.toUpperCase()
 										: undefined}
 								</Avatar>
 							</Dropdown>
@@ -168,7 +176,11 @@ export const Navbar: React.FC = () => {
 					{user ? (
 						<>
 							<div style={{ marginBottom: 10 }}>
-								<span>Welcome, {user.fullName}!</span>
+								<span>
+									Welcome,{' '}
+									{user?.userInfo?.fullName || user?.fullName || user?.username}
+									!
+								</span>
 							</div>
 							<Button
 								icon={<UserOutlined />}

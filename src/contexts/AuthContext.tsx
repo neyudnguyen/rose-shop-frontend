@@ -13,7 +13,7 @@ interface AuthContextType {
 		password: string;
 	}) => Promise<void>;
 	logout: () => void;
-	updateUser: (userData: Partial<User>) => Promise<void>;
+	updateUser: (userData: FormData | Partial<User>) => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -70,8 +70,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 		localStorage.removeItem('user');
 		setUser(null);
 	};
-
-	const updateUser = async (userData: Partial<User>) => {
+	const updateUser = async (userData: FormData | Partial<User>) => {
 		const updatedUser = await authService.updateProfile(userData);
 		setUser(updatedUser);
 		localStorage.setItem('user', JSON.stringify(updatedUser));

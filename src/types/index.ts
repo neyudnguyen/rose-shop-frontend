@@ -1,10 +1,30 @@
+export interface UserInfo {
+	userInfoId: number;
+	fullName?: string;
+	address?: string;
+	birthDate?: string;
+	sex?: 'male' | 'female' | 'other';
+	avatar?: string;
+	createdDate?: string;
+	updatedDate?: string;
+}
+
 export interface User {
-	id: string;
+	userId: number;
+	username: string;
 	email: string;
-	fullName: string;
-	phone?: string;
-	role: 'ADMIN' | 'USER';
-	status: boolean;
+	type: string;
+	createdDate?: string;
+	status: string;
+	userInfo?: UserInfo;
+	// Backward compatibility fields
+	id?: string;
+	fullName?: string;
+	address?: string;
+	birthDate?: string;
+	sex?: 'male' | 'female' | 'other';
+	avatar?: string;
+	role?: 'ADMIN' | 'USER';
 }
 
 export interface Category {
