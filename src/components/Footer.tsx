@@ -40,7 +40,6 @@ export const Footer: React.FC = () => {
 								</Space>
 							</Space>
 						</Col>
-
 						<Col xs={24} sm={12} md={4}>
 							<Title level={4}>Follow Us</Title>
 							<Space size="middle">
@@ -57,67 +56,62 @@ export const Footer: React.FC = () => {
 									<PinterestOutlined />
 								</AntLink>
 							</Space>
-						</Col>
-
+						</Col>{' '}
 						<Col xs={24} sm={12} md={5}>
 							<Title level={4}>Shop</Title>
 							<Space direction="vertical" size="small">
-								<AntLink className="footer-link">
-									<Link to="/flowers">All Products</Link>
-								</AntLink>
-								<AntLink className="footer-link">
-									<Link to="/flowers?category=fresh">Fresh Flowers</Link>
-								</AntLink>
-								<AntLink className="footer-link">
-									<Link to="/flowers?category=dried">Dried Flowers</Link>
-								</AntLink>
-								<AntLink className="footer-link">
-									<Link to="/flowers?category=plants">Live Plants</Link>
-								</AntLink>
-								<AntLink className="footer-link">
-									<Link to="/flowers?category=vases">Designer Vases</Link>
-								</AntLink>
-								<AntLink className="footer-link">
-									<Link to="/flowers?category=candles">Aroma Candles</Link>
-								</AntLink>
-								<AntLink className="footer-link">
-									<Link to="/flowers?category=diffuser">
-										Freshener Diffuser
-									</Link>
-								</AntLink>
+								<Link to="/flowers" className="footer-link">
+									All Products
+								</Link>
+								<Link to="/flowers?category=fresh" className="footer-link">
+									Fresh Flowers
+								</Link>
+								<Link to="/flowers?category=dried" className="footer-link">
+									Dried Flowers
+								</Link>
+								<Link to="/flowers?category=plants" className="footer-link">
+									Live Plants
+								</Link>
+								<Link to="/flowers?category=vases" className="footer-link">
+									Designer Vases
+								</Link>
+								<Link to="/flowers?category=candles" className="footer-link">
+									Aroma Candles
+								</Link>
+								<Link to="/flowers?category=diffuser" className="footer-link">
+									Freshener Diffuser
+								</Link>
 							</Space>
-						</Col>
-
+						</Col>{' '}
 						<Col xs={24} sm={12} md={5}>
 							<Title level={4}>Service</Title>
 							<Space direction="vertical" size="small">
-								<AntLink className="footer-link">
-									<Link to="/services/subscription">Flower Subscription</Link>
-								</AntLink>
-								<AntLink className="footer-link">
-									<Link to="/services/wedding">Wedding & Event Decor</Link>
-								</AntLink>
+								<Link to="/services/subscription" className="footer-link">
+									Flower Subscription
+								</Link>
+								<Link to="/services/wedding" className="footer-link">
+									Wedding & Event Decor
+								</Link>
 							</Space>
-						</Col>
-
+						</Col>{' '}
 						<Col xs={24} sm={12} md={6}>
 							<Title level={4}>About Us</Title>
 							<Space direction="vertical" size="small">
-								<AntLink className="footer-link">
-									<Link to="/about">Our Story</Link>
-								</AntLink>
-								<AntLink className="footer-link">
-									<Link to="/blog">Blog</Link>
-								</AntLink>
-								<AntLink className="footer-link">
-									<Link to="/shipping">Shipping & Returns</Link>
-								</AntLink>
-								<AntLink className="footer-link">
-									<Link to="/terms">Terms & Conditions</Link>
-								</AntLink>
-								<AntLink className="footer-link">
-									<Link to="/privacy">Privacy Policy</Link>
-								</AntLink>
+								<Link to="/about" className="footer-link">
+									Our Story
+								</Link>
+								<Link to="/blog" className="footer-link">
+									Blog
+								</Link>
+								<Link to="/shipping" className="footer-link">
+									Shipping & Returns
+								</Link>
+								<Link to="/terms" className="footer-link">
+									Terms & Conditions
+								</Link>
+								<Link to="/privacy" className="footer-link">
+									Privacy Policy
+								</Link>
 							</Space>
 						</Col>
 					</Row>
