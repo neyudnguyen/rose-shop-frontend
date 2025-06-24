@@ -1,5 +1,6 @@
 import { useAuth } from '../hooks/useAuth';
 import {
+	ArrowLeftOutlined,
 	LockOutlined,
 	MailOutlined,
 	PhoneOutlined,
@@ -46,10 +47,20 @@ export const Register: React.FC = () => {
 			setLoading(false);
 		}
 	};
-
 	return (
 		<div className="min-h-screen bg-gray-50 flex items-center justify-center py-12 px-4">
 			<div className="max-w-md w-full">
+				<div className="mb-4">
+					<Link to="/">
+						<Button
+							type="text"
+							icon={<ArrowLeftOutlined />}
+							className="text-gray-600 hover:text-gray-800"
+						>
+							Back to Home
+						</Button>
+					</Link>
+				</div>
 				<Card className="shadow-lg">
 					{' '}
 					<div className="text-center mb-6">
