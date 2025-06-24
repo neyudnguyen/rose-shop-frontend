@@ -1,15 +1,94 @@
 import { FlowerCard } from '../components/FlowerCard';
 import apiClient from '../services/api';
-import type { Category, Flower } from '../types';
-import { ArrowRightOutlined, ShoppingOutlined } from '@ant-design/icons';
-import { Alert, Button, Carousel, Col, Row, Spin, Typography } from 'antd';
+import type { Flower } from '../types';
+import {
+	ArrowRightOutlined,
+	SafetyCertificateOutlined,
+	ShoppingOutlined,
+	StarOutlined,
+	TruckOutlined,
+} from '@ant-design/icons';
+import {
+	Alert,
+	Button,
+	Card,
+	Carousel,
+	Col,
+	Row,
+	Spin,
+	Typography,
+} from 'antd';
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 
-const { Title, Text } = Typography;
+const { Title, Text, Paragraph } = Typography;
+
+const hotFlowers = [
+	{
+		name: 'Lotus Flower',
+		image: '/images/picture/hoasen.jpg',
+		category: 'Traditional',
+	},
+	{
+		name: 'Tulip',
+		image: '/images/picture/tulip.jpg',
+		category: 'Spring',
+	},
+	{
+		name: 'Wedding Flower',
+		image: '/images/picture/weddingflower.jpg',
+		category: 'Wedding',
+	},
+	{
+		name: 'Sunflower',
+		image: '/images/picture/hoahuongduong.jpg',
+		category: 'Summer',
+	},
+	{
+		name: 'Decorative Flower',
+		image: '/images/picture/hoacanh.png',
+		category: 'Decorative',
+	},
+	{
+		name: 'Rose',
+		image: '/images/picture/hoa4.jpg',
+		category: 'Classic',
+	},
+	{
+		name: 'Peony',
+		image: '/images/picture/peony.jpg',
+		category: 'Elegant',
+	},
+	{
+		name: 'Hydrangea',
+		image: '/images/picture/hydrangea.jpg',
+		category: 'Garden',
+	},
+];
+
+const features = [
+	{
+		icon: <TruckOutlined style={{ fontSize: 48, color: '#F759AB' }} />,
+		title: 'Fast Delivery',
+		description:
+			'Extremely fast shipping times and available across all cities and provinces nationwide.',
+	},
+	{
+		icon: (
+			<SafetyCertificateOutlined style={{ fontSize: 48, color: '#52C41A' }} />
+		),
+		title: 'Free Shipping',
+		description: 'Free shipping for first-time buyers and V.I.P. members.',
+	},
+	{
+		icon: <StarOutlined style={{ fontSize: 48, color: '#1890FF' }} />,
+		title: 'High Quality',
+		description:
+			'Safe quality, no additives, suitable for newborns and pregnant women.',
+	},
+];
 
 export const Home: React.FC = () => {
-	const [popularCategories, setPopularCategories] = useState<Category[]>([]);
 	const [featuredFlowers, setFeaturedFlowers] = useState<Flower[]>([]);
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState<string | null>(null);
@@ -17,12 +96,7 @@ export const Home: React.FC = () => {
 	useEffect(() => {
 		const fetchData = async () => {
 			try {
-				const [categoriesResponse, flowersResponse] = await Promise.all([
-					apiClient.get('/categories/top-popular'),
-					apiClient.get('/flowers?limit=8'),
-				]);
-
-				setPopularCategories(categoriesResponse.data.data || []);
+				const flowersResponse = await apiClient.get('/flowers?limit=8');
 				setFeaturedFlowers(flowersResponse.data.data || []);
 			} catch (err) {
 				setError('Failed to load data. Please try again later.');
@@ -38,16 +112,14 @@ export const Home: React.FC = () => {
 	const handleAddToCart = async (flowerId: string) => {
 		try {
 			await apiClient.post('/cart/add', { flowerId, quantity: 1 });
-			// You might want to show a success message here
 		} catch (err) {
 			console.error('Error adding to cart:', err);
-			// You might want to show an error message here
 		}
 	};
 
 	if (loading) {
 		return (
-			<div className="flex justify-center items-center min-h-96">
+			<div className="flex justify-center items-center min-h-screen">
 				<Spin size="large" />
 			</div>
 		);
@@ -63,91 +135,167 @@ export const Home: React.FC = () => {
 
 	return (
 		<div className="min-h-screen">
-			{/* Hero Section */}
+			{/* Hero Carousel */}
 			<section className="relative">
-				<Carousel autoplay autoplaySpeed={4000} effect="fade" className="h-96">
-					<div>
-						<div
-							className="h-96 bg-cover bg-center flex items-center justify-center"
-							style={{ backgroundImage: 'url(/images/picture/1.jpg)' }}
-						>
-							<div className="bg-black bg-opacity-50 text-white text-center p-8 rounded-lg">
-								<Title level={1} className="text-white !mb-4">
-									Beautiful Flowers for Every Occasion
-								</Title>
-								<Text className="text-lg mb-6 block">
-									Discover our stunning collection of fresh flowers
-								</Text>
-								<Link to="/flowers">
-									<Button
-										type="primary"
-										size="large"
-										icon={<ShoppingOutlined />}
-									>
-										Shop Now
-									</Button>
-								</Link>
+				<div className="w-full max-w-[100vw] overflow-hidden">
+					<Carousel
+						autoplay
+						autoplaySpeed={3500}
+						effect="fade"
+						className="w-full h-[60vh]"
+					>
+						<div className="w-full h-full relative">
+							<div
+								className="h-[60vh] bg-cover bg-center relative"
+								style={{ backgroundImage: 'url(/images/picture/1.jpg)' }}
+							>
+								<div className="absolute inset-0 bg-black bg-opacity-30 flex items-center justify-center">
+									<div className="text-white text-center p-8">
+										<Title level={1} className="text-white !mb-4">
+											Beautiful Flowers for Every Occasion
+										</Title>
+										<Text className="text-lg mb-6 block">
+											Discover our stunning collection of fresh flowers
+										</Text>
+										<Link to="/flowers">
+											<Button
+												type="primary"
+												size="large"
+												icon={<ShoppingOutlined />}
+											>
+												Shop Now
+											</Button>
+										</Link>
+									</div>
+								</div>
 							</div>
 						</div>
-					</div>
-					<div>
-						<div
-							className="h-96 bg-cover bg-center flex items-center justify-center"
-							style={{ backgroundImage: 'url(/images/picture/2.jpg)' }}
-						>
-							<div className="bg-black bg-opacity-50 text-white text-center p-8 rounded-lg">
-								<Title level={1} className="text-white !mb-4">
-									Wedding Flowers
-								</Title>
-								<Text className="text-lg mb-6 block">
-									Make your special day even more beautiful
-								</Text>
-								<Link to="/flowers?category=wedding">
-									<Button
-										type="primary"
-										size="large"
-										icon={<ShoppingOutlined />}
-									>
-										Explore Wedding Collection
-									</Button>
-								</Link>
+						<div className="w-full h-full relative">
+							<div
+								className="h-[60vh] bg-cover bg-center relative"
+								style={{ backgroundImage: 'url(/images/picture/2.jpg)' }}
+							>
+								<div className="absolute inset-0 bg-black bg-opacity-30 flex items-center justify-center">
+									<div className="text-white text-center p-8">
+										<Title level={1} className="text-white !mb-4">
+											Wedding Flowers
+										</Title>
+										<Text className="text-lg mb-6 block">
+											Make your special day even more beautiful
+										</Text>
+										<Link to="/flowers?category=wedding">
+											<Button
+												type="primary"
+												size="large"
+												icon={<ShoppingOutlined />}
+											>
+												Explore Wedding Collection
+											</Button>
+										</Link>
+									</div>
+								</div>
 							</div>
 						</div>
-					</div>
-				</Carousel>
+						<div className="w-full h-full relative">
+							<div
+								className="h-[60vh] bg-cover bg-center relative"
+								style={{ backgroundImage: 'url(/images/picture/3.png)' }}
+							>
+								<div className="absolute inset-0 bg-black bg-opacity-30 flex items-center justify-center">
+									<div className="text-white text-center p-8">
+										<Title level={1} className="text-white !mb-4">
+											Premium Quality
+										</Title>
+										<Text className="text-lg mb-6 block">
+											Handpicked flowers with guaranteed freshness
+										</Text>
+										<Link to="/flowers">
+											<Button
+												type="primary"
+												size="large"
+												icon={<ShoppingOutlined />}
+											>
+												Browse Collection
+											</Button>
+										</Link>
+									</div>
+								</div>
+							</div>
+						</div>
+					</Carousel>
+				</div>
 			</section>
 
-			{/* Popular Categories */}
-			<section className="py-16 bg-gray-50">
-				<div className="max-w-7xl mx-auto px-4">
-					<div className="text-center mb-12">
-						<Title level={2}>Popular Categories</Title>
-						<Text className="text-lg text-gray-600">
-							Explore our most loved flower categories
-						</Text>
-					</div>
-
+			{/* Hot Flowers Section */}
+			<section className="py-12 px-4">
+				<div className="max-w-7xl mx-auto">
+					<Title level={2} className="text-center mb-8 font-bold text-3xl">
+						HOT FLOWERS IN SHOP
+					</Title>
 					<Row gutter={[24, 24]}>
-						{popularCategories.map((category) => (
-							<Col xs={24} sm={12} md={6} key={category.id}>
-								<Link to={`/flowers?category=${category.id}`}>
-									<div className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300 cursor-pointer">
-										<div
-											className="h-48 bg-cover bg-center"
-											style={{
-												backgroundImage: `url(${category.imageUrl || '/images/picture/3.png'})`,
-											}}
-										></div>
-										<div className="p-4 text-center">
-											<Title level={4}>{category.name}</Title>
-											<Text className="text-gray-600">
-												{category.description}
-											</Text>
+						{hotFlowers.map((flower, index) => (
+							<Col key={index} xs={12} sm={8} lg={6}>
+								<Card
+									className="rounded-lg hover:shadow-xl transition-shadow h-full"
+									cover={
+										<div className="relative h-48 w-full overflow-hidden">
+											<img
+												src={flower.image}
+												alt={flower.name}
+												className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+											/>
 										</div>
-									</div>
-								</Link>
+									}
+									styles={{ body: { padding: '16px' } }}
+								>
+									<Title level={5} className="text-center font-semibold mb-2">
+										{flower.name}
+									</Title>
+									<Text className="text-center text-gray-500 block mb-3">
+										{flower.category}
+									</Text>
+									<Button
+										type="primary"
+										className="w-full border-none rounded-full"
+									>
+										View Details
+									</Button>
+								</Card>
 							</Col>
 						))}
+					</Row>
+				</div>
+			</section>
+
+			{/* About Section */}
+			<section className="py-12 px-4 bg-gray-50">
+				<div className="max-w-6xl mx-auto">
+					<Row align="middle" gutter={[32, 24]}>
+						<Col xs={24} md={12}>
+							<img
+								src="/images/picture/pic1.png"
+								alt="About us"
+								className="rounded-lg w-full h-auto object-cover"
+							/>
+						</Col>
+						<Col xs={24} md={12}>
+							<Title level={4} className="mb-2 font-bold">
+								Our Story
+							</Title>
+							<Title level={3} className="mb-2 font-bold">
+								PlatformFlower Studio
+							</Title>
+							<Paragraph className="text-sm mb-4">
+								We are a modern local floral studio specializing in the design
+								and delivery of unique bouquets. We collaborate directly with
+								farms to ensure fresh flowers at all times. Our collection
+								includes fresh bouquets, dried flower arrangements, houseplants,
+								and luxury scented candles to create the perfect atmosphere.
+							</Paragraph>
+							<Button type="primary" className="mt-4 border-none">
+								Learn More
+							</Button>
+						</Col>
 					</Row>
 				</div>
 			</section>
@@ -180,43 +328,39 @@ export const Home: React.FC = () => {
 				</div>
 			</section>
 
-			{/* Features Section */}
+			{/* Why Choose Us Section */}
 			<section className="py-16 bg-gray-50">
 				<div className="max-w-7xl mx-auto px-4">
-					<Row gutter={[32, 32]}>
-						<Col xs={24} md={8}>
-							<div className="text-center">
-								<div className="bg-blue-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-									<ShoppingOutlined className="text-2xl text-blue-600" />
-								</div>
-								<Title level={4}>Fresh Quality</Title>
-								<Text className="text-gray-600">
-									We ensure all our flowers are fresh and of the highest quality
-								</Text>
-							</div>
-						</Col>
-						<Col xs={24} md={8}>
-							<div className="text-center">
-								<div className="bg-green-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-									<ShoppingOutlined className="text-2xl text-green-600" />
-								</div>
-								<Title level={4}>Fast Delivery</Title>
-								<Text className="text-gray-600">
-									Same day delivery available for orders placed before 2 PM
-								</Text>
-							</div>
-						</Col>
-						<Col xs={24} md={8}>
-							<div className="text-center">
-								<div className="bg-purple-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-									<ShoppingOutlined className="text-2xl text-purple-600" />
-								</div>
-								<Title level={4}>Expert Arrangement</Title>
-								<Text className="text-gray-600">
-									Our professional florists create beautiful arrangements
-								</Text>
-							</div>
-						</Col>
+					<div className="text-center mb-12">
+						<Title level={2} className="font-bold">
+							Why Choose Our Products
+						</Title>
+					</div>
+					<Row gutter={[32, 24]}>
+						{features.map((feature, index) => (
+							<Col xs={24} sm={24} md={8} key={index}>
+								{' '}
+								<Card
+									className="text-center h-full hover:shadow-md transition-shadow border rounded-lg"
+									styles={{
+										body: {
+											padding: '24px',
+											display: 'flex',
+											flexDirection: 'column',
+											alignItems: 'center',
+										},
+									}}
+								>
+									<div className="mb-4">{feature.icon}</div>
+									<Title level={5} className="mb-2 font-semibold">
+										{feature.title}
+									</Title>
+									<Paragraph className="text-center">
+										{feature.description}
+									</Paragraph>
+								</Card>
+							</Col>
+						))}
 					</Row>
 				</div>
 			</section>
