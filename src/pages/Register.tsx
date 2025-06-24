@@ -51,9 +51,10 @@ export const Register: React.FC = () => {
 		<div className="min-h-screen bg-gray-50 flex items-center justify-center py-12 px-4">
 			<div className="max-w-md w-full">
 				<Card className="shadow-lg">
+					{' '}
 					<div className="text-center mb-6">
 						<img
-							src="/images/image/logo.jpg"
+							src="/favicon.ico"
 							alt="PlatformFlower"
 							className="h-16 w-auto mx-auto mb-4"
 						/>
@@ -62,11 +63,9 @@ export const Register: React.FC = () => {
 							Join us to discover beautiful flowers
 						</Text>
 					</div>
-
 					{error && (
 						<Alert message={error} type="error" className="mb-4" showIcon />
 					)}
-
 					<Form
 						name="register"
 						onFinish={onFinish}
@@ -163,9 +162,7 @@ export const Register: React.FC = () => {
 							</Button>
 						</Form.Item>
 					</Form>
-
 					<Divider>Or</Divider>
-
 					<div className="text-center">
 						<Text>
 							Already have an account?{' '}

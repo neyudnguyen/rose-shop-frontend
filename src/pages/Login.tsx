@@ -41,9 +41,10 @@ export const Login: React.FC = () => {
 		<div className="min-h-screen bg-gray-50 flex items-center justify-center py-12 px-4">
 			<div className="max-w-md w-full">
 				<Card className="shadow-lg">
+					{' '}
 					<div className="text-center mb-6">
 						<img
-							src="/images/image/logo.jpg"
+							src="/favicon.ico"
 							alt="PlatformFlower"
 							className="h-16 w-auto mx-auto mb-4"
 						/>
@@ -52,11 +53,9 @@ export const Login: React.FC = () => {
 							Sign in to your account to continue
 						</Text>
 					</div>
-
 					{error && (
 						<Alert message={error} type="error" className="mb-4" showIcon />
 					)}
-
 					<Form name="login" onFinish={onFinish} layout="vertical" size="large">
 						<Form.Item
 							name="email"
@@ -94,9 +93,7 @@ export const Login: React.FC = () => {
 							</Button>
 						</Form.Item>
 					</Form>
-
 					<Divider>Or</Divider>
-
 					<div className="text-center">
 						<Text>
 							Don't have an account?{' '}

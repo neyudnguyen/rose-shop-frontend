@@ -95,21 +95,20 @@ export const Navbar: React.FC = () => {
 			className="shadow-md"
 		>
 			<Row justify="space-between" align="middle">
+				{' '}
 				<Col xs={6} sm={4} md={4} className="text-center">
 					<Link to="/">
 						<img
-							src="/images/image/logo.jpg"
+							src="/favicon.ico"
 							alt="Rose Shop"
 							className="h-10 w-auto mx-auto"
 							style={{ maxHeight: 40 }}
 						/>
 					</Link>
 				</Col>
-
 				<Col xs={0} sm={0} md={12} className="flex justify-center">
 					{navigationMenu}
 				</Col>
-
 				<Col xs={0} sm={0} md={8} className="text-center">
 					<Space size="middle" direction="horizontal">
 						<div className="flex justify-center">
@@ -144,7 +143,6 @@ export const Navbar: React.FC = () => {
 						</div>
 					</Space>
 				</Col>
-
 				<Col xs={6} sm={4} md={0} style={{ textAlign: 'right' }}>
 					<Button type="text" icon={<MenuOutlined />} onClick={showDrawer} />
 				</Col>
