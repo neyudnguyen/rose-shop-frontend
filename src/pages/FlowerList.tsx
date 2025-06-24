@@ -58,10 +58,12 @@ export const FlowerList: React.FC = () => {
 						search: searchQuery || undefined,
 						category: categoryFilter || undefined,
 					});
-				setFlowers(flowerData);
-				setTotal(totalCount);
+				setFlowers(flowerData || []);
+				setTotal(totalCount || 0);
 			} catch (err) {
 				setError('Failed to load flowers. Please try again.');
+				setFlowers([]);
+				setTotal(0);
 				console.error('Error fetching flowers:', err);
 			} finally {
 				setLoading(false);
@@ -110,9 +112,8 @@ export const FlowerList: React.FC = () => {
 			</div>
 		);
 	}
-
 	return (
-		<div className="max-w-7xl mx-auto px-4 py-8">
+		<div className="max-w-7xl mx-auto px-4 py-8" style={{ paddingTop: '80px' }}>
 			<div className="mb-8">
 				<Title level={1} className="text-center mb-6">
 					Our Flower Collection
@@ -147,11 +148,11 @@ export const FlowerList: React.FC = () => {
 									</Option>
 								))}
 							</Select>
-						</Col>
+						</Col>{' '}
 						<Col xs={24} sm={24} md={10}>
 							<Space className="text-gray-600">
 								<span>
-									Showing {flowers.length} of {total} flowers
+									Showing {flowers?.length || 0} of {total} flowers
 									{searchQuery && ` for "${searchQuery}"`}
 									{categoryFilter &&
 										categories.find((c) => c.id === categoryFilter) &&
@@ -170,14 +171,14 @@ export const FlowerList: React.FC = () => {
 			) : (
 				<>
 					<Row gutter={[24, 24]}>
-						{flowers.map((flower) => (
+						{flowers?.map((flower) => (
 							<Col xs={24} sm={12} md={8} lg={6} key={flower.id}>
 								<FlowerCard flower={flower} onAddToCart={handleAddToCart} />
 							</Col>
 						))}
 					</Row>
 
-					{flowers.length === 0 && (
+					{(!flowers || flowers.length === 0) && (
 						<div className="text-center py-16">
 							<Title level={3} className="text-gray-500">
 								No flowers found

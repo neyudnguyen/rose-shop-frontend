@@ -88,9 +88,8 @@ export const FlowerDetail: React.FC = () => {
 			</div>
 		);
 	}
-
 	return (
-		<div className="max-w-7xl mx-auto px-4 py-8">
+		<div className="max-w-7xl mx-auto px-4 py-8" style={{ paddingTop: '80px' }}>
 			<Breadcrumb className="mb-6">
 				<Breadcrumb.Item>
 					<a onClick={() => navigate('/')}>Home</a>

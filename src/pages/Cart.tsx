@@ -164,9 +164,8 @@ export const Cart: React.FC = () => {
 			</div>
 		);
 	}
-
 	return (
-		<div className="max-w-7xl mx-auto px-4 py-8">
+		<div className="max-w-7xl mx-auto px-4 py-8" style={{ paddingTop: '80px' }}>
 			<Title level={2} className="mb-6">
 				Shopping Cart
 			</Title>
