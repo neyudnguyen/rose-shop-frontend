@@ -44,6 +44,10 @@ export const AdminFlower: React.FC = () => {
 	const [categories, setCategories] = useState<CategoryResponse[]>([]);
 	const [loading, setLoading] = useState(false);
 	const [isModalVisible, setIsModalVisible] = useState(false);
+	const [isViewModalVisible, setIsViewModalVisible] = useState(false);
+	const [viewingFlower, setViewingFlower] = useState<FlowerResponse | null>(
+		null,
+	);
 	const [editingFlower, setEditingFlower] = useState<FlowerResponse | null>(
 		null,
 	);
@@ -151,43 +155,9 @@ export const AdminFlower: React.FC = () => {
 
 	// Handle view flower details
 	const handleView = (flower: FlowerResponse) => {
-		Modal.info({
-			title: flower.flowerName,
-			width: 600,
-			content: (
-				<div className="mt-4">
-					{flower.imageUrl && (
-						<Image
-							src={flower.imageUrl}
-							alt={flower.flowerName}
-							style={{ width: '100%', maxHeight: 300, objectFit: 'cover' }}
-							className="mb-4"
-						/>
-					)}
-					<p>
-						<strong>Description:</strong> {flower.flowerDescription}
-					</p>
-					<p>
-						<strong>Price:</strong> ${flower.price.toFixed(2)}
-					</p>
-					<p>
-						<strong>Available Quantity:</strong> {flower.availableQuantity}
-					</p>
-					<p>
-						<strong>Category:</strong> {flower.categoryName}
-					</p>
-					<p>
-						<strong>Status:</strong> {flower.status}
-					</p>
-					{flower.createdAt && (
-						<p>
-							<strong>Created:</strong>{' '}
-							{new Date(flower.createdAt).toLocaleDateString()}
-						</p>
-					)}
-				</div>
-			),
-		});
+		console.log('handleView called with:', flower); // Debug log
+		setViewingFlower(flower);
+		setIsViewModalVisible(true);
 	};
 
 	// Handle modal close
@@ -329,26 +299,27 @@ export const AdminFlower: React.FC = () => {
 			width: 150,
 			align: 'center',
 			render: (_, record) => (
-				<div style={{ textAlign: 'center' }}>
-					<Space size="small">
-						<Button
-							type="text"
-							icon={<EyeOutlined />}
-							onClick={() => handleView(record)}
-							style={{ color: COLORS.info }}
-						>
-							View
-						</Button>
-						<Button
-							type="text"
-							icon={<EditOutlined />}
-							onClick={() => handleEdit(record)}
-							style={{ color: COLORS.primary }}
-						>
-							Edit
-						</Button>
-					</Space>
-				</div>
+				<Space
+					size="small"
+					style={{ display: 'flex', justifyContent: 'center' }}
+				>
+					<Button
+						type="text"
+						icon={<EyeOutlined />}
+						onClick={() => handleView(record)}
+						style={{ color: COLORS.info }}
+					>
+						View
+					</Button>
+					<Button
+						type="text"
+						icon={<EditOutlined />}
+						onClick={() => handleEdit(record)}
+						style={{ color: COLORS.primary }}
+					>
+						Edit
+					</Button>
+				</Space>
 			),
 		},
 	];
@@ -563,6 +534,106 @@ export const AdminFlower: React.FC = () => {
 						</Button>
 					</div>
 				</Form>
+			</Modal>
+
+			{/* View Modal */}
+			<Modal
+				title={
+					<div className="flex items-center gap-3">
+						<div
+							className="w-1 h-6 rounded"
+							style={{ backgroundColor: COLORS.info }}
+						/>
+						<span className="text-lg font-semibold">
+							{viewingFlower?.flowerName || 'Flower Details'}
+						</span>
+					</div>
+				}
+				open={isViewModalVisible}
+				onCancel={() => {
+					setIsViewModalVisible(false);
+					setViewingFlower(null);
+				}}
+				footer={null}
+				width={700}
+			>
+				{viewingFlower && (
+					<div className="mt-4">
+						{viewingFlower.imageUrl && (
+							<div className="mb-6 text-center">
+								<Image
+									src={viewingFlower.imageUrl}
+									alt={viewingFlower.flowerName}
+									style={{
+										width: '100%',
+										maxHeight: 400,
+										objectFit: 'cover',
+										borderRadius: 8,
+									}}
+								/>
+							</div>
+						)}
+						<div className="space-y-4">
+							<div>
+								<strong className="text-gray-700">Description:</strong>
+								<p className="mt-1 text-gray-600">
+									{viewingFlower.flowerDescription}
+								</p>
+							</div>
+							<div className="grid grid-cols-2 gap-4">
+								<div>
+									<strong className="text-gray-700">Price:</strong>
+									<p className="mt-1 text-lg font-semibold text-green-600">
+										${viewingFlower.price.toFixed(2)}
+									</p>
+								</div>
+								<div>
+									<strong className="text-gray-700">Available Quantity:</strong>
+									<p className="mt-1 text-lg font-semibold text-blue-600">
+										{viewingFlower.availableQuantity}
+									</p>
+								</div>
+							</div>
+							<div className="grid grid-cols-2 gap-4">
+								<div>
+									<strong className="text-gray-700">Category:</strong>
+									<p className="mt-1 text-gray-600">
+										{viewingFlower.categoryName}
+									</p>
+								</div>
+								<div>
+									<strong className="text-gray-700">Status:</strong>
+									<div className="mt-1">
+										<Tag
+											color={
+												viewingFlower.status === 'active' ? 'green' : 'red'
+											}
+										>
+											{viewingFlower.status === 'active'
+												? 'Active'
+												: 'Inactive'}
+										</Tag>
+									</div>
+								</div>
+							</div>
+							{viewingFlower.createdAt && (
+								<div>
+									<strong className="text-gray-700">Created:</strong>
+									<p className="mt-1 text-gray-600">
+										{new Date(viewingFlower.createdAt).toLocaleDateString(
+											'en-US',
+											{
+												year: 'numeric',
+												month: 'long',
+												day: 'numeric',
+											},
+										)}
+									</p>
+								</div>
+							)}
+						</div>
+					</div>
+				)}
 			</Modal>
 		</div>
 	);
