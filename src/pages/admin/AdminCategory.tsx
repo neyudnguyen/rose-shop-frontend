@@ -4,19 +4,13 @@ import {
 	type CategoryResponse,
 	categoryService,
 } from '../../services/categoryService';
-import {
-	DeleteOutlined,
-	EditOutlined,
-	PlusOutlined,
-	SearchOutlined,
-} from '@ant-design/icons';
+import { EditOutlined, PlusOutlined, SearchOutlined } from '@ant-design/icons';
 import {
 	Button,
 	Card,
 	Form,
 	Input,
 	Modal,
-	Popconfirm,
 	Space,
 	Table,
 	Tag,
@@ -31,7 +25,6 @@ export const AdminCategory: React.FC = () => {
 	const [isModalVisible, setIsModalVisible] = useState(false);
 	const [editingCategory, setEditingCategory] =
 		useState<CategoryResponse | null>(null);
-	const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
 	const [searchText, setSearchText] = useState('');
 	const [form] = Form.useForm();
 
@@ -89,44 +82,6 @@ export const AdminCategory: React.FC = () => {
 					: 'Failed to create category',
 			);
 			console.error('Error saving category:', error);
-		}
-	};
-
-	// Handle delete category
-	const handleDelete = async (categoryId: number) => {
-		try {
-			await categoryService.deleteCategory(categoryId);
-			message.success('Category deleted successfully');
-			loadCategories();
-		} catch (error) {
-			message.error('Failed to delete category');
-			console.error('Error deleting category:', error);
-		}
-	};
-
-	// Handle bulk delete
-	const handleBulkDelete = async () => {
-		if (selectedRowKeys.length === 0) {
-			message.warning('Please select at least one category to delete');
-			return;
-		}
-
-		try {
-			setLoading(true);
-			// Delete each selected category
-			await Promise.all(
-				selectedRowKeys.map((key) =>
-					categoryService.deleteCategory(Number(key)),
-				),
-			);
-			message.success(`Deleted ${selectedRowKeys.length} categories`);
-			setSelectedRowKeys([]);
-			loadCategories();
-		} catch (error) {
-			message.error('Failed to delete selected categories');
-			console.error('Error bulk deleting categories:', error);
-		} finally {
-			setLoading(false);
 		}
 	};
 
@@ -209,30 +164,10 @@ export const AdminCategory: React.FC = () => {
 					>
 						Edit
 					</Button>
-					<Popconfirm
-						title="Confirm Delete"
-						description="Are you sure you want to delete this category?"
-						onConfirm={() => handleDelete(record.categoryId)}
-						okText="Delete"
-						cancelText="Cancel"
-						okButtonProps={{ danger: true }}
-					>
-						<Button type="text" icon={<DeleteOutlined />} danger>
-							Delete
-						</Button>
-					</Popconfirm>
 				</Space>
 			),
 		},
 	];
-
-	// Row selection
-	const rowSelection = {
-		selectedRowKeys,
-		onChange: (newSelectedRowKeys: React.Key[]) => {
-			setSelectedRowKeys(newSelectedRowKeys);
-		},
-	};
 
 	return (
 		<div className="p-6">
@@ -271,20 +206,6 @@ export const AdminCategory: React.FC = () => {
 							style={{ width: 300 }}
 							allowClear
 						/>
-						{selectedRowKeys.length > 0 && (
-							<Popconfirm
-								title="Confirm Delete"
-								description={`Are you sure you want to delete ${selectedRowKeys.length} selected categories?`}
-								onConfirm={handleBulkDelete}
-								okText="Delete"
-								cancelText="Cancel"
-								okButtonProps={{ danger: true }}
-							>
-								<Button danger icon={<DeleteOutlined />}>
-									Delete Selected ({selectedRowKeys.length})
-								</Button>
-							</Popconfirm>
-						)}
 					</div>
 				</div>
 
@@ -294,7 +215,6 @@ export const AdminCategory: React.FC = () => {
 					dataSource={filteredCategories}
 					rowKey="categoryId"
 					loading={loading}
-					rowSelection={rowSelection}
 					pagination={{
 						pageSize: 10,
 						showSizeChanger: true,
