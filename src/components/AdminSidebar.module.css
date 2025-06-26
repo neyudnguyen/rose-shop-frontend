@@ -1,0 +1,32 @@
+/* Admin Sidebar Custom Styles */
+.admin-sidebar .ant-menu-dark {
+	background: transparent !important;
+}
+
+.admin-sidebar .ant-menu-dark .ant-menu-item {
+	background: transparent !important;
+	border-radius: 8px !important;
+	margin: 4px 8px !important;
+	transition: all 0.3s ease !important;
+}
+
+.admin-sidebar .ant-menu-dark .ant-menu-item:hover {
+	background: rgba(255, 255, 255, 0.1) !important;
+}
+
+.admin-sidebar .ant-menu-dark .ant-menu-item-selected {
+	background: rgba(255, 255, 255, 0.2) !important;
+	border-radius: 8px !important;
+}
+
+.admin-sidebar .ant-menu-dark .ant-menu-item-selected::after {
+	display: none !important;
+}
+
+.admin-sidebar .ant-menu-dark .ant-menu-item a {
+	color: inherit !important;
+}
+
+.admin-sidebar .ant-menu-dark .ant-menu-item-icon {
+	color: inherit !important;
+}

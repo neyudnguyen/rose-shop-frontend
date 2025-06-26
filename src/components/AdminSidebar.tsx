@@ -1,3 +1,4 @@
+import { COLORS } from '../constants/colors';
 import { useAuth } from '../hooks/useAuth';
 import {
 	BarChartOutlined,
@@ -13,6 +14,8 @@ import { Avatar, Button, Layout, Menu, Space, Typography } from 'antd';
 import type { MenuProps } from 'antd';
 import React from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
+
+import './AdminSidebar.module.css';
 
 const { Sider } = Layout;
 const { Title, Text } = Typography;
@@ -30,79 +33,195 @@ export const AdminSidebar: React.FC = () => {
 	const menuItems: MenuProps['items'] = [
 		{
 			key: '/admin',
-			icon: <DashboardOutlined />,
-			label: <Link to="/admin">Dashboard</Link>,
+			icon: <DashboardOutlined style={{ color: COLORS.white }} />,
+			label: (
+				<Link
+					to="/admin"
+					style={{ color: COLORS.white, textDecoration: 'none' }}
+				>
+					Dashboard
+				</Link>
+			),
 		},
 		{
 			key: '/admin/flowers',
-			icon: <ShopOutlined />,
-			label: <Link to="/admin/flowers">Manage Flowers</Link>,
+			icon: <ShopOutlined style={{ color: COLORS.white }} />,
+			label: (
+				<Link
+					to="/admin/flowers"
+					style={{ color: COLORS.white, textDecoration: 'none' }}
+				>
+					Manage Flowers
+				</Link>
+			),
 		},
 		{
 			key: '/admin/categories',
-			icon: <TagsOutlined />,
-			label: <Link to="/admin/categories">Manage Categories</Link>,
+			icon: <TagsOutlined style={{ color: COLORS.white }} />,
+			label: (
+				<Link
+					to="/admin/categories"
+					style={{ color: COLORS.white, textDecoration: 'none' }}
+				>
+					Manage Categories
+				</Link>
+			),
 		},
 		{
 			key: '/admin/vouchers',
-			icon: <GiftOutlined />,
-			label: <Link to="/admin/vouchers">Manage Vouchers</Link>,
+			icon: <GiftOutlined style={{ color: COLORS.white }} />,
+			label: (
+				<Link
+					to="/admin/vouchers"
+					style={{ color: COLORS.white, textDecoration: 'none' }}
+				>
+					Manage Vouchers
+				</Link>
+			),
 		},
 		{
 			key: '/admin/users',
-			icon: <UserOutlined />,
-			label: <Link to="/admin/users">Manage Users</Link>,
+			icon: <UserOutlined style={{ color: COLORS.white }} />,
+			label: (
+				<Link
+					to="/admin/users"
+					style={{ color: COLORS.white, textDecoration: 'none' }}
+				>
+					Manage Users
+				</Link>
+			),
 		},
 		{
 			key: '/admin/orders',
-			icon: <BarChartOutlined />,
-			label: <Link to="/admin/orders">Orders</Link>,
+			icon: <BarChartOutlined style={{ color: COLORS.white }} />,
+			label: (
+				<Link
+					to="/admin/orders"
+					style={{ color: COLORS.white, textDecoration: 'none' }}
+				>
+					Orders
+				</Link>
+			),
 		},
 		{
 			key: '/admin/settings',
-			icon: <SettingOutlined />,
-			label: <Link to="/admin/settings">Settings</Link>,
+			icon: <SettingOutlined style={{ color: COLORS.white }} />,
+			label: (
+				<Link
+					to="/admin/settings"
+					style={{ color: COLORS.white, textDecoration: 'none' }}
+				>
+					Settings
+				</Link>
+			),
 		},
 	];
 
 	return (
-		<Sider width={250} className="min-h-screen bg-white shadow-lg">
-			<div className="p-4 border-b">
-				<Space direction="vertical" className="w-full">
-					<div className="flex items-center space-x-3">
+		<Sider
+			width={250}
+			className="min-h-screen shadow-lg admin-sidebar"
+			style={{
+				background: `linear-gradient(180deg, ${COLORS.primary} 0%, ${COLORS.primaryDark} 100%)`,
+				color: COLORS.white,
+			}}
+		>
+			{/* Brand Header */}
+			<div className="p-4 text-center border-b border-white/10">
+				<div className="flex items-center justify-center space-x-2">
+					<div
+						className="w-8 h-8 rounded-full flex items-center justify-center"
+						style={{ backgroundColor: COLORS.white }}
+					>
+						<span
+							className="text-lg font-bold"
+							style={{ color: COLORS.primary }}
+						>
+							🌸
+						</span>
+					</div>
+					<Title
+						level={4}
+						className="!mb-0"
+						style={{ color: COLORS.white, fontSize: '18px' }}
+					>
+						PlatformFlower
+					</Title>
+				</div>
+				<Text
+					className="text-xs block mt-1"
+					style={{ color: COLORS.white, opacity: 0.7 }}
+				>
+					Admin Panel
+				</Text>
+			</div>
+
+			{/* Header with admin info */}
+			<div className="p-6 border-b border-white/20">
+				<Space direction="vertical" className="w-full" size="middle">
+					<div className="flex items-center space-x-4">
 						<Avatar
-							size="large"
+							size={48}
 							src={user?.userInfo?.avatar}
 							icon={<UserOutlined />}
+							style={{
+								backgroundColor: COLORS.white,
+								color: COLORS.primary,
+								border: `2px solid ${COLORS.white}`,
+							}}
 						/>
-						<div>
-							<Title level={5} className="!mb-0">
+						<div className="flex-1 ml-2">
+							<Title
+								level={5}
+								className="!mb-1"
+								style={{ color: COLORS.white, fontSize: '16px' }}
+							>
 								{user?.userInfo?.fullName || user?.username}
 							</Title>
-							<Text type="secondary" className="text-xs">
-								Administrator
+							<Text
+								className="text-xs"
+								style={{ color: COLORS.white, opacity: 0.8 }}
+							>
+								System Administrator
 							</Text>
 						</div>
 					</div>
+
+					{/* Logout Button */}
 					<Button
-						type="primary"
-						danger
 						block
 						icon={<LogoutOutlined />}
 						onClick={handleLogout}
-						size="small"
+						size="middle"
+						style={{
+							backgroundColor: 'rgba(255, 255, 255, 0.15)',
+							borderColor: 'rgba(255, 255, 255, 0.3)',
+							color: COLORS.white,
+							height: '36px',
+							fontWeight: '500',
+						}}
+						className="hover:bg-white/25 hover:border-white/50 transition-all duration-300"
 					>
 						Logout
 					</Button>
 				</Space>
 			</div>
 
-			<Menu
-				mode="inline"
-				selectedKeys={[location.pathname]}
-				items={menuItems}
-				className="border-0 h-full"
-			/>
+			{/* Menu Items */}
+			<div className="pt-4">
+				<Menu
+					mode="inline"
+					selectedKeys={[location.pathname]}
+					items={menuItems}
+					className="border-0 h-full admin-sidebar"
+					style={{
+						backgroundColor: 'transparent',
+						color: COLORS.white,
+						fontSize: '14px',
+					}}
+					theme="dark"
+				/>
+			</div>
 		</Sider>
 	);
 };
