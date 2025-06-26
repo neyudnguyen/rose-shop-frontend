@@ -40,7 +40,7 @@ export const FlowerDetail: React.FC = () => {
 			if (!id) return;
 
 			try {
-				const flowerData = await flowerService.getFlowerById(id);
+				const flowerData = await flowerService.getFlowerById(Number(id));
 				setFlower(flowerData);
 			} catch (err) {
 				setError('Failed to load flower details. Please try again.');
@@ -58,7 +58,10 @@ export const FlowerDetail: React.FC = () => {
 
 		setAddingToCart(true);
 		try {
-			await cartService.addToCart(flower.id, quantity);
+			await cartService.addToCart(
+				flower.id || flower.flowerId?.toString() || '',
+				quantity,
+			);
 			// You might want to show a success message here
 		} catch (err) {
 			console.error('Error adding to cart:', err);
@@ -98,7 +101,7 @@ export const FlowerDetail: React.FC = () => {
 					<a onClick={() => navigate('/flowers')}>Flowers</a>
 				</Breadcrumb.Item>
 				{flower.category && (
-					<Breadcrumb.Item>{flower.category.name}</Breadcrumb.Item>
+					<Breadcrumb.Item>{flower.category.categoryName}</Breadcrumb.Item>
 				)}
 				<Breadcrumb.Item>{flower.name}</Breadcrumb.Item>
 			</Breadcrumb>
@@ -136,7 +139,7 @@ export const FlowerDetail: React.FC = () => {
 								<Rate disabled defaultValue={4.5} />
 								<Text className="text-gray-500">(24 reviews)</Text>
 								{flower.category && (
-									<Tag color="blue">{flower.category.name}</Tag>
+									<Tag color="blue">{flower.category.categoryName}</Tag>
 								)}
 							</div>
 
@@ -148,11 +151,13 @@ export const FlowerDetail: React.FC = () => {
 								<Text strong>Stock:</Text>
 								<Text
 									className={
-										flower.stock > 0 ? 'text-green-600' : 'text-red-600'
+										(flower.stock || flower.availableQuantity || 0) > 0
+											? 'text-green-600'
+											: 'text-red-600'
 									}
 								>
-									{flower.stock > 0
-										? `${flower.stock} available`
+									{(flower.stock || flower.availableQuantity || 0) > 0
+										? `${flower.stock || flower.availableQuantity} available`
 										: 'Out of stock'}
 								</Text>
 							</div>

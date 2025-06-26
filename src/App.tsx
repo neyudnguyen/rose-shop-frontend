@@ -15,6 +15,11 @@ import { Home } from './pages/Home';
 import { Login } from './pages/Login';
 import { Profile } from './pages/Profile';
 import { Register } from './pages/Register';
+import { AdminCategory } from './pages/admin/AdminCategory';
+import { AdminDashboard } from './pages/admin/AdminDashboard';
+import { AdminFlower } from './pages/admin/AdminFlower';
+import { AdminLogin } from './pages/admin/AdminLogin';
+import { AdminVoucher } from './pages/admin/AdminVoucher';
 
 const { Content } = Layout;
 
@@ -52,7 +57,9 @@ function App() {
 					<Routes>
 						{/* Public Routes */}
 						<Route path="/login" element={<Login />} />
+						<Route path="/admin/login" element={<AdminLogin />} />
 						<Route path="/register" element={<Register />} />
+						<Route path="/admin/login" element={<AdminLogin />} />
 						{/* Main Layout Routes */}
 						<Route
 							path="/"
@@ -136,22 +143,10 @@ function App() {
 								<ProtectedRoute adminOnly>
 									<AdminLayout>
 										<Routes>
-											<Route
-												path="/"
-												element={<div>Admin Dashboard - Coming Soon</div>}
-											/>
-											<Route
-												path="/flowers"
-												element={<div>Manage Flowers - Coming Soon</div>}
-											/>
-											<Route
-												path="/categories"
-												element={<div>Manage Categories - Coming Soon</div>}
-											/>
-											<Route
-												path="/vouchers"
-												element={<div>Manage Vouchers - Coming Soon</div>}
-											/>
+											<Route path="/" element={<AdminDashboard />} />
+											<Route path="/flowers" element={<AdminFlower />} />
+											<Route path="/categories" element={<AdminCategory />} />
+											<Route path="/vouchers" element={<AdminVoucher />} />
 											<Route
 												path="/vouchers/stats/:code"
 												element={<div>Voucher Stats - Coming Soon</div>}

@@ -51,15 +51,9 @@ export const FlowerList: React.FC = () => {
 		const fetchFlowers = async () => {
 			setLoading(true);
 			try {
-				const { flowers: flowerData, total: totalCount } =
-					await flowerService.getFlowers({
-						page: currentPage,
-						limit: pageSize,
-						search: searchQuery || undefined,
-						category: categoryFilter || undefined,
-					});
+				const flowerData = await flowerService.getFlowers();
 				setFlowers(flowerData || []);
-				setTotal(totalCount || 0);
+				setTotal(flowerData?.length || 0);
 			} catch (err) {
 				setError('Failed to load flowers. Please try again.');
 				setFlowers([]);
@@ -143,8 +137,8 @@ export const FlowerList: React.FC = () => {
 								onChange={handleCategoryFilter}
 							>
 								{categories.map((category) => (
-									<Option key={category.id} value={category.id}>
-										{category.name}
+									<Option key={category.categoryId} value={category.categoryId}>
+										{category.categoryName}
 									</Option>
 								))}
 							</Select>
@@ -155,8 +149,10 @@ export const FlowerList: React.FC = () => {
 									Showing {flowers?.length || 0} of {total} flowers
 									{searchQuery && ` for "${searchQuery}"`}
 									{categoryFilter &&
-										categories.find((c) => c.id === categoryFilter) &&
-										` in "${categories.find((c) => c.id === categoryFilter)?.name}"`}
+										categories.find(
+											(c) => c.categoryId === Number(categoryFilter),
+										) &&
+										` in "${categories.find((c) => c.categoryId === Number(categoryFilter))?.categoryName}"`}
 								</span>
 							</Space>
 						</Col>

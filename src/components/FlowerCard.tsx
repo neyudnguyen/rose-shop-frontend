@@ -20,7 +20,7 @@ export const FlowerCard: React.FC<FlowerCardProps> = ({
 		e.stopPropagation();
 		e.preventDefault();
 		if (onAddToCart) {
-			onAddToCart(flower.id);
+			onAddToCart(flower.id || flower.flowerId?.toString() || '');
 		}
 	};
 
@@ -79,7 +79,7 @@ export const FlowerCard: React.FC<FlowerCardProps> = ({
 						<div className="flex items-center justify-between">
 							<Rate disabled defaultValue={4.5} className="text-sm" />
 							{flower.category && (
-								<Tag color="blue">{flower.category.name}</Tag>
+								<Tag color="blue">{flower.category.categoryName}</Tag>
 							)}
 						</div>
 					</div>

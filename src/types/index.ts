@@ -28,23 +28,43 @@ export interface User {
 }
 
 export interface Category {
-	id: string;
-	name: string;
-	description?: string;
-	imageUrl?: string;
-	isPopular: boolean;
+	categoryId: number;
+	categoryName: string;
+	status: string;
+	createdAt?: string;
+	updatedAt?: string;
+	flowerCount: number;
+}
+
+export interface CategoryResponse {
+	categoryId: number;
+	categoryName: string;
+	status: string;
+	createdAt?: string;
+	updatedAt?: string;
+	flowerCount: number;
 }
 
 export interface Flower {
-	id: string;
-	name: string;
-	description: string;
+	flowerId: number;
+	flowerName: string;
+	flowerDescription: string;
 	price: number;
 	imageUrl: string;
-	categoryId: string;
+	availableQuantity: number;
+	status: string;
+	createdAt?: string;
+	updatedAt?: string;
+	categoryId?: number;
+	categoryName?: string;
+	isDeleted: boolean;
+	// Backward compatibility fields
+	id?: string;
+	name?: string;
+	description?: string;
+	stock?: number;
+	isAvailable?: boolean;
 	category?: Category;
-	stock: number;
-	isAvailable: boolean;
 }
 
 export interface CartItem {
@@ -108,4 +128,56 @@ export interface ApiResponse<T> {
 	success: boolean;
 	data: T;
 	message: string;
+}
+
+// Voucher types
+export interface VoucherResponse {
+	userVoucherStatusId: number;
+	voucherCode: string;
+	discount: number;
+	description: string;
+	startDate: string;
+	endDate: string;
+	usageLimit?: number;
+	usageCount?: number;
+	remainingCount?: number;
+	createdAt?: string;
+	status: string;
+	isDeleted: boolean;
+	isExpired: boolean;
+	isActive: boolean;
+	canUse: boolean;
+	displayStatus: string;
+}
+
+export interface VoucherManageRequest {
+	UserVoucherStatusId?: number;
+	VoucherCode: string;
+	Discount: number;
+	Description: string;
+	StartDate: string;
+	EndDate: string;
+	UsageLimit: number;
+	RemainingCount: number;
+	Status: string;
+	IsDeleted?: boolean;
+}
+
+export interface VoucherStatsResponse {
+	voucherCode: string;
+	totalUsers: number;
+	usedCount: number;
+	remainingCount: number;
+	usagePercentage: number;
+	userStats: VoucherUserStats[];
+}
+
+export interface VoucherUserStats {
+	userInfoId: number;
+	userName: string;
+	email: string;
+	usageCount?: number;
+	remainingCount?: number;
+	status: string;
+	hasUsed: boolean;
 }
