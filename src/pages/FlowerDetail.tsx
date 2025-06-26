@@ -98,7 +98,7 @@ export const FlowerDetail: React.FC = () => {
 					<a onClick={() => navigate('/flowers')}>Flowers</a>
 				</Breadcrumb.Item>
 				{flower.category && (
-					<Breadcrumb.Item>{flower.category.name}</Breadcrumb.Item>
+					<Breadcrumb.Item>{flower.category.categoryName}</Breadcrumb.Item>
 				)}
 				<Breadcrumb.Item>{flower.name}</Breadcrumb.Item>
 			</Breadcrumb>
@@ -136,7 +136,7 @@ export const FlowerDetail: React.FC = () => {
 								<Rate disabled defaultValue={4.5} />
 								<Text className="text-gray-500">(24 reviews)</Text>
 								{flower.category && (
-									<Tag color="blue">{flower.category.name}</Tag>
+									<Tag color="blue">{flower.category.categoryName}</Tag>
 								)}
 							</div>
 

@@ -79,7 +79,7 @@ export const FlowerCard: React.FC<FlowerCardProps> = ({
 						<div className="flex items-center justify-between">
 							<Rate disabled defaultValue={4.5} className="text-sm" />
 							{flower.category && (
-								<Tag color="blue">{flower.category.name}</Tag>
+								<Tag color="blue">{flower.category.categoryName}</Tag>
 							)}
 						</div>
 					</div>

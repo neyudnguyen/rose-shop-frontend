@@ -143,8 +143,8 @@ export const FlowerList: React.FC = () => {
 								onChange={handleCategoryFilter}
 							>
 								{categories.map((category) => (
-									<Option key={category.id} value={category.id}>
-										{category.name}
+									<Option key={category.categoryId} value={category.categoryId}>
+										{category.categoryName}
 									</Option>
 								))}
 							</Select>
@@ -155,8 +155,10 @@ export const FlowerList: React.FC = () => {
 									Showing {flowers?.length || 0} of {total} flowers
 									{searchQuery && ` for "${searchQuery}"`}
 									{categoryFilter &&
-										categories.find((c) => c.id === categoryFilter) &&
-										` in "${categories.find((c) => c.id === categoryFilter)?.name}"`}
+										categories.find(
+											(c) => c.categoryId === Number(categoryFilter),
+										) &&
+										` in "${categories.find((c) => c.categoryId === Number(categoryFilter))?.categoryName}"`}
 								</span>
 							</Space>
 						</Col>
