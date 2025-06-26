@@ -6,7 +6,7 @@ import type { ReactNode } from 'react';
 interface AuthContextType {
 	user: User | null;
 	loading: boolean;
-	login: (username: string, password: string) => Promise<void>;
+	login: (username: string, password: string) => Promise<User>;
 	register: (userData: {
 		username: string;
 		email: string;
@@ -53,6 +53,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 		localStorage.setItem('token', token);
 		localStorage.setItem('user', JSON.stringify(userData));
 		setUser(userData);
+
+		// Return user data for component to handle redirects
+		return userData;
 	};
 	const register = async (userData: {
 		username: string;

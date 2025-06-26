@@ -25,11 +25,14 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
 	}
 
 	if (!user) {
-		return <Navigate to="/login" state={{ from: location }} replace />;
+		// Redirect to admin login if trying to access admin routes
+		const redirectPath = adminOnly ? '/admin/login' : '/login';
+		return <Navigate to={redirectPath} state={{ from: location }} replace />;
 	}
 
-	if (adminOnly && user.role !== 'ADMIN') {
-		return <Navigate to="/" replace />;
+	// Check admin access using the 'type' field from the API
+	if (adminOnly && user.type !== 'admin') {
+		return <Navigate to="/admin/login" replace />;
 	}
 
 	return <>{children}</>;

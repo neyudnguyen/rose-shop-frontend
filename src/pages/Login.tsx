@@ -121,25 +121,47 @@ export const Login: React.FC = () => {
 						</Form.Item>
 					</Form>
 					<Divider>Or</Divider>
-					<div className="text-center">
-						<Text style={{ color: COLORS.textSecondary }}>
-							Don't have an account?{' '}
-							<Link
-								to="/register"
-								style={{
-									color: COLORS.primary,
-									textDecoration: 'none',
-								}}
-								onMouseEnter={(e) =>
-									(e.currentTarget.style.color = COLORS.primaryDark)
-								}
-								onMouseLeave={(e) =>
-									(e.currentTarget.style.color = COLORS.primary)
-								}
-							>
-								Sign up now
-							</Link>
-						</Text>
+					<div className="text-center space-y-2">
+						<div>
+							<Text style={{ color: COLORS.textSecondary }}>
+								Don't have an account?{' '}
+								<Link
+									to="/register"
+									style={{
+										color: COLORS.primary,
+										textDecoration: 'none',
+									}}
+									onMouseEnter={(e) =>
+										(e.currentTarget.style.color = COLORS.primaryDark)
+									}
+									onMouseLeave={(e) =>
+										(e.currentTarget.style.color = COLORS.primary)
+									}
+								>
+									Sign up now
+								</Link>
+							</Text>
+						</div>
+						<div>
+							<Text style={{ color: COLORS.textSecondary }}>
+								Administrator?{' '}
+								<Link
+									to="/admin/login"
+									style={{
+										color: COLORS.primary,
+										textDecoration: 'none',
+									}}
+									onMouseEnter={(e) =>
+										(e.currentTarget.style.color = COLORS.primaryDark)
+									}
+									onMouseLeave={(e) =>
+										(e.currentTarget.style.color = COLORS.primary)
+									}
+								>
+									Admin Portal
+								</Link>
+							</Text>
+						</div>
 					</div>
 				</Card>
 			</div>

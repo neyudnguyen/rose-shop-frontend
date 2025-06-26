@@ -3,22 +3,29 @@ import {
 	BarChartOutlined,
 	DashboardOutlined,
 	GiftOutlined,
+	LogoutOutlined,
 	SettingOutlined,
 	ShopOutlined,
 	TagsOutlined,
 	UserOutlined,
 } from '@ant-design/icons';
-import { Avatar, Layout, Menu, Space, Typography } from 'antd';
+import { Avatar, Button, Layout, Menu, Space, Typography } from 'antd';
 import type { MenuProps } from 'antd';
 import React from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 
 const { Sider } = Layout;
 const { Title, Text } = Typography;
 
 export const AdminSidebar: React.FC = () => {
-	const { user } = useAuth();
+	const { user, logout } = useAuth();
 	const location = useLocation();
+	const navigate = useNavigate();
+
+	const handleLogout = () => {
+		logout();
+		navigate('/admin/login');
+	};
 
 	const menuItems: MenuProps['items'] = [
 		{
@@ -63,16 +70,30 @@ export const AdminSidebar: React.FC = () => {
 			<div className="p-4 border-b">
 				<Space direction="vertical" className="w-full">
 					<div className="flex items-center space-x-3">
-						<Avatar size="large" icon={<UserOutlined />} />
+						<Avatar
+							size="large"
+							src={user?.userInfo?.avatar}
+							icon={<UserOutlined />}
+						/>
 						<div>
 							<Title level={5} className="!mb-0">
-								{user?.fullName}
+								{user?.userInfo?.fullName || user?.username}
 							</Title>
 							<Text type="secondary" className="text-xs">
 								Administrator
 							</Text>
 						</div>
 					</div>
+					<Button
+						type="primary"
+						danger
+						block
+						icon={<LogoutOutlined />}
+						onClick={handleLogout}
+						size="small"
+					>
+						Logout
+					</Button>
 				</Space>
 			</div>
 

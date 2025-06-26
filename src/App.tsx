@@ -15,6 +15,8 @@ import { Home } from './pages/Home';
 import { Login } from './pages/Login';
 import { Profile } from './pages/Profile';
 import { Register } from './pages/Register';
+import { AdminDashboard } from './pages/admin/AdminDashboard';
+import { AdminLogin } from './pages/admin/AdminLogin';
 
 const { Content } = Layout;
 
@@ -52,7 +54,9 @@ function App() {
 					<Routes>
 						{/* Public Routes */}
 						<Route path="/login" element={<Login />} />
+						<Route path="/admin/login" element={<AdminLogin />} />
 						<Route path="/register" element={<Register />} />
+						<Route path="/admin/login" element={<AdminLogin />} />
 						{/* Main Layout Routes */}
 						<Route
 							path="/"
@@ -136,10 +140,7 @@ function App() {
 								<ProtectedRoute adminOnly>
 									<AdminLayout>
 										<Routes>
-											<Route
-												path="/"
-												element={<div>Admin Dashboard - Coming Soon</div>}
-											/>
+											<Route path="/" element={<AdminDashboard />} />
 											<Route
 												path="/flowers"
 												element={<div>Manage Flowers - Coming Soon</div>}
