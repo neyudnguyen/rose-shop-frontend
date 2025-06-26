@@ -1,3 +1,4 @@
+import { COLORS } from '../../constants/colors';
 import { useAuth } from '../../hooks/useAuth';
 import {
 	ArrowLeftOutlined,
@@ -78,7 +79,11 @@ export const AdminLogin: React.FC = () => {
 						<Button
 							type="text"
 							icon={<ArrowLeftOutlined />}
-							className="text-white hover:text-gray-200 border-none"
+							style={{
+								color: COLORS.white,
+								borderColor: 'transparent',
+							}}
+							className="hover:text-gray-200 border-none"
 							size="large"
 						>
 							Back to Home
@@ -103,10 +108,10 @@ export const AdminLogin: React.FC = () => {
 								style={{ color: '#667eea' }}
 							/>
 						</div>
-						<Title level={2} className="text-white mb-2">
+						<Title level={2} style={{ color: COLORS.white }} className="mb-2">
 							Admin Portal
 						</Title>
-						<Text className="text-gray-100">
+						<Text style={{ color: COLORS.white, opacity: 0.9 }}>
 							Secure access for administrators only
 						</Text>
 					</div>
