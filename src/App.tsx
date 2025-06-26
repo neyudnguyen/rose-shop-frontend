@@ -15,6 +15,7 @@ import { Home } from './pages/Home';
 import { Login } from './pages/Login';
 import { Profile } from './pages/Profile';
 import { Register } from './pages/Register';
+import { AdminCategory } from './pages/admin/AdminCategory';
 import { AdminDashboard } from './pages/admin/AdminDashboard';
 import { AdminLogin } from './pages/admin/AdminLogin';
 
@@ -145,10 +146,7 @@ function App() {
 												path="/flowers"
 												element={<div>Manage Flowers - Coming Soon</div>}
 											/>
-											<Route
-												path="/categories"
-												element={<div>Manage Categories - Coming Soon</div>}
-											/>
+											<Route path="/categories" element={<AdminCategory />} />
 											<Route
 												path="/vouchers"
 												element={<div>Manage Vouchers - Coming Soon</div>}

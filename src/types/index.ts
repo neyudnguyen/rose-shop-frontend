@@ -28,11 +28,21 @@ export interface User {
 }
 
 export interface Category {
-	id: string;
-	name: string;
-	description?: string;
-	imageUrl?: string;
-	isPopular: boolean;
+	categoryId: number;
+	categoryName: string;
+	status: string;
+	createdAt?: string;
+	updatedAt?: string;
+	flowerCount: number;
+}
+
+export interface CategoryResponse {
+	categoryId: number;
+	categoryName: string;
+	status: string;
+	createdAt?: string;
+	updatedAt?: string;
+	flowerCount: number;
 }
 
 export interface Flower {
