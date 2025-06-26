@@ -104,27 +104,34 @@ export const AdminCategory: React.FC = () => {
 	// Table columns
 	const columns: ColumnsType<CategoryResponse> = [
 		{
-			title: 'ID',
+			title: <div style={{ textAlign: 'center' }}>ID</div>,
 			dataIndex: 'categoryId',
 			key: 'categoryId',
 			width: 80,
 			sorter: (a, b) => a.categoryId - b.categoryId,
+			align: 'center',
+			render: (id: number) => <div style={{ textAlign: 'center' }}>#{id}</div>,
 		},
 		{
-			title: 'Category Name',
+			title: <div style={{ textAlign: 'center' }}>Category Name</div>,
 			dataIndex: 'categoryName',
 			key: 'categoryName',
+			width: 200,
 			sorter: (a, b) => a.categoryName.localeCompare(b.categoryName),
+			align: 'center',
 		},
 		{
-			title: 'Status',
+			title: <div style={{ textAlign: 'center' }}>Status</div>,
 			dataIndex: 'status',
 			key: 'status',
 			width: 120,
+			align: 'center',
 			render: (status: string) => (
-				<Tag color={status === 'active' ? 'green' : 'red'}>
-					{status === 'active' ? 'Active' : 'Inactive'}
-				</Tag>
+				<div style={{ textAlign: 'center' }}>
+					<Tag color={status === 'active' ? 'green' : 'red'}>
+						{status === 'active' ? 'Active' : 'Inactive'}
+					</Tag>
+				</div>
 			),
 			filters: [
 				{ text: 'Active', value: 'active' },
@@ -133,38 +140,46 @@ export const AdminCategory: React.FC = () => {
 			onFilter: (value, record) => record.status === value,
 		},
 		{
-			title: 'Flower Count',
+			title: <div style={{ textAlign: 'center' }}>Flower Count</div>,
 			dataIndex: 'flowerCount',
 			key: 'flowerCount',
 			width: 120,
 			sorter: (a, b) => a.flowerCount - b.flowerCount,
+			align: 'center',
 		},
 		{
-			title: 'Created Date',
+			title: <div style={{ textAlign: 'center' }}>Created Date</div>,
 			dataIndex: 'createdAt',
 			key: 'createdAt',
 			width: 150,
-			render: (date: string) =>
-				date ? new Date(date).toLocaleDateString('en-US') : '-',
+			align: 'center',
+			render: (date: string) => (
+				<div style={{ textAlign: 'center' }}>
+					{date ? new Date(date).toLocaleDateString('en-US') : '-'}
+				</div>
+			),
 			sorter: (a, b) =>
 				new Date(a.createdAt || 0).getTime() -
 				new Date(b.createdAt || 0).getTime(),
 		},
 		{
-			title: 'Actions',
+			title: <div style={{ textAlign: 'center' }}>Actions</div>,
 			key: 'actions',
 			width: 150,
+			align: 'center',
 			render: (_, record) => (
-				<Space size="small">
-					<Button
-						type="text"
-						icon={<EditOutlined />}
-						onClick={() => handleEdit(record)}
-						style={{ color: COLORS.primary }}
-					>
-						Edit
-					</Button>
-				</Space>
+				<div style={{ textAlign: 'center' }}>
+					<Space size="small">
+						<Button
+							type="text"
+							icon={<EditOutlined />}
+							onClick={() => handleEdit(record)}
+							style={{ color: COLORS.primary }}
+						>
+							Edit
+						</Button>
+					</Space>
+				</div>
 			),
 		},
 	];

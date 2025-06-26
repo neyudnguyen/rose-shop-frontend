@@ -212,56 +212,77 @@ export const AdminFlower: React.FC = () => {
 	// Table columns
 	const columns: ColumnsType<FlowerResponse> = [
 		{
-			title: 'Image',
+			title: <div style={{ textAlign: 'center' }}>ID</div>,
+			dataIndex: 'flowerId',
+			key: 'flowerId',
+			width: 70,
+			sorter: (a, b) => a.flowerId - b.flowerId,
+			align: 'center',
+			render: (id: number) => <div style={{ textAlign: 'center' }}>#{id}</div>,
+		},
+		{
+			title: <div style={{ textAlign: 'center' }}>Image</div>,
 			dataIndex: 'imageUrl',
 			key: 'imageUrl',
 			width: 80,
-			render: (imageUrl: string) =>
-				imageUrl ? (
-					<Image
-						src={imageUrl}
-						alt="Flower"
-						width={50}
-						height={50}
-						style={{ objectFit: 'cover', borderRadius: 4 }}
-					/>
-				) : (
-					<div className="w-12 h-12 bg-gray-200 rounded flex items-center justify-center">
-						No Image
-					</div>
-				),
+			align: 'center',
+			render: (imageUrl: string) => (
+				<div style={{ textAlign: 'center' }}>
+					{imageUrl ? (
+						<Image
+							src={imageUrl}
+							alt="Flower"
+							width={50}
+							height={50}
+							style={{ objectFit: 'cover', borderRadius: 4 }}
+						/>
+					) : (
+						<div className="w-12 h-12 bg-gray-200 rounded flex items-center justify-center mx-auto">
+							No Image
+						</div>
+					)}
+				</div>
+			),
 		},
 		{
-			title: 'Name',
+			title: <div style={{ textAlign: 'center' }}>Name</div>,
 			dataIndex: 'flowerName',
 			key: 'flowerName',
 			sorter: (a, b) => a.flowerName.localeCompare(b.flowerName),
+			align: 'center',
 		},
 		{
-			title: 'Price',
+			title: <div style={{ textAlign: 'center' }}>Price</div>,
 			dataIndex: 'price',
 			key: 'price',
 			width: 100,
 			sorter: (a, b) => a.price - b.price,
-			render: (price: number) => `$${price.toFixed(2)}`,
+			align: 'center',
+			render: (price: number) => (
+				<div style={{ textAlign: 'center' }}>${price.toFixed(2)}</div>
+			),
 		},
 		{
-			title: 'Stock',
+			title: <div style={{ textAlign: 'center' }}>Stock</div>,
 			dataIndex: 'availableQuantity',
 			key: 'availableQuantity',
 			width: 80,
 			sorter: (a, b) => a.availableQuantity - b.availableQuantity,
+			align: 'center',
 			render: (quantity: number) => (
-				<span className={quantity <= 10 ? 'text-red-500' : 'text-green-600'}>
-					{quantity}
-				</span>
+				<div style={{ textAlign: 'center' }}>
+					<span className={quantity <= 10 ? 'text-red-500' : 'text-green-600'}>
+						{quantity}
+					</span>
+				</div>
 			),
 		},
 		{
-			title: 'Category',
+			title: <div style={{ textAlign: 'center' }}>Category</div>,
 			dataIndex: 'categoryName',
 			key: 'categoryName',
 			width: 120,
+			align: 'center',
 			filters: categories.map((cat) => ({
 				text: cat.categoryName,
 				value: cat.categoryName,
@@ -269,14 +290,17 @@ export const AdminFlower: React.FC = () => {
 			onFilter: (value, record) => record.categoryName === value,
 		},
 		{
-			title: 'Status',
+			title: <div style={{ textAlign: 'center' }}>Status</div>,
 			dataIndex: 'status',
 			key: 'status',
 			width: 100,
+			align: 'center',
 			render: (status: string) => (
-				<Tag color={status === 'active' ? 'green' : 'red'}>
-					{status === 'active' ? 'Active' : 'Inactive'}
-				</Tag>
+				<div style={{ textAlign: 'center' }}>
+					<Tag color={status === 'active' ? 'green' : 'red'}>
+						{status === 'active' ? 'Active' : 'Inactive'}
+					</Tag>
+				</div>
 			),
 			filters: [
 				{ text: 'Active', value: 'active' },
@@ -285,39 +309,46 @@ export const AdminFlower: React.FC = () => {
 			onFilter: (value, record) => record.status === value,
 		},
 		{
-			title: 'Created',
+			title: <div style={{ textAlign: 'center' }}>Created</div>,
 			dataIndex: 'createdAt',
 			key: 'createdAt',
 			width: 120,
-			render: (date: string) =>
-				date ? new Date(date).toLocaleDateString('en-US') : '-',
+			align: 'center',
+			render: (date: string) => (
+				<div style={{ textAlign: 'center' }}>
+					{date ? new Date(date).toLocaleDateString('en-US') : '-'}
+				</div>
+			),
 			sorter: (a, b) =>
 				new Date(a.createdAt || 0).getTime() -
 				new Date(b.createdAt || 0).getTime(),
 		},
 		{
-			title: 'Actions',
+			title: <div style={{ textAlign: 'center' }}>Actions</div>,
 			key: 'actions',
 			width: 150,
+			align: 'center',
 			render: (_, record) => (
-				<Space size="small">
-					<Button
-						type="text"
-						icon={<EyeOutlined />}
-						onClick={() => handleView(record)}
-						style={{ color: COLORS.info }}
-					>
-						View
-					</Button>
-					<Button
-						type="text"
-						icon={<EditOutlined />}
-						onClick={() => handleEdit(record)}
-						style={{ color: COLORS.primary }}
-					>
-						Edit
-					</Button>
-				</Space>
+				<div style={{ textAlign: 'center' }}>
+					<Space size="small">
+						<Button
+							type="text"
+							icon={<EyeOutlined />}
+							onClick={() => handleView(record)}
+							style={{ color: COLORS.info }}
+						>
+							View
+						</Button>
+						<Button
+							type="text"
+							icon={<EditOutlined />}
+							onClick={() => handleEdit(record)}
+							style={{ color: COLORS.primary }}
+						>
+							Edit
+						</Button>
+					</Space>
+				</div>
 			),
 		},
 	];
@@ -373,7 +404,7 @@ export const AdminFlower: React.FC = () => {
 						showTotal: (total, range) =>
 							`${range[0]}-${range[1]} of ${total} flowers`,
 					}}
-					scroll={{ x: 1200 }}
+					scroll={{ x: 1300 }}
 				/>
 			</Card>
 
