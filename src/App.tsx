@@ -19,6 +19,7 @@ import { AdminCategory } from './pages/admin/AdminCategory';
 import { AdminDashboard } from './pages/admin/AdminDashboard';
 import { AdminFlower } from './pages/admin/AdminFlower';
 import { AdminLogin } from './pages/admin/AdminLogin';
+import { AdminVoucher } from './pages/admin/AdminVoucher';
 
 const { Content } = Layout;
 
@@ -145,10 +146,7 @@ function App() {
 											<Route path="/" element={<AdminDashboard />} />
 											<Route path="/flowers" element={<AdminFlower />} />
 											<Route path="/categories" element={<AdminCategory />} />
-											<Route
-												path="/vouchers"
-												element={<div>Manage Vouchers - Coming Soon</div>}
-											/>
+											<Route path="/vouchers" element={<AdminVoucher />} />
 											<Route
 												path="/vouchers/stats/:code"
 												element={<div>Voucher Stats - Coming Soon</div>}

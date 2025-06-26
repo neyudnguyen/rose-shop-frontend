@@ -129,3 +129,55 @@ export interface ApiResponse<T> {
 	data: T;
 	message: string;
 }
+
+// Voucher types
+export interface VoucherResponse {
+	userVoucherStatusId: number;
+	voucherCode: string;
+	discount: number;
+	description: string;
+	startDate: string;
+	endDate: string;
+	usageLimit?: number;
+	usageCount?: number;
+	remainingCount?: number;
+	createdAt?: string;
+	status: string;
+	isDeleted: boolean;
+	isExpired: boolean;
+	isActive: boolean;
+	canUse: boolean;
+	displayStatus: string;
+}
+
+export interface VoucherManageRequest {
+	UserVoucherStatusId?: number;
+	VoucherCode: string;
+	Discount: number;
+	Description: string;
+	StartDate: string;
+	EndDate: string;
+	UsageLimit: number;
+	RemainingCount: number;
+	Status: string;
+	IsDeleted?: boolean;
+}
+
+export interface VoucherStatsResponse {
+	voucherCode: string;
+	totalUsers: number;
+	usedCount: number;
+	remainingCount: number;
+	usagePercentage: number;
+	userStats: VoucherUserStats[];
+}
+
+export interface VoucherUserStats {
+	userInfoId: number;
+	userName: string;
+	email: string;
+	usageCount?: number;
+	remainingCount?: number;
+	status: string;
+	hasUsed: boolean;
+}
