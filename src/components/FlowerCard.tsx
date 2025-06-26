@@ -20,7 +20,7 @@ export const FlowerCard: React.FC<FlowerCardProps> = ({
 		e.stopPropagation();
 		e.preventDefault();
 		if (onAddToCart) {
-			onAddToCart(flower.id);
+			onAddToCart(flower.id || flower.flowerId?.toString() || '');
 		}
 	};
 

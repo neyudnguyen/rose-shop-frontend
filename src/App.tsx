@@ -17,6 +17,7 @@ import { Profile } from './pages/Profile';
 import { Register } from './pages/Register';
 import { AdminCategory } from './pages/admin/AdminCategory';
 import { AdminDashboard } from './pages/admin/AdminDashboard';
+import { AdminFlower } from './pages/admin/AdminFlower';
 import { AdminLogin } from './pages/admin/AdminLogin';
 
 const { Content } = Layout;
@@ -142,10 +143,7 @@ function App() {
 									<AdminLayout>
 										<Routes>
 											<Route path="/" element={<AdminDashboard />} />
-											<Route
-												path="/flowers"
-												element={<div>Manage Flowers - Coming Soon</div>}
-											/>
+											<Route path="/flowers" element={<AdminFlower />} />
 											<Route path="/categories" element={<AdminCategory />} />
 											<Route
 												path="/vouchers"

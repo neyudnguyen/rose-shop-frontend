@@ -46,15 +46,25 @@ export interface CategoryResponse {
 }
 
 export interface Flower {
-	id: string;
-	name: string;
-	description: string;
+	flowerId: number;
+	flowerName: string;
+	flowerDescription: string;
 	price: number;
 	imageUrl: string;
-	categoryId: string;
+	availableQuantity: number;
+	status: string;
+	createdAt?: string;
+	updatedAt?: string;
+	categoryId?: number;
+	categoryName?: string;
+	isDeleted: boolean;
+	// Backward compatibility fields
+	id?: string;
+	name?: string;
+	description?: string;
+	stock?: number;
+	isAvailable?: boolean;
 	category?: Category;
-	stock: number;
-	isAvailable: boolean;
 }
 
 export interface CartItem {

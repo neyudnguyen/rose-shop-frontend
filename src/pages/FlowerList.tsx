@@ -51,15 +51,9 @@ export const FlowerList: React.FC = () => {
 		const fetchFlowers = async () => {
 			setLoading(true);
 			try {
-				const { flowers: flowerData, total: totalCount } =
-					await flowerService.getFlowers({
-						page: currentPage,
-						limit: pageSize,
-						search: searchQuery || undefined,
-						category: categoryFilter || undefined,
-					});
+				const flowerData = await flowerService.getFlowers();
 				setFlowers(flowerData || []);
-				setTotal(totalCount || 0);
+				setTotal(flowerData?.length || 0);
 			} catch (err) {
 				setError('Failed to load flowers. Please try again.');
 				setFlowers([]);
