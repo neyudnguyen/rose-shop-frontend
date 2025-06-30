@@ -20,10 +20,8 @@ import {
 	Button,
 	Card,
 	Col,
-	Descriptions,
 	Divider,
 	Form,
-	Image,
 	Input,
 	InputNumber,
 	Modal,
@@ -31,6 +29,7 @@ import {
 	Select,
 	Space,
 	Spin,
+	Tag,
 	Typography,
 	message,
 } from 'antd';
@@ -348,109 +347,89 @@ export const FlowerDetail: React.FC = () => {
 								size="large"
 								style={{ width: '100%' }}
 							>
+								{/* Header Section */}
 								<div>
-									<Title level={2} style={{ marginBottom: '16px' }}>
+									<Title level={2} style={{ marginBottom: '8px' }}>
 										{flower.flowerName}
 									</Title>
-									<Space
-										align="center"
-										size="large"
-										style={{ marginBottom: '24px' }}
-									>
+
+									{/* Price and Actions */}
+									<div style={{ marginBottom: '16px' }}>
 										<Title level={3} type="success" style={{ margin: 0 }}>
 											{flower.price.toLocaleString('vi-VN')} VND
 										</Title>
-										<Space>
-											<Button
-												icon={<HeartOutlined />}
-												type={isFavorite ? 'primary' : 'default'}
-												shape="circle"
-												size="large"
-												onClick={handleAddToFavorites}
-											/>
-											<Button
-												icon={<ShareAltOutlined />}
-												type="default"
-												shape="circle"
-												size="large"
-												onClick={handleShare}
-											/>
-										</Space>
+									</div>
+
+									{/* Tags for Category and Status */}
+									<Space size="small" style={{ marginBottom: '16px' }}>
+										<Tag
+											color="blue"
+											style={{ fontSize: '14px', padding: '4px 8px' }}
+										>
+											{flower.categoryName || 'N/A'}
+										</Tag>
+										<Tag
+											color={flower.status === 'active' ? 'green' : 'red'}
+											style={{ fontSize: '14px', padding: '4px 8px' }}
+										>
+											{flower.status === 'active' ? 'Available' : 'Unavailable'}
+										</Tag>
+										<Tag
+											color={flower.availableQuantity > 0 ? 'cyan' : 'volcano'}
+											style={{ fontSize: '14px', padding: '4px 8px' }}
+										>
+											{flower.availableQuantity > 0
+												? `${flower.availableQuantity} in stock`
+												: 'Out of stock'}
+										</Tag>
 									</Space>
+
+									{/* Action Buttons - Heart and Share */}
+									<Space style={{ marginBottom: '16px' }}>
+										<Button
+											icon={<HeartOutlined />}
+											type={isFavorite ? 'primary' : 'default'}
+											shape="circle"
+											size="large"
+											onClick={handleAddToFavorites}
+										/>
+										<Button
+											icon={<ShareAltOutlined />}
+											type="default"
+											shape="circle"
+											size="large"
+											onClick={handleShare}
+										/>
+									</Space>
+
+									{/* Description */}
 									<Paragraph
 										style={{
 											fontSize: '16px',
 											lineHeight: '1.6',
 											marginBottom: '24px',
+											color: '#666',
 										}}
 									>
 										{flower.flowerDescription}
 									</Paragraph>
-
-									<Descriptions
-										column={1}
-										size="middle"
-										style={{ marginBottom: '24px' }}
-									>
-										<Descriptions.Item label={<Text strong>Category</Text>}>
-											<Text
-												code
-												style={{
-													backgroundColor: '#e6f7ff',
-													color: '#1890ff',
-													padding: '4px 8px',
-													borderRadius: '4px',
-												}}
-											>
-												{flower.categoryName || 'N/A'}
-											</Text>
-										</Descriptions.Item>
-										<Descriptions.Item label={<Text strong>Stock</Text>}>
-											<Text
-												type={
-													flower.availableQuantity > 0 ? 'success' : 'danger'
-												}
-												strong
-											>
-												{flower.availableQuantity > 0
-													? `${flower.availableQuantity} available`
-													: 'Out of stock'}
-											</Text>
-										</Descriptions.Item>
-										<Descriptions.Item label={<Text strong>Status</Text>}>
-											<Text
-												code
-												style={{
-													backgroundColor:
-														flower.status === 'active' ? '#f6ffed' : '#fff2f0',
-													color:
-														flower.status === 'active' ? '#52c41a' : '#ff4d4f',
-													padding: '4px 8px',
-													borderRadius: '4px',
-												}}
-											>
-												{flower.status === 'active'
-													? 'Available'
-													: 'Unavailable'}
-											</Text>
-										</Descriptions.Item>
-									</Descriptions>
 								</div>
 
-								<Divider />
+								<Divider style={{ margin: '16px 0' }} />
 
 								{/* Quantity Selector */}
-								<div
-									style={{
-										display: 'flex',
-										justifyContent: 'space-between',
-										alignItems: 'center',
-									}}
-								>
-									<Text strong style={{ fontSize: '16px' }}>
-										Quantity:
+								<div>
+									<Text
+										strong
+										style={{
+											fontSize: '16px',
+											display: 'block',
+											marginBottom: '12px',
+										}}
+									>
+										Select Quantity:
 									</Text>
-									<Space size="middle">
+									<Space size="middle" style={{ marginBottom: '24px' }}>
 										<Button
 											icon={<MinusOutlined />}
 											onClick={handleDecrement}
@@ -512,19 +491,25 @@ export const FlowerDetail: React.FC = () => {
 													width: '100%',
 													height: '48px',
 													fontSize: '16px',
+													backgroundColor: '#52c41a',
+													borderColor: '#52c41a',
 												}}
 											>
 												Buy Now
 											</Button>
 										</Col>
 									</Row>
-									<Button
-										icon={<FlagOutlined />}
-										onClick={showReportModal}
-										type="text"
-									>
-										Report to Admin
-									</Button>
+
+									<div style={{ textAlign: 'center', marginTop: '16px' }}>
+										<Button
+											icon={<FlagOutlined />}
+											onClick={showReportModal}
+											type="text"
+											style={{ color: '#666' }}
+										>
+											Report to Admin
+										</Button>
+									</div>
 								</Space>
 							</Space>
 						</Card>
