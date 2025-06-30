@@ -93,6 +93,14 @@ class CategoryService {
 			await apiClient.get<ApiResponse<CategoryResponse[]>>('/categories');
 		return response.data.data;
 	}
+
+	// Get top popular categories (for home page)
+	async getTopPopularCategories(): Promise<CategoryResponse[]> {
+		const response = await apiClient.get<ApiResponse<CategoryResponse[]>>(
+			'/categories/top-popular',
+		);
+		return response.data.data;
+	}
 }
 
 export const categoryService = new CategoryService();
