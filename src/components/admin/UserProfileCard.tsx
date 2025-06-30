@@ -46,15 +46,15 @@ export const UserProfileCard: React.FC<UserProfileCardProps> = ({ user }) => {
 
 	return (
 		<Card className="user-profile-card">
-			<div className="flex items-start space-x-4">
+			<div className="flex items-start space-x-6">
 				<Avatar
 					size={80}
 					src={user.userInfo?.avatar}
 					icon={<UserOutlined />}
 					style={{ backgroundColor: COLORS.primary }}
 				/>
-				<div className="flex-1">
-					<div className="flex items-center space-x-2 mb-2">
+				<div className="flex-1 min-w-0">
+					<div className="flex items-center space-x-3 mb-3">
 						<Title level={4} className="!mb-0">
 							{user.userInfo?.fullName || user.username}
 						</Title>
@@ -66,40 +66,42 @@ export const UserProfileCard: React.FC<UserProfileCardProps> = ({ user }) => {
 						</Tag>
 					</div>
 
-					<Text type="secondary" className="block mb-3">
+					<Text type="secondary" className="block mb-4">
 						@{user.username}
 					</Text>
 
-					<Space direction="vertical" size="small" className="w-full">
-						<div className="flex items-center space-x-2">
+					<Space direction="vertical" size="middle" className="w-full">
+						<div className="flex items-center space-x-3">
 							<MailOutlined style={{ color: COLORS.primary }} />
 							<Text>{user.email}</Text>
 						</div>
 
 						{user.userInfo?.phone && (
-							<div className="flex items-center space-x-2">
+							<div className="flex items-center space-x-3">
 								<PhoneOutlined style={{ color: COLORS.primary }} />
 								<Text>{user.userInfo.phone}</Text>
 							</div>
 						)}
 
 						{user.userInfo?.address && (
-							<div className="flex items-center space-x-2">
+							<div className="flex items-center space-x-3">
 								<HomeOutlined style={{ color: COLORS.primary }} />
 								<Text className="text-sm">{user.userInfo.address}</Text>
 							</div>
 						)}
 
 						{user.userInfo?.dateOfBirth && (
-							<div className="flex items-center space-x-2">
+							<div className="flex items-center space-x-3">
 								<CalendarOutlined style={{ color: COLORS.primary }} />
 								<Text>{formatDate(user.userInfo.dateOfBirth)}</Text>
 							</div>
 						)}
 
 						{user.userInfo?.gender && (
-							<div className="flex items-center space-x-2">
-								<span>{getGenderIcon(user.userInfo.gender)}</span>
+							<div className="flex items-center space-x-3">
+								<span style={{ fontSize: '16px' }}>
+									{getGenderIcon(user.userInfo.gender)}
+								</span>
 								<Text className="capitalize">{user.userInfo.gender}</Text>
 							</div>
 						)}
@@ -107,7 +109,7 @@ export const UserProfileCard: React.FC<UserProfileCardProps> = ({ user }) => {
 				</div>
 			</div>
 
-			<div className="mt-4 pt-4 border-t border-gray-200">
+			<div className="mt-6 pt-4 border-t border-gray-200">
 				<Descriptions size="small" column={2}>
 					<Descriptions.Item label="Created">
 						{formatDate(user.createdAt)}

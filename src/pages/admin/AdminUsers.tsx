@@ -8,33 +8,22 @@ import {
 	EyeOutlined,
 	SearchOutlined,
 	StopOutlined,
-	UserOutlined,
 } from '@ant-design/icons';
 import {
-	Avatar,
-	Badge,
 	Button,
 	Card,
-	Col,
 	Form,
 	Input,
 	Modal,
-	Popconfirm,
-	Row,
-	Select,
 	Space,
 	Table,
 	Tag,
-	Tooltip,
-	Typography,
 	message,
 } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
 import React, { useEffect, useState } from 'react';
 
-const { Title, Text } = Typography;
 const { TextArea } = Input;
-const { Option } = Select;
 
 interface UserStats {
 	totalUsers: number;
@@ -47,11 +36,8 @@ interface UserStats {
 
 export const AdminUsers: React.FC = () => {
 	const [users, setUsers] = useState<UserListRequest[]>([]);
-	const [filteredUsers, setFilteredUsers] = useState<UserListRequest[]>([]);
 	const [loading, setLoading] = useState(false);
 	const [searchText, setSearchText] = useState('');
-	const [statusFilter, setStatusFilter] = useState<string>('all');
-	const [typeFilter, setTypeFilter] = useState<string>('all');
 	const [selectedUser, setSelectedUser] = useState<UserDetailResponse | null>(
 		null,
 	);
@@ -60,44 +46,18 @@ export const AdminUsers: React.FC = () => {
 	const [userStats, setUserStats] = useState<UserStats | null>(null);
 	const [form] = Form.useForm();
 
-	const filterUsers = React.useCallback(() => {
-		let filtered = users;
-
-		// Search filter
-		if (searchText) {
-			filtered = filtered.filter(
-				(user) =>
-					user.username.toLowerCase().includes(searchText.toLowerCase()) ||
-					user.email.toLowerCase().includes(searchText.toLowerCase()) ||
-					user.userInfo?.fullName
-						?.toLowerCase()
-						.includes(searchText.toLowerCase()),
-			);
-		}
-
-		// Status filter
-		if (statusFilter !== 'all') {
-			filtered = filtered.filter((user) =>
-				statusFilter === 'active' ? user.isActive : !user.isActive,
-			);
-		}
-
-		// Type filter
-		if (typeFilter !== 'all') {
-			filtered = filtered.filter((user) => user.type === typeFilter);
-		}
-
-		setFilteredUsers(filtered);
-	}, [users, searchText, statusFilter, typeFilter]);
+	// Filter users based on search text
+	const filteredUsers = users.filter(
+		(user) =>
+			user.username.toLowerCase().includes(searchText.toLowerCase()) ||
+			user.email.toLowerCase().includes(searchText.toLowerCase()) ||
+			user.userInfo?.fullName?.toLowerCase().includes(searchText.toLowerCase()),
+	);
 
 	useEffect(() => {
 		fetchUsers();
 		fetchUserStats();
 	}, []);
-
-	useEffect(() => {
-		filterUsers();
-	}, [filterUsers]);
 
 	const fetchUsers = async () => {
 		try {
@@ -173,9 +133,6 @@ export const AdminUsers: React.FC = () => {
 		}
 	};
 
-	const getStatusText = (isActive: boolean) =>
-		isActive ? 'Active' : 'Inactive';
-
 	const getTypeColor = (type: string) => {
 		switch (type) {
 			case 'admin':
@@ -187,207 +144,193 @@ export const AdminUsers: React.FC = () => {
 		}
 	};
 
-	const formatDate = (dateString?: string) => {
-		if (!dateString) return 'N/A';
-		return new Date(dateString).toLocaleDateString('vi-VN');
-	};
-
+	// Table columns
 	const columns: ColumnsType<UserListRequest> = [
 		{
-			title: 'User',
-			key: 'user',
-			width: 300,
-			render: (_, record) => (
-				<div className="flex items-center space-x-3">
-					<Avatar
-						size={40}
-						src={record.userInfo?.avatar}
-						icon={<UserOutlined />}
-						style={{ backgroundColor: COLORS.primary }}
-					/>
-					<div>
-						<div className="font-medium text-gray-900">
-							{record.userInfo?.fullName || record.username}
-						</div>
-						<div className="text-sm text-gray-500">@{record.username}</div>
-						<div className="text-xs text-gray-400">{record.email}</div>
-					</div>
+			title: <div style={{ textAlign: 'center' }}>ID</div>,
+			dataIndex: 'userId',
+			key: 'userId',
+			width: 80,
+			sorter: (a, b) => a.userId - b.userId,
+			align: 'center',
+			render: (id: number) => <div style={{ textAlign: 'center' }}>#{id}</div>,
+		},
+		{
+			title: <div style={{ textAlign: 'center' }}>Name</div>,
+			dataIndex: 'userInfo',
+			key: 'name',
+			width: 180,
+			sorter: (a, b) => {
+				const nameA = a.userInfo?.fullName || a.username;
+				const nameB = b.userInfo?.fullName || b.username;
+				return nameA.localeCompare(nameB);
+			},
+			align: 'center',
+			render: (
+				userInfo: UserListRequest['userInfo'],
+				record: UserListRequest,
+			) => (
+				<div style={{ textAlign: 'center' }}>
+					{userInfo?.fullName || record.username}
 				</div>
 			),
 		},
 		{
-			title: 'Type',
+			title: <div style={{ textAlign: 'center' }}>Email</div>,
+			dataIndex: 'email',
+			key: 'email',
+			width: 220,
+			sorter: (a, b) => a.email.localeCompare(b.email),
+			align: 'center',
+		},
+		{
+			title: <div style={{ textAlign: 'center' }}>Type</div>,
 			dataIndex: 'type',
 			key: 'type',
 			width: 100,
+			align: 'center',
 			render: (type: string) => (
-				<Tag color={getTypeColor(type)} className="capitalize">
-					{type}
-				</Tag>
+				<div style={{ textAlign: 'center' }}>
+					<Tag color={getTypeColor(type)} className="capitalize">
+						{type}
+					</Tag>
+				</div>
 			),
+			filters: [
+				{ text: 'Admin', value: 'admin' },
+				{ text: 'User', value: 'user' },
+			],
+			onFilter: (value, record) => record.type === value,
 		},
 		{
-			title: 'Status',
+			title: <div style={{ textAlign: 'center' }}>Status</div>,
 			dataIndex: 'isActive',
 			key: 'status',
 			width: 100,
+			align: 'center',
 			render: (isActive: boolean) => (
-				<Badge
-					status={isActive ? 'success' : 'error'}
-					text={
-						<span className={isActive ? 'text-green-600' : 'text-red-600'}>
-							{getStatusText(isActive)}
-						</span>
-					}
-				/>
-			),
-		},
-		{
-			title: 'Contact',
-			key: 'contact',
-			width: 200,
-			render: (_, record) => (
-				<div>
-					{record.userInfo?.phone && (
-						<div className="text-sm">📞 {record.userInfo.phone}</div>
-					)}
-					{record.userInfo?.address && (
-						<div className="text-xs text-gray-500 truncate max-w-32">
-							📍 {record.userInfo.address}
-						</div>
-					)}
+				<div style={{ textAlign: 'center' }}>
+					<Tag color={isActive ? 'green' : 'red'}>
+						{isActive ? 'Active' : 'Inactive'}
+					</Tag>
 				</div>
 			),
+			filters: [
+				{ text: 'Active', value: true },
+				{ text: 'Inactive', value: false },
+			],
+			onFilter: (value, record) => record.isActive === value,
 		},
 		{
-			title: 'Created',
+			title: <div style={{ textAlign: 'center' }}>Created Date</div>,
 			dataIndex: 'createdAt',
 			key: 'createdAt',
-			width: 120,
+			width: 150,
+			align: 'center',
 			render: (date: string) => (
-				<div className="text-sm text-gray-600">{formatDate(date)}</div>
+				<div style={{ textAlign: 'center' }}>
+					{date ? new Date(date).toLocaleDateString('en-US') : '-'}
+				</div>
 			),
+			sorter: (a, b) =>
+				new Date(a.createdAt || 0).getTime() -
+				new Date(b.createdAt || 0).getTime(),
 		},
 		{
-			title: 'Actions',
+			title: <div style={{ textAlign: 'center' }}>Actions</div>,
 			key: 'actions',
-			width: 150,
+			width: 200,
+			align: 'center',
 			render: (_, record) => (
-				<Space>
-					<Tooltip title="View Details">
+				<div style={{ textAlign: 'center' }}>
+					<Space size="small">
 						<Button
 							type="text"
 							icon={<EyeOutlined />}
 							onClick={() => handleViewDetails(record.userId)}
-						/>
-					</Tooltip>
-
-					{record.type !== 'admin' && (
-						<Popconfirm
-							title={`${record.isActive ? 'Deactivate' : 'Activate'} User`}
-							description={`Are you sure you want to ${record.isActive ? 'deactivate' : 'activate'} this user?`}
-							onConfirm={() => handleToggleStatus(record)}
-							okText="Yes"
-							cancelText="No"
+							style={{ color: COLORS.info }}
 						>
-							<Tooltip
-								title={record.isActive ? 'Deactivate User' : 'Activate User'}
+							View
+						</Button>
+						{record.type !== 'admin' && (
+							<Button
+								type="text"
+								icon={
+									record.isActive ? <StopOutlined /> : <CheckCircleOutlined />
+								}
+								onClick={() => handleToggleStatus(record)}
+								style={{
+									color: record.isActive ? COLORS.error : COLORS.success,
+								}}
 							>
-								<Button
-									type="text"
-									danger={record.isActive}
-									icon={
-										record.isActive ? <StopOutlined /> : <CheckCircleOutlined />
-									}
-								/>
-							</Tooltip>
-						</Popconfirm>
-					)}
-				</Space>
+								{record.isActive ? 'Deactivate' : 'Activate'}
+							</Button>
+						)}
+					</Space>
+				</div>
 			),
 		},
 	];
 
 	return (
-		<div className="p-6 bg-gray-50 min-h-screen">
-			<div className="mb-6">
-				<Title level={2} className="!mb-2">
-					User Management
-				</Title>
-				<Text type="secondary">Manage and monitor user accounts</Text>
-			</div>
-
+		<div className="p-6">
 			{/* Statistics Cards */}
 			{userStats && <UserStatsCards stats={userStats} />}
 
-			{/* Filters */}
-			<Card className="mb-6">
-				<Row gutter={[16, 16]} align="middle">
-					<Col xs={24} sm={12} md={8}>
-						<Input
-							placeholder="Search users..."
-							prefix={<SearchOutlined />}
-							value={searchText}
-							onChange={(e) => setSearchText(e.target.value)}
-							allowClear
+			<Card
+				title={
+					<div className="flex items-center gap-3">
+						<div
+							className="w-1 h-8 rounded"
+							style={{ backgroundColor: COLORS.primary }}
 						/>
-					</Col>
-					<Col xs={12} sm={6} md={4}>
-						<Select
-							placeholder="Status"
-							value={statusFilter}
-							onChange={setStatusFilter}
-							style={{ width: '100%' }}
-						>
-							<Option value="all">All Status</Option>
-							<Option value="active">Active</Option>
-							<Option value="inactive">Inactive</Option>
-						</Select>
-					</Col>
-					<Col xs={12} sm={6} md={4}>
-						<Select
-							placeholder="Type"
-							value={typeFilter}
-							onChange={setTypeFilter}
-							style={{ width: '100%' }}
-						>
-							<Option value="all">All Types</Option>
-							<Option value="admin">Admin</Option>
-							<Option value="user">User</Option>
-						</Select>
-					</Col>
-					<Col xs={24} sm={12} md={8} className="text-right">
-						<Space>
-							<Button onClick={fetchUsers} loading={loading}>
-								Refresh
-							</Button>
-						</Space>
-					</Col>
-				</Row>
-			</Card>
+						<h2 className="text-2xl font-bold mb-0">User Management</h2>
+					</div>
+				}
+			>
+				{/* Search */}
+				<div className="mb-4">
+					<Input
+						placeholder="Search users..."
+						prefix={<SearchOutlined />}
+						value={searchText}
+						onChange={(e) => setSearchText(e.target.value)}
+						style={{ width: 300 }}
+						allowClear
+					/>
+				</div>
 
-			{/* Users Table */}
-			<Card>
+				{/* Users table */}
 				<Table
 					columns={columns}
 					dataSource={filteredUsers}
 					rowKey="userId"
 					loading={loading}
 					pagination={{
-						total: filteredUsers.length,
 						pageSize: 10,
 						showSizeChanger: true,
 						showQuickJumper: true,
 						showTotal: (total, range) =>
 							`${range[0]}-${range[1]} of ${total} users`,
 					}}
-					scroll={{ x: 1200 }}
+					style={{
+						borderRadius: 8,
+						overflow: 'hidden',
+					}}
 				/>
 			</Card>
 
 			{/* User Detail Modal */}
 			<Modal
-				title="User Details"
+				title={
+					<div className="flex items-center gap-3">
+						<div
+							className="w-1 h-6 rounded"
+							style={{ backgroundColor: COLORS.info }}
+						/>
+						<span className="text-lg font-semibold">User Details</span>
+					</div>
+				}
 				open={detailModalVisible}
 				onCancel={() => setDetailModalVisible(false)}
 				footer={null}
@@ -398,7 +341,17 @@ export const AdminUsers: React.FC = () => {
 
 			{/* Status Change Modal */}
 			<Modal
-				title={`${selectedUser?.isActive ? 'Deactivate' : 'Activate'} User`}
+				title={
+					<div className="flex items-center gap-3">
+						<div
+							className="w-1 h-6 rounded"
+							style={{ backgroundColor: COLORS.primary }}
+						/>
+						<span className="text-lg font-semibold">
+							{selectedUser?.isActive ? 'Deactivate' : 'Activate'} User
+						</span>
+					</div>
+				}
 				open={statusModalVisible}
 				onOk={handleStatusSubmit}
 				onCancel={() => {
@@ -407,7 +360,7 @@ export const AdminUsers: React.FC = () => {
 				}}
 				confirmLoading={loading}
 			>
-				<Form form={form} layout="vertical">
+				<Form form={form} layout="vertical" className="mt-4">
 					<Form.Item
 						name="reason"
 						label="Reason"
