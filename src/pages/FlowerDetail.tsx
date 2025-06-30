@@ -293,33 +293,18 @@ export const FlowerDetail: React.FC = () => {
 										position: 'relative',
 										height: '500px',
 										overflow: 'hidden',
+										display: 'flex',
+										alignItems: 'center',
+										justifyContent: 'center',
 									}}
 								>
-									<Image
+									<img
 										src={flower.imageUrl}
-										alt={flower.flowerName}
 										style={{
 											width: '100%',
-											height: '100%',
+											height: 'auto',
 											objectFit: 'cover',
-										}}
-										preview={{
-											mask: (
-												<div
-													style={{
-														backgroundColor: 'rgba(0,0,0,0.5)',
-														color: 'white',
-														padding: '8px 16px',
-														borderRadius: '4px',
-													}}
-												>
-													Click to zoom
-												</div>
-											),
-										}}
-										onError={(e) => {
-											const target = e.target as HTMLImageElement;
-											target.src = '/images/picture/hoa4.jpg';
+											objectPosition: 'center',
 										}}
 									/>
 									{!isAvailable && (
