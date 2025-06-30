@@ -62,32 +62,22 @@ export const UserStatsCards: React.FC<UserStatsProps> = ({ stats }) => {
 	];
 
 	return (
-		<Row gutter={[16, 16]} className="mb-6">
+		<Row gutter={[16, 16]}>
 			{statsConfig.map((stat, index) => (
 				<Col xs={12} sm={8} lg={4} key={index}>
 					<Card
 						className="stats-card hover:shadow-lg transition-shadow duration-300"
-						style={{ 
-							borderTop: `3px solid ${stat.color}`,
-							borderRadius: '8px',
-							overflow: 'hidden'
-						}}
-						bodyStyle={{ padding: '20px' }}
+						style={{ borderTop: `3px solid ${stat.color}` }}
 					>
 						<Statistic
-							title={
-								<span style={{ fontSize: '14px', fontWeight: 500, color: '#6b7280' }}>
-									{stat.title}
-								</span>
-							}
+							title={stat.title}
 							value={stat.value}
 							suffix={stat.suffix}
 							prefix={stat.icon}
 							valueStyle={{
 								color: stat.color,
-								fontSize: '1.75rem',
+								fontSize: '1.5rem',
 								fontWeight: 'bold',
-								lineHeight: 1.2
 							}}
 						/>
 					</Card>

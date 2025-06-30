@@ -3,7 +3,6 @@ import { UserStatsCards } from '../../components/admin/UserStatsCards';
 import { COLORS } from '../../constants/colors';
 import { userManagementService } from '../../services/userManagementService';
 import type { UserDetailResponse, UserListRequest } from '../../types';
-import './AdminUsers.module.css';
 import {
 	CheckCircleOutlined,
 	EyeOutlined,
@@ -195,35 +194,18 @@ export const AdminUsers: React.FC = () => {
 
 	const columns: ColumnsType<UserListRequest> = [
 		{
-			title: 'ID',
-			dataIndex: 'userId',
-			key: 'userId',
-			width: 80,
-			align: 'center',
-			sorter: (a, b) => a.userId - b.userId,
-			render: (userId: number) => (
-				<span className="font-mono text-gray-600">#{userId}</span>
-			),
-		},
-		{
-			title: 'User Information',
+			title: 'User',
 			key: 'user',
-			width: 280,
-			align: 'center',
-			sorter: (a, b) => {
-				const nameA = a.userInfo?.fullName || a.username;
-				const nameB = b.userInfo?.fullName || b.username;
-				return nameA.localeCompare(nameB);
-			},
+			width: 300,
 			render: (_, record) => (
-				<div className="flex items-center justify-center space-x-3">
+				<div className="flex items-center space-x-3">
 					<Avatar
 						size={40}
 						src={record.userInfo?.avatar}
 						icon={<UserOutlined />}
 						style={{ backgroundColor: COLORS.primary }}
 					/>
-					<div className="text-center">
+					<div>
 						<div className="font-medium text-gray-900">
 							{record.userInfo?.fullName || record.username}
 						</div>
@@ -238,53 +220,34 @@ export const AdminUsers: React.FC = () => {
 			dataIndex: 'type',
 			key: 'type',
 			width: 100,
-			align: 'center',
-			filters: [
-				{ text: 'Admin', value: 'admin' },
-				{ text: 'User', value: 'user' },
-			],
-			onFilter: (value, record) => record.type === value,
-			sorter: (a, b) => a.type.localeCompare(b.type),
 			render: (type: string) => (
-				<div className="flex justify-center">
-					<Tag color={getTypeColor(type)} className="capitalize">
-						{type}
-					</Tag>
-				</div>
+				<Tag color={getTypeColor(type)} className="capitalize">
+					{type}
+				</Tag>
 			),
 		},
 		{
 			title: 'Status',
 			dataIndex: 'isActive',
 			key: 'status',
-			width: 120,
-			align: 'center',
-			filters: [
-				{ text: 'Active', value: true },
-				{ text: 'Inactive', value: false },
-			],
-			onFilter: (value, record) => record.isActive === value,
-			sorter: (a, b) => Number(b.isActive) - Number(a.isActive),
+			width: 100,
 			render: (isActive: boolean) => (
-				<div className="flex justify-center">
-					<Badge
-						status={isActive ? 'success' : 'error'}
-						text={
-							<span className={isActive ? 'text-green-600' : 'text-red-600'}>
-								{getStatusText(isActive)}
-							</span>
-						}
-					/>
-				</div>
+				<Badge
+					status={isActive ? 'success' : 'error'}
+					text={
+						<span className={isActive ? 'text-green-600' : 'text-red-600'}>
+							{getStatusText(isActive)}
+						</span>
+					}
+				/>
 			),
 		},
 		{
 			title: 'Contact',
 			key: 'contact',
-			width: 180,
-			align: 'center',
+			width: 200,
 			render: (_, record) => (
-				<div className="text-center">
+				<div>
 					{record.userInfo?.phone && (
 						<div className="text-sm">📞 {record.userInfo.phone}</div>
 					)}
@@ -293,69 +256,54 @@ export const AdminUsers: React.FC = () => {
 							📍 {record.userInfo.address}
 						</div>
 					)}
-					{!record.userInfo?.phone && !record.userInfo?.address && (
-						<span className="text-gray-400 text-xs">No contact info</span>
-					)}
 				</div>
 			),
 		},
 		{
-			title: 'Created Date',
+			title: 'Created',
 			dataIndex: 'createdAt',
 			key: 'createdAt',
-			width: 130,
-			align: 'center',
-			sorter: (a, b) => {
-				const dateA = new Date(a.createdAt || '').getTime();
-				const dateB = new Date(b.createdAt || '').getTime();
-				return dateB - dateA;
-			},
-			defaultSortOrder: 'descend',
+			width: 120,
 			render: (date: string) => (
-				<div className="text-sm text-gray-600 text-center">
-					{formatDate(date)}
-				</div>
+				<div className="text-sm text-gray-600">{formatDate(date)}</div>
 			),
 		},
 		{
 			title: 'Actions',
 			key: 'actions',
-			width: 120,
-			align: 'center',
+			width: 150,
 			render: (_, record) => (
-				<div className="flex justify-center">
-					<Space>
-						<Tooltip title="View Details">
-							<Button
-								type="text"
-								icon={<EyeOutlined />}
-								onClick={() => handleViewDetails(record.userId)}
-							/>
-						</Tooltip>
+				<Space>
+					<Tooltip title="View Details">
+						<Button
+							type="text"
+							icon={<EyeOutlined />}
+							onClick={() => handleViewDetails(record.userId)}
+						/>
+					</Tooltip>
 
-						{record.type !== 'admin' && (
-							<Popconfirm
-								title={`${record.isActive ? 'Deactivate' : 'Activate'} User`}
-								description={`Are you sure you want to ${record.isActive ? 'deactivate' : 'activate'} this user?`}
-								onConfirm={() => handleToggleStatus(record)}
-								okText="Yes"
-								cancelText="No"
+					{record.type !== 'admin' && (
+						<Popconfirm
+							title={`${record.isActive ? 'Deactivate' : 'Activate'} User`}
+							description={`Are you sure you want to ${record.isActive ? 'deactivate' : 'activate'} this user?`}
+							onConfirm={() => handleToggleStatus(record)}
+							okText="Yes"
+							cancelText="No"
+						>
+							<Tooltip
+								title={record.isActive ? 'Deactivate User' : 'Activate User'}
 							>
-								<Tooltip
-									title={record.isActive ? 'Deactivate User' : 'Activate User'}
-								>
-									<Button
-										type="text"
-										danger={record.isActive}
-										icon={
-											record.isActive ? <StopOutlined /> : <CheckCircleOutlined />
-										}
-									/>
-								</Tooltip>
-							</Popconfirm>
-						)}
-					</Space>
-				</div>
+								<Button
+									type="text"
+									danger={record.isActive}
+									icon={
+										record.isActive ? <StopOutlined /> : <CheckCircleOutlined />
+									}
+								/>
+							</Tooltip>
+						</Popconfirm>
+					)}
+				</Space>
 			),
 		},
 	];
@@ -429,15 +377,11 @@ export const AdminUsers: React.FC = () => {
 						total: filteredUsers.length,
 						pageSize: 10,
 						showSizeChanger: true,
-						pageSizeOptions: ['10', '20', '50', '100'],
 						showQuickJumper: true,
 						showTotal: (total, range) =>
 							`${range[0]}-${range[1]} of ${total} users`,
 					}}
-					scroll={{ x: 1300 }}
-					size="middle"
-					bordered
-					className="custom-table"
+					scroll={{ x: 1200 }}
 				/>
 			</Card>
 
