@@ -166,7 +166,7 @@ export const Checkout: React.FC = () => {
 							{flower?.flowerName}
 						</Text>
 						<div style={{ color: '#666', fontSize: '12px' }}>
-							{flower?.price?.toLocaleString('vi-VN')} VND
+							{flower?.price?.toLocaleString('vi-VN')} ₫
 						</div>
 					</div>
 				</Space>
@@ -188,7 +188,7 @@ export const Checkout: React.FC = () => {
 					{((record.flower?.price || 0) * record.quantity).toLocaleString(
 						'vi-VN',
 					)}{' '}
-					VND
+					₫
 				</Text>
 			),
 		},
@@ -340,7 +340,7 @@ export const Checkout: React.FC = () => {
 												<div>
 													<Text strong>Standard Delivery</Text>
 													<div style={{ color: '#666', fontSize: '12px' }}>
-														3-5 business days - 30,000 VND
+														3-5 business days - 30,000 ₫
 													</div>
 												</div>
 											</Space>
@@ -351,7 +351,7 @@ export const Checkout: React.FC = () => {
 												<div>
 													<Text strong>Express Delivery</Text>
 													<div style={{ color: '#666', fontSize: '12px' }}>
-														1-2 business days - 50,000 VND
+														1-2 business days - 50,000 ₫
 													</div>
 												</div>
 											</Space>
@@ -449,11 +449,11 @@ export const Checkout: React.FC = () => {
 						<Space direction="vertical" size="small" style={{ width: '100%' }}>
 							<div style={{ display: 'flex', justifyContent: 'space-between' }}>
 								<Text>Subtotal:</Text>
-								<Text>{subtotal.toLocaleString('vi-VN')} VND</Text>
+								<Text>{subtotal.toLocaleString('vi-VN')} ₫</Text>
 							</div>
 							<div style={{ display: 'flex', justifyContent: 'space-between' }}>
 								<Text>Shipping:</Text>
-								<Text>{shippingFee.toLocaleString('vi-VN')} VND</Text>
+								<Text>{shippingFee.toLocaleString('vi-VN')} ₫</Text>
 							</div>
 							<Divider style={{ margin: '12px 0' }} />
 							<div style={{ display: 'flex', justifyContent: 'space-between' }}>
@@ -461,7 +461,7 @@ export const Checkout: React.FC = () => {
 									Total:
 								</Text>
 								<Text strong style={{ fontSize: '16px', color: '#52c41a' }}>
-									{total.toLocaleString('vi-VN')} VND
+									{total.toLocaleString('vi-VN')} ₫
 								</Text>
 							</div>
 						</Space>

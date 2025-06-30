@@ -230,7 +230,7 @@ export const AdminFlower: React.FC = () => {
 			align: 'center',
 			render: (price: number) => (
 				<div style={{ textAlign: 'center' }}>
-					{price.toLocaleString('vi-VN')} VND
+					{price.toLocaleString('vi-VN')} ₫
 				</div>
 			),
 		},
@@ -586,7 +586,7 @@ export const AdminFlower: React.FC = () => {
 								<div>
 									<strong className="text-gray-700">Price:</strong>
 									<p className="mt-1 text-lg font-semibold text-green-600">
-										{viewingFlower.price.toLocaleString('vi-VN')} VND
+										{viewingFlower.price.toLocaleString('vi-VN')} ₫
 									</p>
 								</div>
 								<div>

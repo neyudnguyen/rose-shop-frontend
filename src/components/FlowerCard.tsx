@@ -75,7 +75,7 @@ export const FlowerCard: React.FC<FlowerCardProps> = ({
 				<div className="flex items-center justify-between pt-2">
 					<div className="flex flex-col">
 						<Text strong className="text-xl text-red-500 font-bold">
-							{flowerPrice.toLocaleString('vi-VN')} VND
+							{flowerPrice.toLocaleString('vi-VN')} ₫
 						</Text>
 						<Text type="secondary" className="text-xs">
 							Stock: {flowerStock}

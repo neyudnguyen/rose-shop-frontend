@@ -295,7 +295,7 @@ export const FlowerDetail: React.FC = () => {
 									{/* Price and Actions */}
 									<div style={{ marginBottom: '16px' }}>
 										<Title level={3} type="success" style={{ margin: 0 }}>
-											{flower.price.toLocaleString('vi-VN')} VND
+											{flower.price.toLocaleString('vi-VN')} ₫
 										</Title>
 									</div>
 

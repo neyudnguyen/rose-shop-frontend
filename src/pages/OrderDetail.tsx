@@ -97,7 +97,7 @@ export const OrderDetail: React.FC = () => {
 							{record.flowerName}
 						</Text>
 						<div style={{ color: '#666', fontSize: '14px', marginTop: '4px' }}>
-							{record.unitPrice?.toLocaleString('vi-VN')} VND each
+							{record.unitPrice?.toLocaleString('vi-VN')} ₫ each
 						</div>
 					</div>
 				</Space>
@@ -119,7 +119,7 @@ export const OrderDetail: React.FC = () => {
 			width: 150,
 			render: (totalPrice) => (
 				<Text strong style={{ fontSize: '16px', color: '#52c41a' }}>
-					{totalPrice?.toLocaleString('vi-VN')} VND
+					{totalPrice?.toLocaleString('vi-VN')} ₫
 				</Text>
 			),
 		},
@@ -270,7 +270,7 @@ export const OrderDetail: React.FC = () => {
 								<Space>
 									<Text strong>{order.voucherCode}</Text>
 									<Text type="success">
-										-{order.voucherDiscountAmount?.toLocaleString('vi-VN')} VND
+										-{order.voucherDiscountAmount?.toLocaleString('vi-VN')} ₫
 									</Text>
 								</Space>
 							</Descriptions.Item>
@@ -295,11 +295,11 @@ export const OrderDetail: React.FC = () => {
 						<Space direction="vertical" size="small" style={{ width: '100%' }}>
 							<div style={{ display: 'flex', justifyContent: 'space-between' }}>
 								<Text>Subtotal:</Text>
-								<Text>{order.subTotal?.toLocaleString('vi-VN')} VND</Text>
+								<Text>{order.subTotal?.toLocaleString('vi-VN')} ₫</Text>
 							</div>
 							<div style={{ display: 'flex', justifyContent: 'space-between' }}>
 								<Text>Shipping Fee:</Text>
-								<Text>{order.shippingFee?.toLocaleString('vi-VN')} VND</Text>
+								<Text>{order.shippingFee?.toLocaleString('vi-VN')} ₫</Text>
 							</div>
 							{order.voucherDiscountAmount > 0 && (
 								<div
@@ -307,7 +307,7 @@ export const OrderDetail: React.FC = () => {
 								>
 									<Text>Voucher Discount:</Text>
 									<Text type="success">
-										-{order.voucherDiscountAmount?.toLocaleString('vi-VN')} VND
+										-{order.voucherDiscountAmount?.toLocaleString('vi-VN')} ₫
 									</Text>
 								</div>
 							)}
@@ -323,7 +323,7 @@ export const OrderDetail: React.FC = () => {
 									Total:
 								</Text>
 								<Text strong style={{ fontSize: '18px', color: '#52c41a' }}>
-									{order.totalPrice?.toLocaleString('vi-VN')} VND
+									{order.totalPrice?.toLocaleString('vi-VN')} ₫
 								</Text>
 							</div>
 						</Space>

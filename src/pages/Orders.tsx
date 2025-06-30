@@ -125,7 +125,7 @@ export const Orders: React.FC = () => {
 			key: 'totalPrice',
 			render: (totalPrice) => (
 				<Text strong style={{ fontSize: '16px', color: '#52c41a' }}>
-					{totalPrice?.toLocaleString('vi-VN')} VND
+					{totalPrice?.toLocaleString('vi-VN')} ₫
 				</Text>
 			),
 		},
