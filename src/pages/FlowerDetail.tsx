@@ -1,3 +1,4 @@
+import { FlowerCard } from '../components/FlowerCard';
 import { cartService } from '../services/cartService';
 import { flowerService } from '../services/flowerService';
 import type { Flower } from '../types';
@@ -6,9 +7,11 @@ import {
 	DollarOutlined,
 	ExclamationCircleOutlined,
 	FlagOutlined,
+	HeartOutlined,
 	HomeOutlined,
 	MinusOutlined,
 	PlusOutlined,
+	ShareAltOutlined,
 	ShoppingCartOutlined,
 } from '@ant-design/icons';
 import {
@@ -16,12 +19,15 @@ import {
 	Breadcrumb,
 	Button,
 	Card,
+	Col,
 	Descriptions,
 	Divider,
 	Form,
+	Image,
 	Input,
 	InputNumber,
 	Modal,
+	Row,
 	Select,
 	Space,
 	Spin,
@@ -43,13 +49,16 @@ interface ReportFormValues {
 export const FlowerDetail: React.FC = () => {
 	const { id } = useParams<{ id: string }>();
 	const [flower, setFlower] = useState<Flower | null>(null);
+	const [suggestedFlowers, setSuggestedFlowers] = useState<Flower[]>([]);
 	const [loading, setLoading] = useState(true);
+	const [suggestedLoading, setSuggestedLoading] = useState(false);
 	const [error, setError] = useState<string | null>(null);
 	const [quantity, setQuantity] = useState(1);
 	const [addingToCart, setAddingToCart] = useState(false);
 	const [reportModalVisible, setReportModalVisible] = useState(false);
 	const [reportForm] = Form.useForm();
 	const [submitting, setSubmitting] = useState(false);
+	const [isFavorite, setIsFavorite] = useState(false);
 
 	useEffect(() => {
 		const fetchFlower = async () => {
@@ -58,6 +67,22 @@ export const FlowerDetail: React.FC = () => {
 			try {
 				const flowerData = await flowerService.getFlowerById(Number(id));
 				setFlower(flowerData);
+
+				// Fetch suggested flowers after getting the main flower
+				setSuggestedLoading(true);
+				try {
+					const allFlowers = await flowerService.getFlowers();
+					// Filter out current flower and get random 4 flowers
+					const filteredFlowers = allFlowers.filter(
+						(f) => f.flowerId !== flowerData.flowerId && f.status === 'active',
+					);
+					const shuffled = filteredFlowers.sort(() => 0.5 - Math.random());
+					setSuggestedFlowers(shuffled.slice(0, 4));
+				} catch (suggestedError) {
+					console.error('Error fetching suggested flowers:', suggestedError);
+				} finally {
+					setSuggestedLoading(false);
+				}
 			} catch (err) {
 				setError('Failed to load flower details. Please try again.');
 				console.error('Error fetching flower:', err);
@@ -81,6 +106,36 @@ export const FlowerDetail: React.FC = () => {
 			message.error('Failed to add to cart. Please try again.');
 		} finally {
 			setAddingToCart(false);
+		}
+	};
+
+	const handleAddToFavorites = () => {
+		setIsFavorite(!isFavorite);
+		message.success(
+			isFavorite ? 'Removed from favorites' : 'Added to favorites',
+		);
+	};
+
+	const handleShare = () => {
+		if (navigator.share) {
+			navigator.share({
+				title: flower?.flowerName,
+				text: flower?.flowerDescription,
+				url: window.location.href,
+			});
+		} else {
+			navigator.clipboard.writeText(window.location.href);
+			message.success('Link copied to clipboard!');
+		}
+	};
+
+	const handleSuggestedAddToCart = async (flowerId: string) => {
+		try {
+			await cartService.addToCart(flowerId, 1);
+			message.success('Added to cart successfully!');
+		} catch (err) {
+			console.error('Error adding to cart:', err);
+			message.error('Failed to add to cart. Please try again.');
 		}
 	};
 
@@ -138,8 +193,14 @@ export const FlowerDetail: React.FC = () => {
 
 	if (loading) {
 		return (
-			<div className="flex justify-center items-center min-h-96">
-				<Spin size="large" />
+			<div
+				className="flex justify-center items-center min-h-96"
+				style={{
+					background:
+						'linear-gradient(135deg, #FFF9E6 0%, #FFDBDB 50%, #FFC6C6 100%)',
+				}}
+			>
+				<Spin size="large" style={{ color: '#644A07' }} />
 			</div>
 		);
 	}
@@ -161,190 +222,287 @@ export const FlowerDetail: React.FC = () => {
 		flower.status === 'active' && flower.availableQuantity > 0;
 
 	return (
-		<div className="max-w-6xl mx-auto px-4 py-8 lg:py-24">
-			<Breadcrumb
-				className="mb-6"
-				items={[
-					{
-						title: (
-							<Link to="/">
-								<HomeOutlined />
-							</Link>
-						),
-					},
-					{
-						title: <Link to="/flowers">Flowers</Link>,
-					},
-					{
-						title: flower.categoryName || 'Category',
-					},
-					{
-						title: flower.flowerName,
-					},
-				]}
-			/>
+		<div className="min-h-screen bg-gray-50">
+			<div className="max-w-6xl mx-auto px-4 py-8 lg:py-16">
+				<Breadcrumb
+					className="mb-8 bg-white px-4 py-2 rounded-lg shadow-sm"
+					items={[
+						{
+							title: (
+								<Link to="/" className="text-blue-600 hover:text-blue-800">
+									<HomeOutlined />
+								</Link>
+							),
+						},
+						{
+							title: (
+								<Link
+									to="/flowers"
+									className="text-blue-600 hover:text-blue-800"
+								>
+									Flowers
+								</Link>
+							),
+						},
+						{
+							title: (
+								<span className="text-gray-600">
+									{flower.categoryName || 'Category'}
+								</span>
+							),
+						},
+						{
+							title: (
+								<span className="text-gray-800 font-medium">
+									{flower.flowerName}
+								</span>
+							),
+						},
+					]}
+				/>
 
-			<div className="flex flex-col lg:flex-row gap-10">
-				{/* Image Section */}
-				<div className="flex-1">
-					<Card className="h-full border-0 shadow-lg">
-						<div className="relative w-full h-96 lg:h-[500px] overflow-hidden rounded-lg">
-							<img
-								src={flower.imageUrl}
-								alt={flower.flowerName}
-								className="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
-								onError={(e) => {
-									const target = e.target as HTMLImageElement;
-									target.src = '/images/picture/hoa4.jpg';
-								}}
-							/>
-							{!isAvailable && (
-								<div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-									<div className="bg-red-500 text-white px-4 py-2 rounded-lg font-semibold">
-										Out of Stock
+				<div className="flex flex-col lg:flex-row gap-10 mb-16">
+					{/* Image Section */}
+					<div className="flex-1">
+						<Card className="h-full border-0 shadow-xl rounded-2xl overflow-hidden bg-white">
+							<div className="relative w-full h-96 lg:h-[500px] overflow-hidden">
+								<Image
+									src={flower.imageUrl}
+									alt={flower.flowerName}
+									className="w-full h-full object-cover"
+									style={{ borderRadius: '1rem' }}
+									preview={{
+										mask: (
+											<div className="bg-black bg-opacity-50 text-white px-4 py-2 rounded-lg">
+												Click to zoom
+											</div>
+										),
+									}}
+									onError={(e) => {
+										const target = e.target as HTMLImageElement;
+										target.src = '/images/picture/hoa4.jpg';
+									}}
+								/>
+								{!isAvailable && (
+									<div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+										<div className="bg-red-500 text-white px-6 py-3 rounded-xl font-semibold shadow-lg">
+											Out of Stock
+										</div>
+									</div>
+								)}
+							</div>
+						</Card>
+					</div>
+
+					{/* Details Section */}
+					<div className="flex-1 flex flex-col justify-between space-y-6">
+						<Card className="border-0 shadow-xl rounded-2xl bg-white p-6">
+							<div>
+								<Title level={2} className="!text-3xl !font-bold !mb-4">
+									{flower.flowerName}
+								</Title>
+								<div className="flex items-center gap-4 mb-6">
+									<Title level={3} className="!mb-0 !text-2xl text-green-600">
+										{flower.price.toLocaleString('vi-VN')} VND
+									</Title>
+									<div className="flex gap-2">
+										<Button
+											icon={<HeartOutlined />}
+											type={isFavorite ? 'primary' : 'default'}
+											shape="circle"
+											size="large"
+											onClick={handleAddToFavorites}
+										/>
+										<Button
+											icon={<ShareAltOutlined />}
+											type="default"
+											shape="circle"
+											size="large"
+											onClick={handleShare}
+										/>
 									</div>
 								</div>
-							)}
-						</div>
-					</Card>
+								<Paragraph className="text-gray-700 text-lg leading-relaxed mb-6">
+									{flower.flowerDescription}
+								</Paragraph>
+
+								<Descriptions column={1} size="middle" className="mb-6">
+									<Descriptions.Item
+										label={
+											<Text strong className="text-gray-700">
+												Category
+											</Text>
+										}
+									>
+										<span className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm font-medium">
+											{flower.categoryName || 'N/A'}
+										</span>
+									</Descriptions.Item>
+									<Descriptions.Item
+										label={
+											<Text strong className="text-gray-700">
+												Stock
+											</Text>
+										}
+									>
+										<Text
+											className={`font-medium ${
+												flower.availableQuantity > 0
+													? 'text-green-600'
+													: 'text-red-600'
+											}`}
+										>
+											{flower.availableQuantity > 0
+												? `${flower.availableQuantity} available`
+												: 'Out of stock'}
+										</Text>
+									</Descriptions.Item>
+									<Descriptions.Item
+										label={
+											<Text strong className="text-gray-700">
+												Status
+											</Text>
+										}
+									>
+										<span
+											className={`px-3 py-1 rounded-full text-sm font-medium ${
+												flower.status === 'active'
+													? 'bg-green-100 text-green-800'
+													: 'bg-red-100 text-red-800'
+											}`}
+										>
+											{flower.status === 'active' ? 'Available' : 'Unavailable'}
+										</span>
+									</Descriptions.Item>
+								</Descriptions>
+							</div>
+
+							<Divider className="my-6" />
+
+							{/* Quantity Selector */}
+							<div className="flex items-center justify-between mb-6">
+								<Text strong className="text-lg">
+									Quantity:
+								</Text>
+								<Space size="middle">
+									<Button
+										icon={<MinusOutlined />}
+										onClick={handleDecrement}
+										disabled={!isAvailable}
+										size="large"
+									/>
+									<InputNumber
+										min={1}
+										max={flower.availableQuantity}
+										value={quantity}
+										onChange={(value) => setQuantity(Number(value) || 1)}
+										controls={false}
+										style={{ width: '80px' }}
+										size="large"
+										disabled={!isAvailable}
+										className="text-center font-semibold"
+									/>
+									<Button
+										icon={<PlusOutlined />}
+										onClick={handleIncrement}
+										disabled={
+											!isAvailable || quantity >= flower.availableQuantity
+										}
+										size="large"
+									/>
+								</Space>
+							</div>
+
+							{/* Action Buttons */}
+							<div className="flex flex-col sm:flex-row gap-4">
+								<Button
+									type="primary"
+									size="large"
+									icon={<ShoppingCartOutlined />}
+									onClick={handleAddToCart}
+									loading={addingToCart}
+									disabled={!isAvailable}
+									className="flex-1 h-12 text-lg font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-300"
+								>
+									Add to Cart
+								</Button>
+								<Button
+									type="primary"
+									size="large"
+									icon={<DollarOutlined />}
+									disabled={!isAvailable}
+									className="flex-1 h-12 text-lg font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-300"
+								>
+									Buy Now
+								</Button>
+							</div>
+
+							{/* Report Button */}
+							<div className="mt-4">
+								<Button
+									icon={<FlagOutlined />}
+									onClick={showReportModal}
+									className="rounded-lg"
+								>
+									Report to Admin
+								</Button>
+							</div>
+						</Card>
+
+						{/* Additional Info Card */}
+						<Card className="border-0 shadow-lg rounded-2xl bg-white">
+							<div className="space-y-3">
+								<div className="flex justify-between items-center">
+									<Text className="text-gray-600">🚚 Delivery:</Text>
+									<Text strong className="text-gray-800">
+										Same day delivery available
+									</Text>
+								</div>
+								<div className="flex justify-between items-center">
+									<Text className="text-gray-600">📋 Care instructions:</Text>
+									<Text strong className="text-gray-800">
+										Included with purchase
+									</Text>
+								</div>
+								<div className="flex justify-between items-center">
+									<Text className="text-gray-600">✅ Guarantee:</Text>
+									<Text strong className="text-gray-800">
+										7-day freshness guarantee
+									</Text>
+								</div>
+							</div>
+						</Card>
+					</div>
 				</div>
 
-				{/* Details Section */}
-				<div className="flex-1 flex flex-col justify-between space-y-6">
-					<div>
-						<Title level={2} style={{ color: '#644A07', marginBottom: '16px' }}>
-							{flower.flowerName}
-						</Title>
-						<Title level={4} style={{ color: '#594100', marginBottom: '24px' }}>
-							{flower.price.toLocaleString('vi-VN')} VND
-						</Title>
-						<Paragraph style={{ color: '#644A07', marginBottom: '24px' }}>
-							{flower.flowerDescription}
-						</Paragraph>
-
-						<Descriptions column={1} size="small" className="mb-6">
-							<Descriptions.Item label={<Text strong>Category</Text>}>
-								{flower.categoryName || 'N/A'}
-							</Descriptions.Item>
-							<Descriptions.Item label={<Text strong>Stock</Text>}>
-								<Text
-									className={
-										flower.availableQuantity > 0
-											? 'text-green-600'
-											: 'text-red-600'
-									}
-								>
-									{flower.availableQuantity > 0
-										? `${flower.availableQuantity} available`
-										: 'Out of stock'}
-								</Text>
-							</Descriptions.Item>
-							<Descriptions.Item label={<Text strong>Status</Text>}>
-								<Text
-									className={
-										flower.status === 'active'
-											? 'text-green-600'
-											: 'text-red-600'
-									}
-								>
-									{flower.status === 'active' ? 'Available' : 'Unavailable'}
-								</Text>
-							</Descriptions.Item>
-						</Descriptions>
-					</div>
-
-					<Divider />
-
-					{/* Quantity Selector */}
-					<div className="flex items-center space-x-4">
-						<Text strong style={{ color: '#644A07' }}>
-							Quantity:
-						</Text>
-						<Space>
-							<Button
-								icon={<MinusOutlined />}
-								onClick={handleDecrement}
-								disabled={!isAvailable}
-							/>
-							<InputNumber
-								min={1}
-								max={flower.availableQuantity}
-								value={quantity}
-								onChange={(value) => setQuantity(Number(value) || 1)}
-								controls={false}
-								style={{ width: '60px' }}
-								disabled={!isAvailable}
-							/>
-							<Button
-								icon={<PlusOutlined />}
-								onClick={handleIncrement}
-								disabled={!isAvailable || quantity >= flower.availableQuantity}
-							/>
-						</Space>
-					</div>
-
-					{/* Action Buttons */}
-					<div className="flex flex-col sm:flex-row sm:items-center sm:space-x-4 space-y-4 sm:space-y-0">
-						<Button
-							type="primary"
-							size="large"
-							icon={<ShoppingCartOutlined />}
-							style={{
-								backgroundColor: '#FFDBDB',
-								color: '#644A07',
-								borderColor: '#FFDBDB',
-							}}
-							onClick={handleAddToCart}
-							loading={addingToCart}
-							disabled={!isAvailable}
-							className="hover:bg-pink-200"
-						>
-							Add to Cart
-						</Button>
-						<Button
-							type="primary"
-							size="large"
-							icon={<DollarOutlined />}
-							style={{
-								backgroundColor: '#FFC6C6',
-								color: '#644A07',
-								borderColor: '#FFC6C6',
-							}}
-							disabled={!isAvailable}
-							className="hover:bg-pink-300"
-						>
-							Buy Now
-						</Button>
-					</div>
-
-					{/* Report Button */}
-					<div>
-						<Button
-							icon={<FlagOutlined />}
-							style={{ color: '#644A07', borderColor: '#644A07' }}
-							onClick={showReportModal}
-							className="hover:bg-yellow-50"
-						>
-							Report to Admin
-						</Button>
-					</div>
-
-					{/* Additional Info Card */}
-					<Card className="bg-gray-50 border-0 shadow-sm">
-						<div className="space-y-2">
-							<div className="flex justify-between">
-								<Text>Delivery:</Text>
-								<Text strong>Same day delivery available</Text>
-							</div>
-							<div className="flex justify-between">
-								<Text>Care instructions:</Text>
-								<Text>Included with purchase</Text>
-							</div>
-							<div className="flex justify-between">
-								<Text>Guarantee:</Text>
-								<Text>7-day freshness guarantee</Text>
-							</div>
+				{/* Suggested Flowers Section */}
+				<div className="mt-16">
+					<Card className="border-0 shadow-xl rounded-2xl bg-white">
+						<div className="text-center mb-8">
+							<Title level={2} className="!text-2xl !font-bold !mb-2">
+								You might also like
+							</Title>
+							<Text className="text-gray-600 text-lg">
+								Discover more beautiful flowers from our collection
+							</Text>
 						</div>
+
+						{suggestedLoading ? (
+							<div className="flex justify-center items-center min-h-64">
+								<Spin size="large" />
+							</div>
+						) : (
+							<Row gutter={[24, 24]}>
+								{suggestedFlowers.map((suggestedFlower) => (
+									<Col xs={24} sm={12} md={6} key={suggestedFlower.flowerId}>
+										<FlowerCard
+											flower={suggestedFlower}
+											onAddToCart={handleSuggestedAddToCart}
+										/>
+									</Col>
+								))}
+							</Row>
+						)}
 					</Card>
 				</div>
 			</div>
@@ -352,7 +510,7 @@ export const FlowerDetail: React.FC = () => {
 			{/* Report Modal */}
 			<Modal
 				title={
-					<div className="flex items-center text-[#644A07]">
+					<div className="flex items-center">
 						<ExclamationCircleOutlined className="mr-2" />
 						Report this Product
 					</div>
@@ -367,11 +525,7 @@ export const FlowerDetail: React.FC = () => {
 				<Form form={reportForm} layout="vertical" onFinish={handleReportSubmit}>
 					<Form.Item
 						name="report_reason"
-						label={
-							<span className="text-[#644A07] font-medium">
-								Reason for Report
-							</span>
-						}
+						label={<span className="font-medium">Reason for Report</span>}
 						rules={[{ required: true, message: 'Please select a reason' }]}
 					>
 						<Select
@@ -390,9 +544,7 @@ export const FlowerDetail: React.FC = () => {
 
 					<Form.Item
 						name="report_description"
-						label={
-							<span className="text-[#644A07] font-medium">Description</span>
-						}
+						label={<span className="font-medium">Description</span>}
 						rules={[
 							{
 								required: true,
@@ -424,7 +576,7 @@ export const FlowerDetail: React.FC = () => {
 							htmlType="submit"
 							loading={submitting}
 							icon={<FlagOutlined />}
-							className="bg-gradient-to-r from-[#644A07] to-[#8B6914] hover:from-[#8B6914] hover:to-[#644A07] border-none rounded-full"
+							className="rounded-full"
 						>
 							Submit Report
 						</Button>
