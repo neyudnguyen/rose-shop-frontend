@@ -9,11 +9,15 @@ export const cartService = {
 		return response.data.data;
 	},
 
-	addToCart: async (flowerId: string, quantity: number): Promise<CartItem> => {
-		const response = await apiClient.post<ApiResponse<CartItem>>('/cart/add', {
-			flowerId,
+	addToCart: async (flowerId: string, quantity: number): Promise<void> => {
+		await apiClient.post('/cart/add', {
+			flowerId: Number(flowerId),
 			quantity,
 		});
+	},
+
+	getCartCount: async (): Promise<number> => {
+		const response = await apiClient.get<ApiResponse<number>>('/cart/count');
 		return response.data.data;
 	},
 

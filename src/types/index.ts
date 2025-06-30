@@ -225,3 +225,66 @@ export interface UserSearchParams {
 	page?: number;
 	limit?: number;
 }
+
+// Order types based on API schema
+export interface CreateOrderRequest {
+	phoneNumber?: string;
+	paymentMethod: string;
+	deliveryMethod: string;
+	addressId?: number;
+	userVoucherStatusId?: number;
+}
+
+export interface OrderItemResponse {
+	orderDetailId: number;
+	flowerId: number;
+	flowerName: string;
+	flowerImage: string;
+	unitPrice: number;
+	quantity: number;
+	totalPrice: number;
+	status: string;
+}
+
+export interface OrderResponse {
+	orderId: number;
+	userId: number;
+	phoneNumber: string;
+	paymentMethod: string;
+	deliveryMethod: string;
+	createdDate: string;
+	userVoucherStatusId?: number;
+	voucherCode?: string;
+	voucherDiscount?: number;
+	addressId: number;
+	addressDescription: string;
+	statusPayment: string;
+	subTotal: number;
+	shippingFee: number;
+	voucherDiscountAmount: number;
+	totalPrice: number;
+	items: OrderItemResponse[];
+	paymentUrl?: string;
+}
+
+// Address types based on API schema
+export interface AddressResponse {
+	addressId: number;
+	userInfoId: number;
+	description: string;
+	userFullName: string;
+	createdAt?: string;
+	updatedAt?: string;
+}
+
+export interface ManageAddressRequest {
+	AddressId?: number;
+	Description: string;
+	IsDeleted?: boolean;
+}
+
+export interface PaymentStatusResponse {
+	success: boolean;
+	message: string;
+	data: unknown;
+}

@@ -86,25 +86,25 @@ export const Cart: React.FC = () => {
 			dataIndex: 'flower',
 			key: 'flower',
 			render: (flower) => (
-				<div className="flex items-center space-x-3">
+				<Space size={12}>
 					<Image
 						width={60}
 						height={60}
 						src={flower?.imageUrl}
-						alt={flower?.name}
-						className="rounded object-cover"
+						alt={flower?.flowerName}
+						style={{ borderRadius: '8px', objectFit: 'cover' }}
 					/>
 					<div>
-						<Link to={`/flowers/${flower?.id}`}>
-							<Text strong className="hover:text-blue-600">
-								{flower?.name}
+						<Link to={`/flowers/${flower?.flowerId}`}>
+							<Text strong style={{ fontSize: '16px' }}>
+								{flower?.flowerName}
 							</Text>
 						</Link>
-						<div className="text-gray-500 text-sm">
+						<div style={{ color: '#666', fontSize: '14px', marginTop: '4px' }}>
 							{flower?.price?.toLocaleString('vi-VN')} VND
 						</div>
 					</div>
-				</div>
+				</Space>
 			),
 		},
 		{
@@ -114,10 +114,11 @@ export const Cart: React.FC = () => {
 			render: (quantity, record) => (
 				<InputNumber
 					min={1}
-					max={record.flower?.stock || 1}
+					max={record.flower?.availableQuantity || 1}
 					value={quantity}
 					onChange={(value) => value && handleQuantityChange(record.id, value)}
 					disabled={updating === record.id}
+					style={{ width: '80px' }}
 				/>
 			),
 		},
@@ -125,7 +126,7 @@ export const Cart: React.FC = () => {
 			title: 'Subtotal',
 			key: 'subtotal',
 			render: (_, record) => (
-				<Text strong>
+				<Text strong style={{ fontSize: '16px', color: '#52c41a' }}>
 					{((record.flower?.price || 0) * record.quantity).toLocaleString(
 						'vi-VN',
 					)}{' '}
@@ -168,23 +169,34 @@ export const Cart: React.FC = () => {
 		);
 	}
 	return (
-		<div className="max-w-7xl mx-auto px-4 py-8" style={{ paddingTop: '80px' }}>
-			<Title level={2} className="mb-6">
+		<div
+			style={{
+				maxWidth: '1200px',
+				margin: '0 auto',
+				padding: '80px 16px 40px',
+			}}
+		>
+			<Title level={2} style={{ marginBottom: '24px' }}>
 				Shopping Cart
 			</Title>
 
 			{cartItems.length === 0 ? (
-				<Card>
+				<Card style={{ textAlign: 'center', padding: '60px 24px' }}>
 					<Empty
 						image="/images/picture/4.png"
+						imageStyle={{ height: '160px' }}
 						description={
 							<div>
-								<Text className="text-gray-500 text-lg">
+								<Text style={{ color: '#666', fontSize: '18px' }}>
 									Your cart is empty
 								</Text>
-								<div className="mt-4">
+								<div style={{ marginTop: '16px' }}>
 									<Link to="/">
-										<Button type="primary" icon={<ShoppingOutlined />}>
+										<Button
+											type="primary"
+											size="large"
+											icon={<ShoppingOutlined />}
+										>
 											Continue Shopping
 										</Button>
 									</Link>
@@ -194,10 +206,17 @@ export const Cart: React.FC = () => {
 					/>
 				</Card>
 			) : (
-				<div className="space-y-6">
+				<Space direction="vertical" size={24} style={{ width: '100%' }}>
 					<Card>
-						<div className="flex justify-between items-center mb-4">
-							<Text className="text-lg">
+						<div
+							style={{
+								display: 'flex',
+								justifyContent: 'space-between',
+								alignItems: 'center',
+								marginBottom: '16px',
+							}}
+						>
+							<Text style={{ fontSize: '16px' }}>
 								{cartItems.length} item{cartItems.length !== 1 ? 's' : ''} in
 								your cart
 							</Text>
@@ -222,22 +241,37 @@ export const Cart: React.FC = () => {
 					</Card>
 
 					<Card>
-						<div className="flex justify-between items-center">
+						<div
+							style={{
+								display: 'flex',
+								justifyContent: 'space-between',
+								alignItems: 'center',
+							}}
+						>
 							<Space direction="vertical" size="small">
-								<Text className="text-lg">Order Summary</Text>
+								<Text style={{ fontSize: '18px', fontWeight: 'bold' }}>
+									Order Summary
+								</Text>
 								<Text type="secondary">
 									Total ({cartItems.length} item
 									{cartItems.length !== 1 ? 's' : ''})
 								</Text>
 							</Space>
-							<div className="text-right">
-								<Title level={3} className="text-red-600 !mb-0">
+							<div style={{ textAlign: 'right' }}>
+								<Title level={3} style={{ color: '#52c41a', margin: 0 }}>
 									{totalAmount.toLocaleString('vi-VN')} VND
 								</Title>
 							</div>
 						</div>
 
-						<div className="mt-6 flex justify-end space-x-3">
+						<div
+							style={{
+								marginTop: '24px',
+								display: 'flex',
+								justifyContent: 'flex-end',
+								gap: '12px',
+							}}
+						>
 							<Link to="/">
 								<Button size="large">Continue Shopping</Button>
 							</Link>
@@ -248,7 +282,7 @@ export const Cart: React.FC = () => {
 							</Link>
 						</div>
 					</Card>
-				</div>
+				</Space>
 			)}
 		</div>
 	);

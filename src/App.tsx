@@ -10,11 +10,14 @@ import { ProtectedRoute } from './components/ProtectedRoute';
 import { AdminAuthProvider } from './contexts/AdminAuthContext';
 import { AuthProvider } from './contexts/AuthContext';
 import { Cart } from './pages/Cart';
+import { Checkout } from './pages/Checkout';
 import { FlowerDetail } from './pages/FlowerDetail';
 import { FlowerList } from './pages/FlowerList';
 // Pages
 import { Home } from './pages/Home';
 import { Login } from './pages/Login';
+import { OrderDetail } from './pages/OrderDetail';
+import { Orders } from './pages/Orders';
 import { Profile } from './pages/Profile';
 import { Register } from './pages/Register';
 import { AdminCategory } from './pages/admin/AdminCategory';
@@ -140,7 +143,7 @@ function App() {
 										element={
 											<ProtectedRoute>
 												<MainLayout>
-													<div>Checkout Page - Coming Soon</div>
+													<Checkout />
 												</MainLayout>
 											</ProtectedRoute>
 										}
@@ -150,7 +153,17 @@ function App() {
 										element={
 											<ProtectedRoute>
 												<MainLayout>
-													<div>Orders Page - Coming Soon</div>
+													<Orders />
+												</MainLayout>
+											</ProtectedRoute>
+										}
+									/>
+									<Route
+										path="/orders/:orderId"
+										element={
+											<ProtectedRoute>
+												<MainLayout>
+													<OrderDetail />
 												</MainLayout>
 											</ProtectedRoute>
 										}
