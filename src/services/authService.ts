@@ -13,6 +13,14 @@ export const authService = {
 			username,
 			password,
 		});
+
+		// Verify that the logged in user is NOT an admin
+		if (response.data.data.user.type === 'admin') {
+			throw new Error(
+				'Admin accounts cannot login here. Please use the admin portal.',
+			);
+		}
+
 		return response.data.data;
 	},
 
@@ -28,6 +36,14 @@ export const authService = {
 	},
 	getCurrentUser: async (): Promise<User> => {
 		const response = await apiClient.get<ApiResponse<User>>('/user/profile');
+
+		// Prevent admin users from accessing user context
+		if (response.data.data.type === 'admin') {
+			throw new Error(
+				'Admin users cannot access user pages. Please use admin portal.',
+			);
+		}
+
 		return response.data.data;
 	},
 	updateProfile: async (userData: FormData | Partial<User>): Promise<User> => {

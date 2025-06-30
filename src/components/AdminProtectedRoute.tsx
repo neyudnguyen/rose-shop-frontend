@@ -1,15 +1,17 @@
-import { useAuth } from '../hooks/useAuth';
+import { useAdminAuth } from '../hooks/useAdminAuth';
 import { Spin } from 'antd';
 import React from 'react';
 import type { ReactNode } from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
 
-interface ProtectedRouteProps {
+interface AdminProtectedRouteProps {
 	children: ReactNode;
 }
 
-export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
-	const { user, loading } = useAuth();
+export const AdminProtectedRoute: React.FC<AdminProtectedRouteProps> = ({
+	children,
+}) => {
+	const { user, loading } = useAdminAuth();
 	const location = useLocation();
 
 	if (loading) {
@@ -21,11 +23,11 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
 	}
 
 	if (!user) {
-		return <Navigate to="/login" state={{ from: location }} replace />;
+		return <Navigate to="/admin/login" state={{ from: location }} replace />;
 	}
 
-	// Prevent admin users from accessing regular user pages
-	if (user.type === 'admin') {
+	// Double check that user is admin
+	if (user.type !== 'admin') {
 		return <Navigate to="/admin/login" replace />;
 	}
 

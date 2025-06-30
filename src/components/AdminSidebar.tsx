@@ -1,5 +1,5 @@
 import { COLORS } from '../constants/colors';
-import { useAuth } from '../hooks/useAuth';
+import { useAdminAuth } from '../hooks/useAdminAuth';
 import {
 	BarChartOutlined,
 	DashboardOutlined,
@@ -21,7 +21,7 @@ const { Sider } = Layout;
 const { Title, Text } = Typography;
 
 export const AdminSidebar: React.FC = () => {
-	const { user, logout } = useAuth();
+	const { user, logout } = useAdminAuth();
 	const location = useLocation();
 	const navigate = useNavigate();
 

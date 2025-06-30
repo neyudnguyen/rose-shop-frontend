@@ -1,4 +1,4 @@
-import api from './api';
+import adminApi from './adminApi';
 
 // Types based on OpenAPI spec
 export interface VoucherResponse {
@@ -55,25 +55,25 @@ export interface VoucherUserStats {
 export const voucherService = {
 	// Get all vouchers
 	getAllVouchers: async (): Promise<VoucherResponse[]> => {
-		const response = await api.get('/admin/vouchers/all');
+		const response = await adminApi.get('/admin/vouchers/all');
 		return response.data.data;
 	},
 
 	// Get voucher by ID
 	getVoucherById: async (id: number): Promise<VoucherResponse> => {
-		const response = await api.get(`/admin/vouchers/${id}`);
+		const response = await adminApi.get(`/admin/vouchers/${id}`);
 		return response.data.data;
 	},
 
 	// Get voucher by code
 	getVoucherByCode: async (code: string): Promise<VoucherResponse> => {
-		const response = await api.get(`/admin/vouchers/code/${code}`);
+		const response = await adminApi.get(`/admin/vouchers/code/${code}`);
 		return response.data.data;
 	},
 
 	// Get voucher stats
 	getVoucherStats: async (code: string): Promise<VoucherStatsResponse> => {
-		const response = await api.get(`/admin/vouchers/stats/${code}`);
+		const response = await adminApi.get(`/admin/vouchers/stats/${code}`);
 		return response.data.data;
 	},
 
@@ -102,7 +102,7 @@ export const voucherService = {
 			formData.append('IsDeleted', data.IsDeleted.toString());
 		}
 
-		const response = await api.post('/admin/vouchers/manage', formData, {
+		const response = await adminApi.post('/admin/vouchers/manage', formData, {
 			headers: {
 				'Content-Type': 'multipart/form-data',
 			},

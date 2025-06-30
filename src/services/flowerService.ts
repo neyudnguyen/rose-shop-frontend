@@ -1,5 +1,6 @@
 import type { ApiResponse } from '../types';
 
+import adminApiClient from './adminApi';
 import apiClient from './api';
 
 // Based on OpenAPI spec FlowerResponse
@@ -37,7 +38,7 @@ class FlowerService {
 
 	// Get all flowers for admin
 	async getAdminFlowers(): Promise<FlowerResponse[]> {
-		const response = await apiClient.get<ApiResponse<FlowerResponse[]>>(
+		const response = await adminApiClient.get<ApiResponse<FlowerResponse[]>>(
 			`${this.baseUrl}/all`,
 		);
 		return response.data.data;
@@ -45,7 +46,7 @@ class FlowerService {
 
 	// Get flower by ID for admin
 	async getAdminFlowerById(flowerId: number): Promise<FlowerResponse> {
-		const response = await apiClient.get<ApiResponse<FlowerResponse>>(
+		const response = await adminApiClient.get<ApiResponse<FlowerResponse>>(
 			`${this.baseUrl}/${flowerId}`,
 		);
 		return response.data.data;
@@ -67,7 +68,7 @@ class FlowerService {
 		if (data.IsDeleted !== undefined)
 			formData.append('IsDeleted', data.IsDeleted.toString());
 
-		const response = await apiClient.post<ApiResponse<FlowerResponse>>(
+		const response = await adminApiClient.post<ApiResponse<FlowerResponse>>(
 			`${this.baseUrl}/manage`,
 			formData,
 			{
