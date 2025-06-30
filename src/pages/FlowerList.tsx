@@ -52,8 +52,40 @@ export const FlowerList: React.FC = () => {
 			setLoading(true);
 			try {
 				const flowerData = await flowerService.getFlowers();
-				setFlowers(flowerData || []);
-				setTotal(flowerData?.length || 0);
+
+				// Apply client-side filtering based on search and category
+				let filteredFlowers = flowerData || [];
+
+				// Filter by search query
+				if (searchQuery) {
+					filteredFlowers = filteredFlowers.filter(
+						(flower) =>
+							flower.flowerName
+								.toLowerCase()
+								.includes(searchQuery.toLowerCase()) ||
+							flower.flowerDescription
+								.toLowerCase()
+								.includes(searchQuery.toLowerCase()) ||
+							flower.categoryName
+								?.toLowerCase()
+								.includes(searchQuery.toLowerCase()),
+					);
+				}
+
+				// Filter by category
+				if (categoryFilter) {
+					filteredFlowers = filteredFlowers.filter(
+						(flower) => flower.categoryId === parseInt(categoryFilter),
+					);
+				}
+
+				// Apply pagination
+				const startIndex = (currentPage - 1) * pageSize;
+				const endIndex = startIndex + pageSize;
+				const paginatedFlowers = filteredFlowers.slice(startIndex, endIndex);
+
+				setFlowers(paginatedFlowers);
+				setTotal(filteredFlowers.length);
 			} catch (err) {
 				setError('Failed to load flowers. Please try again.');
 				setFlowers([]);
@@ -168,7 +200,7 @@ export const FlowerList: React.FC = () => {
 				<>
 					<Row gutter={[24, 24]}>
 						{flowers?.map((flower) => (
-							<Col xs={24} sm={12} md={8} lg={6} key={flower.id}>
+							<Col xs={24} sm={12} md={8} lg={6} key={flower.flowerId}>
 								<FlowerCard flower={flower} onAddToCart={handleAddToCart} />
 							</Col>
 						))}

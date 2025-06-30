@@ -58,10 +58,7 @@ export const FlowerDetail: React.FC = () => {
 
 		setAddingToCart(true);
 		try {
-			await cartService.addToCart(
-				flower.id || flower.flowerId?.toString() || '',
-				quantity,
-			);
+			await cartService.addToCart(flower.flowerId?.toString() || '', quantity);
 			// You might want to show a success message here
 		} catch (err) {
 			console.error('Error adding to cart:', err);
@@ -100,10 +97,10 @@ export const FlowerDetail: React.FC = () => {
 				<Breadcrumb.Item>
 					<a onClick={() => navigate('/flowers')}>Flowers</a>
 				</Breadcrumb.Item>
-				{flower.category && (
-					<Breadcrumb.Item>{flower.category.categoryName}</Breadcrumb.Item>
+				{flower.categoryName && (
+					<Breadcrumb.Item>{flower.categoryName}</Breadcrumb.Item>
 				)}
-				<Breadcrumb.Item>{flower.name}</Breadcrumb.Item>
+				<Breadcrumb.Item>{flower.flowerName}</Breadcrumb.Item>
 			</Breadcrumb>
 
 			<Button
@@ -119,7 +116,7 @@ export const FlowerDetail: React.FC = () => {
 					<Card className="overflow-hidden">
 						<Image
 							src={flower.imageUrl}
-							alt={flower.name}
+							alt={flower.flowerName}
 							className="w-full h-auto object-cover"
 							preview={{
 								mask: 'Click to preview',
@@ -132,14 +129,14 @@ export const FlowerDetail: React.FC = () => {
 					<div className="space-y-6">
 						<div>
 							<Title level={1} className="!mb-2">
-								{flower.name}
+								{flower.flowerName}
 							</Title>
 
 							<div className="flex items-center space-x-4 mb-4">
 								<Rate disabled defaultValue={4.5} />
 								<Text className="text-gray-500">(24 reviews)</Text>
-								{flower.category && (
-									<Tag color="blue">{flower.category.categoryName}</Tag>
+								{flower.categoryName && (
+									<Tag color="blue">{flower.categoryName}</Tag>
 								)}
 							</div>
 
@@ -151,21 +148,21 @@ export const FlowerDetail: React.FC = () => {
 								<Text strong>Stock:</Text>
 								<Text
 									className={
-										(flower.stock || flower.availableQuantity || 0) > 0
+										flower.availableQuantity > 0
 											? 'text-green-600'
 											: 'text-red-600'
 									}
 								>
-									{(flower.stock || flower.availableQuantity || 0) > 0
-										? `${flower.stock || flower.availableQuantity} available`
+									{flower.availableQuantity > 0
+										? `${flower.availableQuantity} available`
 										: 'Out of stock'}
 								</Text>
 							</div>
 
 							<div className="flex items-center space-x-2 mb-6">
 								<Text strong>Status:</Text>
-								<Tag color={flower.isAvailable ? 'green' : 'red'}>
-									{flower.isAvailable ? 'Available' : 'Unavailable'}
+								<Tag color={flower.status === 'active' ? 'green' : 'red'}>
+									{flower.status === 'active' ? 'Available' : 'Unavailable'}
 								</Tag>
 							</div>
 						</div>
@@ -173,7 +170,7 @@ export const FlowerDetail: React.FC = () => {
 						<div>
 							<Title level={4}>Description</Title>
 							<Paragraph className="text-gray-700">
-								{flower.description}
+								{flower.flowerDescription}
 							</Paragraph>
 						</div>
 
@@ -182,10 +179,12 @@ export const FlowerDetail: React.FC = () => {
 								<Text strong>Quantity:</Text>
 								<InputNumber
 									min={1}
-									max={flower.stock}
+									max={flower.availableQuantity}
 									value={quantity}
 									onChange={(value) => setQuantity(value || 1)}
-									disabled={!flower.isAvailable || flower.stock === 0}
+									disabled={
+										flower.status !== 'active' || flower.availableQuantity === 0
+									}
 								/>
 							</div>
 
@@ -196,7 +195,9 @@ export const FlowerDetail: React.FC = () => {
 									icon={<ShoppingCartOutlined />}
 									onClick={handleAddToCart}
 									loading={addingToCart}
-									disabled={!flower.isAvailable || flower.stock === 0}
+									disabled={
+										flower.status !== 'active' || flower.availableQuantity === 0
+									}
 									className="flex-1"
 								>
 									Add to Cart
