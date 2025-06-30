@@ -208,7 +208,7 @@ export const Home: React.FC = () => {
 			<section className="py-12 px-4">
 				<div className="max-w-7xl mx-auto">
 					<Title level={2} className="text-center mb-8 font-bold text-3xl">
-						HOT CATEGORIES IN SHOP
+						Hot Categories in Shop
 					</Title>
 					{loading ? (
 						<div className="flex justify-center items-center min-h-64">
@@ -217,26 +217,35 @@ export const Home: React.FC = () => {
 					) : (
 						<Row gutter={[24, 24]} justify="center">
 							{topCategories.map((category) => (
-								<Col key={category.categoryId} xs={12} sm={8} lg={6}>
+								<Col key={category.categoryId} xs={12} sm={12} md={8} lg={6}>
 									<Card
-										className="rounded-lg hover:shadow-xl transition-shadow h-full"
-										cover={
-											<div className="relative h-48 w-full overflow-hidden bg-gradient-to-br from-pink-100 to-rose-200 flex items-center justify-center">
-												<div className="text-6xl text-rose-400">🌸</div>
-											</div>
-										}
-										styles={{ body: { padding: '16px' } }}
+										className="rounded-xl hover:shadow-xl transition-all duration-300 h-full border-0 bg-gradient-to-br from-rose-50 to-pink-50 hover:from-rose-100 hover:to-pink-100"
+										styles={{
+											body: {
+												padding: '24px',
+												textAlign: 'center',
+												display: 'flex',
+												flexDirection: 'column',
+												justifyContent: 'center',
+												minHeight: '160px',
+											},
+										}}
 									>
-										<Title level={5} className="text-center font-semibold mb-2">
+										<div className="text-4xl mb-3 text-rose-400">🌸</div>
+										<Title
+											level={4}
+											className="text-center font-bold mb-2 text-gray-800"
+										>
 											{category.categoryName}
 										</Title>
-										<Text className="text-center text-gray-500 block mb-3">
+										<Text className="text-center text-gray-600 block mb-4 text-sm">
 											{category.flowerCount} flowers available
 										</Text>
 										<Link to={`/flowers?category=${category.categoryId}`}>
 											<Button
 												type="primary"
-												className="w-full border-none rounded-full"
+												className="border-none rounded-full bg-gradient-to-r from-rose-400 to-pink-400 hover:from-rose-500 hover:to-pink-500"
+												size="middle"
 											>
 												View Collection
 											</Button>
@@ -250,7 +259,7 @@ export const Home: React.FC = () => {
 			</section>
 
 			{/* Featured Flowers */}
-			<section className="py-16">
+			<section className="py-8">
 				<div className="max-w-7xl mx-auto px-4">
 					<div className="text-center mb-12">
 						<Title level={2}>Featured Flowers</Title>
