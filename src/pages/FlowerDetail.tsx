@@ -3,10 +3,7 @@ import { cartService } from '../services/cartService';
 import { flowerService } from '../services/flowerService';
 import type { Flower } from '../types';
 import {
-	CloseCircleOutlined,
 	DollarOutlined,
-	ExclamationCircleOutlined,
-	FlagOutlined,
 	HeartOutlined,
 	HomeOutlined,
 	MinusOutlined,
@@ -21,12 +18,8 @@ import {
 	Card,
 	Col,
 	Divider,
-	Form,
-	Input,
 	InputNumber,
-	Modal,
 	Row,
-	Select,
 	Space,
 	Spin,
 	Tag,
@@ -37,13 +30,6 @@ import React, { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 
 const { Title, Text, Paragraph } = Typography;
-const { TextArea } = Input;
-const { Option } = Select;
-
-interface ReportFormValues {
-	report_reason: string;
-	report_description: string;
-}
 
 export const FlowerDetail: React.FC = () => {
 	const { id } = useParams<{ id: string }>();
@@ -54,9 +40,6 @@ export const FlowerDetail: React.FC = () => {
 	const [error, setError] = useState<string | null>(null);
 	const [quantity, setQuantity] = useState(1);
 	const [addingToCart, setAddingToCart] = useState(false);
-	const [reportModalVisible, setReportModalVisible] = useState(false);
-	const [reportForm] = Form.useForm();
-	const [submitting, setSubmitting] = useState(false);
 	const [isFavorite, setIsFavorite] = useState(false);
 
 	useEffect(() => {
@@ -145,50 +128,6 @@ export const FlowerDetail: React.FC = () => {
 	const handleDecrement = () => {
 		setQuantity((prev) => (prev > 1 ? prev - 1 : 1));
 	};
-
-	const showReportModal = () => {
-		setReportModalVisible(true);
-	};
-
-	const handleReportCancel = () => {
-		setReportModalVisible(false);
-		reportForm.resetFields();
-	};
-
-	const handleReportSubmit = async (values: ReportFormValues) => {
-		setSubmitting(true);
-		try {
-			// Mock implementation - in real app, you would send to API
-			const reportData = {
-				flower_id: Number(id),
-				report_reason: values.report_reason,
-				report_description: values.report_description,
-			};
-
-			console.log('Report data to submit:', reportData);
-
-			// Simulate API call
-			await new Promise((resolve) => setTimeout(resolve, 1000));
-
-			message.success('Report submitted successfully');
-			setReportModalVisible(false);
-			reportForm.resetFields();
-		} catch (error) {
-			console.error('Error submitting report:', error);
-			message.error('Failed to submit report. Please try again.');
-		} finally {
-			setSubmitting(false);
-		}
-	};
-
-	const reportReasons = [
-		'Inappropriate content',
-		'Misleading information',
-		'Counterfeit product',
-		'Prohibited item',
-		'Price issues',
-		'Other',
-	];
 
 	if (loading) {
 		return (
@@ -499,17 +438,6 @@ export const FlowerDetail: React.FC = () => {
 											</Button>
 										</Col>
 									</Row>
-
-									<div style={{ textAlign: 'center', marginTop: '16px' }}>
-										<Button
-											icon={<FlagOutlined />}
-											onClick={showReportModal}
-											type="text"
-											style={{ color: '#666' }}
-										>
-											Report to Admin
-										</Button>
-									</div>
 								</Space>
 							</Space>
 						</Card>
@@ -552,78 +480,6 @@ export const FlowerDetail: React.FC = () => {
 					)}
 				</Card>
 			</div>
-
-			{/* Report Modal */}
-			<Modal
-				title={
-					<Space>
-						<ExclamationCircleOutlined />
-						<Text strong>Report this Product</Text>
-					</Space>
-				}
-				open={reportModalVisible}
-				onCancel={handleReportCancel}
-				footer={null}
-				width={500}
-			>
-				<Divider style={{ margin: '12px 0' }} />
-				<Form form={reportForm} layout="vertical" onFinish={handleReportSubmit}>
-					<Form.Item
-						name="report_reason"
-						label={<Text strong>Reason for Report</Text>}
-						rules={[{ required: true, message: 'Please select a reason' }]}
-					>
-						<Select placeholder="Select a reason" size="large">
-							{reportReasons.map((reason) => (
-								<Option key={reason} value={reason}>
-									{reason}
-								</Option>
-							))}
-						</Select>
-					</Form.Item>
-
-					<Form.Item
-						name="report_description"
-						label={<Text strong>Description</Text>}
-						rules={[
-							{
-								required: true,
-								message: 'Please provide details about the issue',
-							},
-							{ max: 255, message: 'Description cannot exceed 255 characters' },
-						]}
-					>
-						<TextArea
-							rows={4}
-							placeholder="Please provide more details about the issue..."
-							maxLength={255}
-							showCount
-							size="large"
-						/>
-					</Form.Item>
-
-					<div
-						style={{
-							display: 'flex',
-							justifyContent: 'flex-end',
-							gap: '12px',
-							marginTop: '16px',
-						}}
-					>
-						<Button onClick={handleReportCancel} icon={<CloseCircleOutlined />}>
-							Cancel
-						</Button>
-						<Button
-							type="primary"
-							htmlType="submit"
-							loading={submitting}
-							icon={<FlagOutlined />}
-						>
-							Submit Report
-						</Button>
-					</div>
-				</Form>
-			</Modal>
 		</div>
 	);
 };
