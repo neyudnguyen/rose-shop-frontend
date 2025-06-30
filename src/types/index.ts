@@ -181,3 +181,47 @@ export interface VoucherUserStats {
 	status: string;
 	hasUsed: boolean;
 }
+
+// User Management types for Admin
+export interface UserInfoManagement {
+	fullName?: string;
+	phone?: string;
+	address?: string;
+	dateOfBirth?: string;
+	gender?: string;
+	avatar?: string;
+}
+
+export interface UserListRequest {
+	userId: number;
+	username: string;
+	email: string;
+	type: string;
+	createdAt?: string;
+	updatedAt?: string;
+	isActive: boolean;
+	userInfo?: UserInfoManagement;
+}
+
+export interface UserDetailResponse {
+	userId: number;
+	username: string;
+	email: string;
+	type: string;
+	createdAt?: string;
+	updatedAt?: string;
+	isActive: boolean;
+	userInfo?: UserInfoManagement;
+}
+
+export interface UserStatusUpdate {
+	reason: string;
+}
+
+export interface UserSearchParams {
+	search?: string;
+	type?: 'admin' | 'user';
+	status?: 'active' | 'inactive';
+	page?: number;
+	limit?: number;
+}

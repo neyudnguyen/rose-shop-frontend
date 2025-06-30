@@ -21,6 +21,7 @@ import { AdminCategory } from './pages/admin/AdminCategory';
 import { AdminDashboard } from './pages/admin/AdminDashboard';
 import { AdminFlower } from './pages/admin/AdminFlower';
 import { AdminLogin } from './pages/admin/AdminLogin';
+import { AdminUsers } from './pages/admin/AdminUsers';
 import { AdminVoucher } from './pages/admin/AdminVoucher';
 
 const { Content } = Layout;
@@ -80,10 +81,7 @@ function App() {
 												path="/vouchers/stats/:code"
 												element={<div>Voucher Stats - Coming Soon</div>}
 											/>
-											<Route
-												path="/users"
-												element={<div>Manage Users - Coming Soon</div>}
-											/>
+											<Route path="/users" element={<AdminUsers />} />
 										</Routes>
 									</AdminLayout>
 								</AdminProtectedRoute>
