@@ -33,10 +33,12 @@ export const Cart: React.FC = () => {
 	const fetchCartItems = async () => {
 		try {
 			const items = await cartService.getMyCart();
-			setCartItems(items);
+			// Ensure items is always an array
+			setCartItems(Array.isArray(items) ? items : []);
 		} catch (err) {
 			setError('Failed to load cart items. Please try again.');
 			console.error('Error fetching cart:', err);
+			setCartItems([]); // Set empty array on error
 		} finally {
 			setLoading(false);
 		}
@@ -76,9 +78,11 @@ export const Cart: React.FC = () => {
 		}
 	};
 
-	const totalAmount = cartItems.reduce((sum, item) => {
-		return sum + (item.flower?.price || 0) * item.quantity;
-	}, 0);
+	const totalAmount = Array.isArray(cartItems)
+		? cartItems.reduce((sum, item) => {
+				return sum + (item.flower?.price || 0) * item.quantity;
+			}, 0)
+		: 0;
 
 	const columns: ColumnsType<CartItem> = [
 		{
@@ -180,7 +184,7 @@ export const Cart: React.FC = () => {
 				Shopping Cart
 			</Title>
 
-			{cartItems.length === 0 ? (
+			{!Array.isArray(cartItems) || cartItems.length === 0 ? (
 				<Card style={{ textAlign: 'center', padding: '60px 24px' }}>
 					<Empty
 						image="/images/picture/4.png"
@@ -217,8 +221,11 @@ export const Cart: React.FC = () => {
 							}}
 						>
 							<Text style={{ fontSize: '16px' }}>
-								{cartItems.length} item{cartItems.length !== 1 ? 's' : ''} in
-								your cart
+								{Array.isArray(cartItems) ? cartItems.length : 0} item
+								{(Array.isArray(cartItems) ? cartItems.length : 0) !== 1
+									? 's'
+									: ''}{' '}
+								in your cart
 							</Text>
 							<Popconfirm
 								title="Clear all items?"
@@ -233,7 +240,7 @@ export const Cart: React.FC = () => {
 
 						<Table
 							columns={columns}
-							dataSource={cartItems}
+							dataSource={Array.isArray(cartItems) ? cartItems : []}
 							rowKey="id"
 							pagination={false}
 							scroll={{ x: 600 }}
@@ -253,8 +260,11 @@ export const Cart: React.FC = () => {
 									Order Summary
 								</Text>
 								<Text type="secondary">
-									Total ({cartItems.length} item
-									{cartItems.length !== 1 ? 's' : ''})
+									Total ({Array.isArray(cartItems) ? cartItems.length : 0} item
+									{(Array.isArray(cartItems) ? cartItems.length : 0) !== 1
+										? 's'
+										: ''}
+									)
 								</Text>
 							</Space>
 							<div style={{ textAlign: 'right' }}>

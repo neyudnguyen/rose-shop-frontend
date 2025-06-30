@@ -69,10 +69,12 @@ export interface Flower {
 
 export interface CartItem {
 	id: string;
+	cartId?: number; // From database
 	flowerId: string;
 	flower?: Flower;
 	quantity: number;
 	userId: string;
+	unitPrice?: number; // From database
 }
 
 export interface Address {

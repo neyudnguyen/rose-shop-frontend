@@ -4,9 +4,19 @@ import apiClient from './api';
 
 export const cartService = {
 	getMyCart: async (): Promise<CartItem[]> => {
-		const response =
-			await apiClient.get<ApiResponse<CartItem[]>>('/cart/my-cart');
-		return response.data.data;
+		try {
+			const response =
+				await apiClient.get<ApiResponse<CartItem[]>>('/cart/my-cart');
+			// Debug logging
+			console.log('Cart API Response:', response.data);
+
+			// Ensure we always return an array
+			const data = response.data?.data;
+			return Array.isArray(data) ? data : [];
+		} catch (error) {
+			console.error('Error fetching cart:', error);
+			return []; // Return empty array on error
+		}
 	},
 
 	addToCart: async (flowerId: string, quantity: number): Promise<void> => {
