@@ -1,9 +1,13 @@
+import { FlowerCard } from '../components/FlowerCard';
 import { cartService } from '../services/cartService';
 import { flowerService } from '../services/flowerService';
 import type { Flower } from '../types';
 import {
-	ArrowLeftOutlined,
+	DollarOutlined,
 	HeartOutlined,
+	HomeOutlined,
+	MinusOutlined,
+	PlusOutlined,
 	ShareAltOutlined,
 	ShoppingCartOutlined,
 } from '@ant-design/icons';
@@ -13,27 +17,30 @@ import {
 	Button,
 	Card,
 	Col,
-	Image,
+	Divider,
 	InputNumber,
-	Rate,
 	Row,
+	Space,
 	Spin,
 	Tag,
 	Typography,
+	message,
 } from 'antd';
 import React, { useEffect, useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 
 const { Title, Text, Paragraph } = Typography;
 
 export const FlowerDetail: React.FC = () => {
 	const { id } = useParams<{ id: string }>();
-	const navigate = useNavigate();
 	const [flower, setFlower] = useState<Flower | null>(null);
+	const [suggestedFlowers, setSuggestedFlowers] = useState<Flower[]>([]);
 	const [loading, setLoading] = useState(true);
+	const [suggestedLoading, setSuggestedLoading] = useState(false);
 	const [error, setError] = useState<string | null>(null);
 	const [quantity, setQuantity] = useState(1);
 	const [addingToCart, setAddingToCart] = useState(false);
+	const [isFavorite, setIsFavorite] = useState(false);
 
 	useEffect(() => {
 		const fetchFlower = async () => {
@@ -42,6 +49,22 @@ export const FlowerDetail: React.FC = () => {
 			try {
 				const flowerData = await flowerService.getFlowerById(Number(id));
 				setFlower(flowerData);
+
+				// Fetch suggested flowers after getting the main flower
+				setSuggestedLoading(true);
+				try {
+					const allFlowers = await flowerService.getFlowers();
+					// Filter out current flower and get random 4 flowers
+					const filteredFlowers = allFlowers.filter(
+						(f) => f.flowerId !== flowerData.flowerId && f.status === 'active',
+					);
+					const shuffled = filteredFlowers.sort(() => 0.5 - Math.random());
+					setSuggestedFlowers(shuffled.slice(0, 4));
+				} catch (suggestedError) {
+					console.error('Error fetching suggested flowers:', suggestedError);
+				} finally {
+					setSuggestedLoading(false);
+				}
 			} catch (err) {
 				setError('Failed to load flower details. Please try again.');
 				console.error('Error fetching flower:', err);
@@ -58,22 +81,65 @@ export const FlowerDetail: React.FC = () => {
 
 		setAddingToCart(true);
 		try {
-			await cartService.addToCart(
-				flower.id || flower.flowerId?.toString() || '',
-				quantity,
-			);
-			// You might want to show a success message here
+			await cartService.addToCart(flower.flowerId?.toString() || '', quantity);
+			message.success('Added to cart successfully!');
 		} catch (err) {
 			console.error('Error adding to cart:', err);
-			// You might want to show an error message here
+			message.error('Failed to add to cart. Please try again.');
 		} finally {
 			setAddingToCart(false);
 		}
 	};
 
+	const handleAddToFavorites = () => {
+		setIsFavorite(!isFavorite);
+		message.success(
+			isFavorite ? 'Removed from favorites' : 'Added to favorites',
+		);
+	};
+
+	const handleShare = () => {
+		if (navigator.share) {
+			navigator.share({
+				title: flower?.flowerName,
+				text: flower?.flowerDescription,
+				url: window.location.href,
+			});
+		} else {
+			navigator.clipboard.writeText(window.location.href);
+			message.success('Link copied to clipboard!');
+		}
+	};
+
+	const handleSuggestedAddToCart = async (flowerId: string) => {
+		try {
+			await cartService.addToCart(flowerId, 1);
+			message.success('Added to cart successfully!');
+		} catch (err) {
+			console.error('Error adding to cart:', err);
+			message.error('Failed to add to cart. Please try again.');
+		}
+	};
+
+	const handleIncrement = () => {
+		setQuantity((prev) => prev + 1);
+	};
+
+	const handleDecrement = () => {
+		setQuantity((prev) => (prev > 1 ? prev - 1 : 1));
+	};
+
 	if (loading) {
 		return (
-			<div className="flex justify-center items-center min-h-96">
+			<div
+				style={{
+					display: 'flex',
+					justifyContent: 'center',
+					alignItems: 'center',
+					minHeight: '400px',
+					padding: '24px',
+				}}
+			>
 				<Spin size="large" />
 			</div>
 		);
@@ -81,7 +147,7 @@ export const FlowerDetail: React.FC = () => {
 
 	if (error || !flower) {
 		return (
-			<div className="p-4">
+			<div style={{ padding: '16px' }}>
 				<Alert
 					message="Error"
 					description={error || 'Flower not found'}
@@ -91,150 +157,329 @@ export const FlowerDetail: React.FC = () => {
 			</div>
 		);
 	}
+
+	const isAvailable =
+		flower.status === 'active' && flower.availableQuantity > 0;
+
 	return (
-		<div className="max-w-7xl mx-auto px-4 py-8" style={{ paddingTop: '80px' }}>
-			<Breadcrumb className="mb-6">
-				<Breadcrumb.Item>
-					<a onClick={() => navigate('/')}>Home</a>
-				</Breadcrumb.Item>
-				<Breadcrumb.Item>
-					<a onClick={() => navigate('/flowers')}>Flowers</a>
-				</Breadcrumb.Item>
-				{flower.category && (
-					<Breadcrumb.Item>{flower.category.categoryName}</Breadcrumb.Item>
-				)}
-				<Breadcrumb.Item>{flower.name}</Breadcrumb.Item>
-			</Breadcrumb>
+		<div
+			style={{
+				minHeight: '100vh',
+				backgroundColor: '#f5f5f5',
+				padding: '24px 0',
+			}}
+		>
+			<div style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 16px' }}>
+				<Breadcrumb
+					style={{
+						marginTop: '32px',
+						padding: '20px 0px',
+						fontSize: '16px',
+					}}
+					items={[
+						{
+							title: (
+								<Link to="/" style={{ color: '#1890ff', fontSize: '16px' }}>
+									<HomeOutlined />
+								</Link>
+							),
+						},
+						{
+							title: (
+								<Link
+									to="/flowers"
+									style={{ color: '#1890ff', fontSize: '16px' }}
+								>
+									Flowers
+								</Link>
+							),
+						},
+						{
+							title: (
+								<Link
+									to={`/flowers?category=${flower.categoryId || ''}`}
+									style={{ color: '#1890ff', fontSize: '16px' }}
+								>
+									{flower.categoryName || 'Category'}
+								</Link>
+							),
+						},
+						{
+							title: (
+								<Link
+									to={`/flowers/${flower.flowerId}`}
+									style={{
+										color: '#1890ff',
+										fontSize: '16px',
+										fontWeight: 'bold',
+									}}
+								>
+									{flower.flowerName}
+								</Link>
+							),
+						},
+					]}
+				/>
 
-			<Button
-				icon={<ArrowLeftOutlined />}
-				onClick={() => navigate(-1)}
-				className="mb-6"
-			>
-				Back
-			</Button>
-
-			<Row gutter={[48, 32]}>
-				<Col xs={24} md={12}>
-					<Card className="overflow-hidden">
-						<Image
-							src={flower.imageUrl}
-							alt={flower.name}
-							className="w-full h-auto object-cover"
-							preview={{
-								mask: 'Click to preview',
-							}}
+				<Row gutter={[32, 32]} style={{ marginBottom: '64px' }}>
+					{/* Image Section */}
+					<Col xs={24} lg={12}>
+						<Card
+							cover={
+								<div
+									style={{
+										position: 'relative',
+										height: '500px',
+										overflow: 'hidden',
+										display: 'flex',
+										alignItems: 'center',
+										justifyContent: 'center',
+									}}
+								>
+									<img
+										src={flower.imageUrl}
+										style={{
+											width: '100%',
+											height: 'auto',
+											objectFit: 'cover',
+											objectPosition: 'center',
+										}}
+									/>
+									{!isAvailable && (
+										<div
+											style={{
+												position: 'absolute',
+												top: 0,
+												left: 0,
+												right: 0,
+												bottom: 0,
+												backgroundColor: 'rgba(0,0,0,0.5)',
+												display: 'flex',
+												alignItems: 'center',
+												justifyContent: 'center',
+											}}
+										>
+											<div
+												style={{
+													backgroundColor: '#ff4d4f',
+													color: 'white',
+													padding: '12px 24px',
+													borderRadius: '8px',
+													fontWeight: 'bold',
+												}}
+											>
+												Out of Stock
+											</div>
+										</div>
+									)}
+								</div>
+							}
+							style={{ height: '100%' }}
 						/>
-					</Card>
-				</Col>
+					</Col>
 
-				<Col xs={24} md={12}>
-					<div className="space-y-6">
-						<div>
-							<Title level={1} className="!mb-2">
-								{flower.name}
-							</Title>
+					{/* Details Section */}
+					<Col xs={24} lg={12}>
+						<Card style={{ height: '100%' }}>
+							<Space
+								direction="vertical"
+								size="large"
+								style={{ width: '100%' }}
+							>
+								{/* Header Section */}
+								<div>
+									<Title level={2} style={{ marginBottom: '8px' }}>
+										{flower.flowerName}
+									</Title>
 
-							<div className="flex items-center space-x-4 mb-4">
-								<Rate disabled defaultValue={4.5} />
-								<Text className="text-gray-500">(24 reviews)</Text>
-								{flower.category && (
-									<Tag color="blue">{flower.category.categoryName}</Tag>
-								)}
-							</div>
+									{/* Price and Actions */}
+									<div style={{ marginBottom: '16px' }}>
+										<Title level={3} type="success" style={{ margin: 0 }}>
+											{flower.price.toLocaleString('vi-VN')} ₫
+										</Title>
+									</div>
 
-							<Title level={2} className="text-red-600 !mb-4">
-								${flower.price.toFixed(2)}
-							</Title>
+									{/* Tags for Category and Status */}
+									<Space size="small" style={{ marginBottom: '16px' }}>
+										<Tag
+											color="blue"
+											style={{ fontSize: '14px', padding: '4px 8px' }}
+										>
+											{flower.categoryName || 'N/A'}
+										</Tag>
+										<Tag
+											color={flower.status === 'active' ? 'green' : 'red'}
+											style={{ fontSize: '14px', padding: '4px 8px' }}
+										>
+											{flower.status === 'active' ? 'Available' : 'Unavailable'}
+										</Tag>
+										<Tag
+											color={flower.availableQuantity > 0 ? 'cyan' : 'volcano'}
+											style={{ fontSize: '14px', padding: '4px 8px' }}
+										>
+											{flower.availableQuantity > 0
+												? `${flower.availableQuantity} in stock`
+												: 'Out of stock'}
+										</Tag>
+									</Space>
 
-							<div className="flex items-center space-x-2 mb-4">
-								<Text strong>Stock:</Text>
-								<Text
-									className={
-										(flower.stock || flower.availableQuantity || 0) > 0
-											? 'text-green-600'
-											: 'text-red-600'
-									}
-								>
-									{(flower.stock || flower.availableQuantity || 0) > 0
-										? `${flower.stock || flower.availableQuantity} available`
-										: 'Out of stock'}
-								</Text>
-							</div>
+									{/* Action Buttons - Heart and Share */}
+									<Space style={{ marginBottom: '16px' }}>
+										<Button
+											icon={<HeartOutlined />}
+											type={isFavorite ? 'primary' : 'default'}
+											shape="circle"
+											size="large"
+											onClick={handleAddToFavorites}
+										/>
+										<Button
+											icon={<ShareAltOutlined />}
+											type="default"
+											shape="circle"
+											size="large"
+											onClick={handleShare}
+										/>
+									</Space>
 
-							<div className="flex items-center space-x-2 mb-6">
-								<Text strong>Status:</Text>
-								<Tag color={flower.isAvailable ? 'green' : 'red'}>
-									{flower.isAvailable ? 'Available' : 'Unavailable'}
-								</Tag>
-							</div>
-						</div>
-
-						<div>
-							<Title level={4}>Description</Title>
-							<Paragraph className="text-gray-700">
-								{flower.description}
-							</Paragraph>
-						</div>
-
-						<div className="space-y-4">
-							<div className="flex items-center space-x-4">
-								<Text strong>Quantity:</Text>
-								<InputNumber
-									min={1}
-									max={flower.stock}
-									value={quantity}
-									onChange={(value) => setQuantity(value || 1)}
-									disabled={!flower.isAvailable || flower.stock === 0}
-								/>
-							</div>
-
-							<div className="flex space-x-3">
-								<Button
-									type="primary"
-									size="large"
-									icon={<ShoppingCartOutlined />}
-									onClick={handleAddToCart}
-									loading={addingToCart}
-									disabled={!flower.isAvailable || flower.stock === 0}
-									className="flex-1"
-								>
-									Add to Cart
-								</Button>
-
-								<Button size="large" icon={<HeartOutlined />} className="px-4">
-									Wishlist
-								</Button>
-
-								<Button
-									size="large"
-									icon={<ShareAltOutlined />}
-									className="px-4"
-								>
-									Share
-								</Button>
-							</div>
-						</div>
-
-						<Card className="bg-gray-50">
-							<div className="space-y-2">
-								<div className="flex justify-between">
-									<Text>Delivery:</Text>
-									<Text strong>Same day delivery available</Text>
+									{/* Description */}
+									<Paragraph
+										style={{
+											fontSize: '16px',
+											lineHeight: '1.6',
+											marginBottom: '24px',
+											color: '#666',
+										}}
+									>
+										{flower.flowerDescription}
+									</Paragraph>
 								</div>
-								<div className="flex justify-between">
-									<Text>Care instructions:</Text>
-									<Text>Included with purchase</Text>
+
+								<Divider style={{ margin: '16px 0' }} />
+
+								{/* Quantity Selector */}
+								<div>
+									<Text
+										strong
+										style={{
+											fontSize: '16px',
+											display: 'block',
+											marginBottom: '12px',
+										}}
+									>
+										Select Quantity:
+									</Text>
+									<Space size="middle" style={{ marginBottom: '24px' }}>
+										<Button
+											icon={<MinusOutlined />}
+											onClick={handleDecrement}
+											disabled={!isAvailable}
+											size="large"
+										/>
+										<InputNumber
+											min={1}
+											max={flower.availableQuantity}
+											value={quantity}
+											onChange={(value) => setQuantity(Number(value) || 1)}
+											controls={false}
+											style={{ width: '80px' }}
+											size="large"
+											disabled={!isAvailable}
+										/>
+										<Button
+											icon={<PlusOutlined />}
+											onClick={handleIncrement}
+											disabled={
+												!isAvailable || quantity >= flower.availableQuantity
+											}
+											size="large"
+										/>
+									</Space>
 								</div>
-								<div className="flex justify-between">
-									<Text>Guarantee:</Text>
-									<Text>7-day freshness guarantee</Text>
-								</div>
-							</div>
+
+								{/* Action Buttons */}
+								<Space
+									direction="vertical"
+									size="middle"
+									style={{ width: '100%' }}
+								>
+									<Row gutter={16}>
+										<Col span={12}>
+											<Button
+												type="primary"
+												size="large"
+												icon={<ShoppingCartOutlined />}
+												onClick={handleAddToCart}
+												loading={addingToCart}
+												disabled={!isAvailable}
+												style={{
+													width: '100%',
+													height: '48px',
+													fontSize: '16px',
+												}}
+											>
+												Add to Cart
+											</Button>
+										</Col>
+										<Col span={12}>
+											<Button
+												type="primary"
+												size="large"
+												icon={<DollarOutlined />}
+												disabled={!isAvailable}
+												style={{
+													width: '100%',
+													height: '48px',
+													fontSize: '16px',
+													backgroundColor: '#52c41a',
+													borderColor: '#52c41a',
+												}}
+											>
+												Buy Now
+											</Button>
+										</Col>
+									</Row>
+								</Space>
+							</Space>
 						</Card>
+					</Col>
+				</Row>
+
+				{/* Suggested Flowers Section */}
+				<Card style={{ marginTop: '64px' }}>
+					<div style={{ textAlign: 'center', marginBottom: '32px' }}>
+						<Title level={2} style={{ marginBottom: '8px' }}>
+							You might also like
+						</Title>
+						<Text type="secondary" style={{ fontSize: '16px' }}>
+							Discover more beautiful flowers from our collection
+						</Text>
 					</div>
-				</Col>
-			</Row>
+
+					{suggestedLoading ? (
+						<div
+							style={{
+								display: 'flex',
+								justifyContent: 'center',
+								alignItems: 'center',
+								minHeight: '256px',
+							}}
+						>
+							<Spin size="large" />
+						</div>
+					) : (
+						<Row gutter={[24, 24]}>
+							{suggestedFlowers.map((suggestedFlower) => (
+								<Col xs={24} sm={12} md={6} key={suggestedFlower.flowerId}>
+									<FlowerCard
+										flower={suggestedFlower}
+										onAddToCart={handleSuggestedAddToCart}
+									/>
+								</Col>
+							))}
+						</Row>
+					)}
+				</Card>
+			</div>
 		</div>
 	);
 };

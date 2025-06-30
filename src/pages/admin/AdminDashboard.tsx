@@ -1,4 +1,4 @@
-import { useAuth } from '../../hooks/useAuth';
+import { useAdminAuth } from '../../hooks/useAdminAuth';
 import {
 	AppstoreOutlined,
 	BarChartOutlined,
@@ -12,7 +12,7 @@ import React from 'react';
 const { Title, Text } = Typography;
 
 export const AdminDashboard: React.FC = () => {
-	const { user } = useAuth();
+	const { user } = useAdminAuth();
 
 	return (
 		<div className="p-6">

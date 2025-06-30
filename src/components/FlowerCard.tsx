@@ -1,11 +1,10 @@
 import type { Flower } from '../types';
 import { EyeOutlined, ShoppingCartOutlined } from '@ant-design/icons';
-import { Button, Card, Rate, Tag, Typography } from 'antd';
+import { Button, Card, Tag, Typography } from 'antd';
 import React from 'react';
 import { Link } from 'react-router-dom';
 
 const { Text, Title } = Typography;
-const { Meta } = Card;
 
 interface FlowerCardProps {
 	flower: Flower;
@@ -20,71 +19,96 @@ export const FlowerCard: React.FC<FlowerCardProps> = ({
 		e.stopPropagation();
 		e.preventDefault();
 		if (onAddToCart) {
-			onAddToCart(flower.id || flower.flowerId?.toString() || '');
+			onAddToCart(flower.flowerId?.toString() || flower.id || '');
 		}
 	};
+
+	// Normalize flower data to handle different property names
+	const flowerName = flower.flowerName || flower.name || '';
+	const flowerDescription =
+		flower.flowerDescription || flower.description || '';
+	const flowerPrice = flower.price || 0;
+	const flowerImage = flower.imageUrl || '';
+	const flowerStock = flower.availableQuantity ?? flower.stock ?? 0;
+	const isAvailable = flower.status === 'active' && flowerStock > 0;
+	const flowerId = flower.flowerId || parseInt(flower.id || '0');
 
 	return (
 		<Card
 			hoverable
-			className="h-full"
+			className="h-full shadow-sm border-0 rounded-xl overflow-hidden bg-white"
 			cover={
-				<div className="relative overflow-hidden h-64">
+				<div className="relative overflow-hidden h-60">
 					<img
-						alt={flower.name}
-						src={flower.imageUrl}
+						alt={flowerName}
+						src={flowerImage}
 						className="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
+						onError={(e) => {
+							const target = e.target as HTMLImageElement;
+							target.src = '/images/picture/hoa4.jpg'; // Use existing flower image as fallback
+						}}
 					/>
-					{!flower.isAvailable && (
+					{!isAvailable && (
 						<div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-							<Tag color="red">Out of Stock</Tag>
+							<Tag color="red" className="text-white font-medium">
+								Out of Stock
+							</Tag>
 						</div>
 					)}
 				</div>
 			}
-			actions={[
-				<Link to={`/flowers/${flower.id}`} key="view">
-					<Button type="text" icon={<EyeOutlined />}>
-						View Details
-					</Button>
-				</Link>,
-				<Button
-					key="cart"
-					type="text"
-					icon={<ShoppingCartOutlined />}
-					onClick={handleAddToCart}
-					disabled={!flower.isAvailable || flower.stock === 0}
-				>
-					Add to Cart
-				</Button>,
-			]}
+			styles={{
+				body: {
+					padding: '20px',
+				},
+			}}
 		>
-			<Meta
-				title={
-					<Title level={4} className="!mb-2 line-clamp-2">
-						{flower.name}
-					</Title>
-				}
-				description={
-					<div className="space-y-2">
-						<Text className="text-gray-600 line-clamp-2">
-							{flower.description}
+			<div className="space-y-3">
+				<Title level={4} className="!mb-2 line-clamp-2 text-gray-800">
+					{flowerName}
+				</Title>
+
+				<Text className="text-gray-600 line-clamp-2 text-sm leading-relaxed">
+					{flowerDescription}
+				</Text>
+
+				<div className="flex items-center justify-between pt-2">
+					<div className="flex flex-col">
+						<Text strong className="text-xl text-red-500 font-bold">
+							{flowerPrice.toLocaleString('vi-VN')} ₫
 						</Text>
-						<div className="flex items-center justify-between">
-							<Text strong className="text-lg text-red-600">
-								${flower.price.toFixed(2)}
-							</Text>
-							<Text type="secondary">Stock: {flower.stock}</Text>
-						</div>
-						<div className="flex items-center justify-between">
-							<Rate disabled defaultValue={4.5} className="text-sm" />
-							{flower.category && (
-								<Tag color="blue">{flower.category.categoryName}</Tag>
-							)}
-						</div>
+						<Text type="secondary" className="text-xs">
+							Stock: {flowerStock}
+						</Text>
 					</div>
-				}
-			/>
+					{flower.categoryName && (
+						<Tag color="blue" className="rounded-full px-3">
+							{flower.categoryName}
+						</Tag>
+					)}
+				</div>
+
+				<div className="flex gap-2 pt-3">
+					<Link to={`/flowers/${flowerId}`} className="flex-1">
+						<Button
+							type="default"
+							icon={<EyeOutlined />}
+							className="w-full border-gray-300 hover:border-blue-500 hover:text-blue-500"
+						>
+							View
+						</Button>
+					</Link>
+					<Button
+						type="primary"
+						icon={<ShoppingCartOutlined />}
+						onClick={handleAddToCart}
+						disabled={!isAvailable}
+						className="flex-1 bg-gradient-to-r from-rose-400 to-pink-400 border-0 hover:from-rose-500 hover:to-pink-500"
+					>
+						Add to Cart
+					</Button>
+				</div>
+			</div>
 		</Card>
 	);
 };

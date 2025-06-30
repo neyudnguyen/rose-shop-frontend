@@ -1,5 +1,5 @@
 import { COLORS } from '../../constants/colors';
-import { useAuth } from '../../hooks/useAuth';
+import { useAdminAuth } from '../../hooks/useAdminAuth';
 import {
 	ArrowLeftOutlined,
 	LockOutlined,
@@ -20,7 +20,7 @@ interface AdminLoginForm {
 export const AdminLogin: React.FC = () => {
 	const [loading, setLoading] = useState(false);
 	const [error, setError] = useState<string | null>(null);
-	const { login, user } = useAuth();
+	const { login, user } = useAdminAuth();
 	const navigate = useNavigate();
 
 	// Redirect if already logged in as admin

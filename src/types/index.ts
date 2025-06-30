@@ -68,11 +68,39 @@ export interface Flower {
 }
 
 export interface CartItem {
-	id: string;
-	flowerId: string;
-	flower?: Flower;
+	id?: string;
+	cartId: number;
+	flowerId: number;
+	flowerName: string;
+	flowerDescription: string;
+	imageUrl: string;
 	quantity: number;
-	userId: string;
+	unitPrice: number;
+	totalPrice: number;
+	currentPrice: number;
+	priceChanged: boolean;
+	categoryName: string;
+	availableQuantity: number;
+	userId?: string;
+	flower?: Flower; // Backward compatibility
+}
+
+export interface CartSummary {
+	grandTotal: number;
+	totalItems: number;
+	totalTypes: number;
+	// Backward compatibility fields
+	totalQuantity?: number;
+	subtotal?: number;
+	tax?: number;
+	discount?: number;
+	shipping?: number;
+	total?: number;
+}
+
+export interface CartResponse {
+	items: CartItem[];
+	summary: CartSummary;
 }
 
 export interface Address {
@@ -180,4 +208,111 @@ export interface VoucherUserStats {
 	remainingCount?: number;
 	status: string;
 	hasUsed: boolean;
+}
+
+// User Management types for Admin
+export interface UserInfoManagement {
+	fullName?: string;
+	phone?: string;
+	address?: string;
+	dateOfBirth?: string;
+	gender?: string;
+	avatar?: string;
+}
+
+export interface UserListRequest {
+	userId: number;
+	username: string;
+	email: string;
+	type: string;
+	createdAt?: string;
+	updatedAt?: string;
+	isActive: boolean;
+	userInfo?: UserInfoManagement;
+}
+
+export interface UserDetailResponse {
+	userId: number;
+	username: string;
+	email: string;
+	type: string;
+	createdAt?: string;
+	updatedAt?: string;
+	isActive: boolean;
+	userInfo?: UserInfoManagement;
+}
+
+export interface UserStatusUpdate {
+	reason: string;
+}
+
+export interface UserSearchParams {
+	search?: string;
+	type?: 'admin' | 'user';
+	status?: 'active' | 'inactive';
+	page?: number;
+	limit?: number;
+}
+
+// Order types based on API schema
+export interface CreateOrderRequest {
+	phoneNumber?: string;
+	paymentMethod: string;
+	deliveryMethod: string;
+	addressId?: number;
+	userVoucherStatusId?: number;
+}
+
+export interface OrderItemResponse {
+	orderDetailId: number;
+	flowerId: number;
+	flowerName: string;
+	flowerImage: string;
+	unitPrice: number;
+	quantity: number;
+	totalPrice: number;
+	status: string;
+}
+
+export interface OrderResponse {
+	orderId: number;
+	userId: number;
+	phoneNumber: string;
+	paymentMethod: string;
+	deliveryMethod: string;
+	createdDate: string;
+	userVoucherStatusId?: number;
+	voucherCode?: string;
+	voucherDiscount?: number;
+	addressId: number;
+	addressDescription: string;
+	statusPayment: string;
+	subTotal: number;
+	shippingFee: number;
+	voucherDiscountAmount: number;
+	totalPrice: number;
+	items: OrderItemResponse[];
+	paymentUrl?: string;
+}
+
+// Address types based on API schema
+export interface AddressResponse {
+	addressId: number;
+	userInfoId: number;
+	description: string;
+	userFullName: string;
+	createdAt?: string;
+	updatedAt?: string;
+}
+
+export interface ManageAddressRequest {
+	AddressId?: number;
+	Description: string;
+	IsDeleted?: boolean;
+}
+
+export interface PaymentStatusResponse {
+	success: boolean;
+	message: string;
+	data: unknown;
 }

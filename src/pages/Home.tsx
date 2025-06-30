@@ -1,7 +1,9 @@
 import { FlowerCard } from '../components/FlowerCard';
 import { COLORS } from '../constants/colors';
-import apiClient from '../services/api';
-import type { Flower } from '../types';
+import { cartService } from '../services/cartService';
+import { categoryService } from '../services/categoryService';
+import { flowerService } from '../services/flowerService';
+import type { Category, Flower } from '../types';
 import {
 	ArrowRightOutlined,
 	SafetyCertificateOutlined,
@@ -23,49 +25,6 @@ import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 
 const { Title, Text, Paragraph } = Typography;
-
-const hotFlowers = [
-	{
-		name: 'Lotus Flower',
-		image: '/images/picture/hoasen.jpg',
-		category: 'Traditional',
-	},
-	{
-		name: 'Tulip',
-		image: '/images/picture/tulip.jpg',
-		category: 'Spring',
-	},
-	{
-		name: 'Wedding Flower',
-		image: '/images/picture/weddingflower.jpg',
-		category: 'Wedding',
-	},
-	{
-		name: 'Sunflower',
-		image: '/images/picture/hoahuongduong.jpg',
-		category: 'Summer',
-	},
-	{
-		name: 'Decorative Flower',
-		image: '/images/picture/hoacanh.png',
-		category: 'Decorative',
-	},
-	{
-		name: 'Rose',
-		image: '/images/picture/hoa4.jpg',
-		category: 'Classic',
-	},
-	{
-		name: 'Peony',
-		image: '/images/picture/peony.jpg',
-		category: 'Elegant',
-	},
-	{
-		name: 'Hydrangea',
-		image: '/images/picture/hydrangea.jpg',
-		category: 'Garden',
-	},
-];
 
 const features = [
 	{
@@ -92,6 +51,7 @@ const features = [
 ];
 
 export const Home: React.FC = () => {
+	const [topCategories, setTopCategories] = useState<Category[]>([]);
 	const [featuredFlowers, setFeaturedFlowers] = useState<Flower[]>([]);
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState<string | null>(null);
@@ -99,8 +59,14 @@ export const Home: React.FC = () => {
 	useEffect(() => {
 		const fetchData = async () => {
 			try {
-				const flowersResponse = await apiClient.get('/flowers?limit=8');
-				setFeaturedFlowers(flowersResponse.data.data || []);
+				// Fetch top popular categories
+				const categoriesResponse =
+					await categoryService.getTopPopularCategories();
+				setTopCategories(categoriesResponse || []);
+
+				// Fetch featured flowers (first 9 flowers from shop)
+				const flowersResponse = await flowerService.getFlowers();
+				setFeaturedFlowers(flowersResponse.slice(0, 9) || []);
 			} catch (err) {
 				setError('Failed to load data. Please try again later.');
 				console.error('Error fetching home data:', err);
@@ -114,7 +80,7 @@ export const Home: React.FC = () => {
 
 	const handleAddToCart = async (flowerId: string) => {
 		try {
-			await apiClient.post('/cart/add', { flowerId, quantity: 1 });
+			await cartService.addToCart(flowerId, 1);
 		} catch (err) {
 			console.error('Error adding to cart:', err);
 		}
@@ -238,44 +204,97 @@ export const Home: React.FC = () => {
 				</div>
 			</section>
 
-			{/* Hot Flowers Section */}
+			{/* Top Popular Categories Section */}
 			<section className="py-12 px-4">
 				<div className="max-w-7xl mx-auto">
 					<Title level={2} className="text-center mb-8 font-bold text-3xl">
-						HOT FLOWERS IN SHOP
+						Hot Categories in Shop
 					</Title>
-					<Row gutter={[24, 24]}>
-						{hotFlowers.map((flower, index) => (
-							<Col key={index} xs={12} sm={8} lg={6}>
-								<Card
-									className="rounded-lg hover:shadow-xl transition-shadow h-full"
-									cover={
-										<div className="relative h-48 w-full overflow-hidden">
-											<img
-												src={flower.image}
-												alt={flower.name}
-												className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
-											/>
-										</div>
-									}
-									styles={{ body: { padding: '16px' } }}
-								>
-									<Title level={5} className="text-center font-semibold mb-2">
-										{flower.name}
-									</Title>
-									<Text className="text-center text-gray-500 block mb-3">
-										{flower.category}
-									</Text>
+					{loading ? (
+						<div className="flex justify-center items-center min-h-64">
+							<Spin size="large" />
+						</div>
+					) : (
+						<Row gutter={[24, 24]} justify="center">
+							{topCategories.map((category) => (
+								<Col key={category.categoryId} xs={12} sm={12} md={8} lg={6}>
+									<Card
+										className="rounded-xl hover:shadow-xl transition-all duration-300 h-full border-0 bg-gradient-to-br from-rose-50 to-pink-50 hover:from-rose-100 hover:to-pink-100"
+										styles={{
+											body: {
+												padding: '24px',
+												textAlign: 'center',
+												display: 'flex',
+												flexDirection: 'column',
+												justifyContent: 'center',
+												minHeight: '160px',
+											},
+										}}
+									>
+										<div className="text-4xl mb-3 text-rose-400">🌸</div>
+										<Title
+											level={4}
+											className="text-center font-bold mb-2 text-gray-800"
+										>
+											{category.categoryName}
+										</Title>
+										<Text className="text-center text-gray-600 block mb-4 text-sm">
+											{category.flowerCount} flowers available
+										</Text>
+										<Link to={`/flowers?category=${category.categoryId}`}>
+											<Button
+												type="primary"
+												className="border-none rounded-full bg-gradient-to-r from-rose-400 to-pink-400 hover:from-rose-500 hover:to-pink-500"
+												size="middle"
+											>
+												View Collection
+											</Button>
+										</Link>
+									</Card>
+								</Col>
+							))}
+						</Row>
+					)}
+				</div>
+			</section>
+
+			{/* Featured Flowers */}
+			<section className="py-8">
+				<div className="max-w-7xl mx-auto px-4">
+					<div className="text-center mb-12">
+						<Title level={2}>Featured Flowers</Title>
+						<Text className="text-lg text-gray-600">
+							Handpicked flowers just for you
+						</Text>
+					</div>
+
+					{loading ? (
+						<div className="flex justify-center items-center min-h-64">
+							<Spin size="large" />
+						</div>
+					) : (
+						<>
+							<Row gutter={[24, 24]}>
+								{featuredFlowers.map((flower) => (
+									<Col xs={24} sm={12} md={8} lg={8} key={flower.flowerId}>
+										<FlowerCard flower={flower} onAddToCart={handleAddToCart} />
+									</Col>
+								))}
+							</Row>
+
+							<div className="text-center mt-8">
+								<Link to="/flowers">
 									<Button
 										type="primary"
-										className="w-full border-none rounded-full"
+										size="large"
+										icon={<ArrowRightOutlined />}
 									>
-										View Details
+										View All Flowers
 									</Button>
-								</Card>
-							</Col>
-						))}
-					</Row>
+								</Link>
+							</div>
+						</>
+					)}
 				</div>
 			</section>
 
@@ -312,36 +331,8 @@ export const Home: React.FC = () => {
 				</div>
 			</section>
 
-			{/* Featured Flowers */}
-			<section className="py-16">
-				<div className="max-w-7xl mx-auto px-4">
-					<div className="text-center mb-12">
-						<Title level={2}>Featured Flowers</Title>
-						<Text className="text-lg text-gray-600">
-							Handpicked flowers just for you
-						</Text>
-					</div>
-
-					<Row gutter={[24, 24]}>
-						{featuredFlowers.map((flower) => (
-							<Col xs={24} sm={12} md={8} lg={6} key={flower.id}>
-								<FlowerCard flower={flower} onAddToCart={handleAddToCart} />
-							</Col>
-						))}
-					</Row>
-
-					<div className="text-center mt-8">
-						<Link to="/flowers">
-							<Button type="primary" size="large" icon={<ArrowRightOutlined />}>
-								View All Flowers
-							</Button>
-						</Link>
-					</div>
-				</div>
-			</section>
-
 			{/* Why Choose Us Section */}
-			<section className="py-16 bg-gray-50">
+			<section className="py-16">
 				<div className="max-w-7xl mx-auto px-4">
 					<div className="text-center mb-12">
 						<Title level={2} className="font-bold">

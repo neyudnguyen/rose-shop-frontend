@@ -1,5 +1,6 @@
 import type { ApiResponse } from '../types';
 
+import adminApiClient from './adminApi';
 import apiClient from './api';
 
 // Based on the OpenAPI spec, the API expects this structure
@@ -38,7 +39,7 @@ class CategoryService {
 
 	// Get all categories
 	async getCategories(): Promise<CategoryResponse[]> {
-		const response = await apiClient.get<ApiResponse<CategoryResponse[]>>(
+		const response = await adminApiClient.get<ApiResponse<CategoryResponse[]>>(
 			this.baseUrl,
 		);
 		return response.data.data;
@@ -46,7 +47,7 @@ class CategoryService {
 
 	// Get category by ID
 	async getCategoryById(id: number): Promise<CategoryResponse> {
-		const response = await apiClient.get<ApiResponse<CategoryResponse>>(
+		const response = await adminApiClient.get<ApiResponse<CategoryResponse>>(
 			`${this.baseUrl}/${id}`,
 		);
 		return response.data.data;
@@ -54,7 +55,7 @@ class CategoryService {
 
 	// Create new category - matches the API spec exactly
 	async createCategory(data: CategoryCreateRequest): Promise<CategoryResponse> {
-		const response = await apiClient.post<ApiResponse<CategoryResponse>>(
+		const response = await adminApiClient.post<ApiResponse<CategoryResponse>>(
 			`${this.baseUrl}/manage`,
 			data,
 		);
@@ -70,7 +71,7 @@ class CategoryService {
 			categoryId: id,
 			categoryName: data.categoryName,
 		};
-		const response = await apiClient.post<ApiResponse<CategoryResponse>>(
+		const response = await adminApiClient.post<ApiResponse<CategoryResponse>>(
 			`${this.baseUrl}/manage`,
 			updateData,
 		);
@@ -83,13 +84,21 @@ class CategoryService {
 			categoryId: id,
 			isDeleted: true,
 		};
-		await apiClient.post(`${this.baseUrl}/manage`, deleteData);
+		await adminApiClient.post(`${this.baseUrl}/manage`, deleteData);
 	}
 
 	// Get public categories (for customers)
 	async getPublicCategories(): Promise<CategoryResponse[]> {
 		const response =
 			await apiClient.get<ApiResponse<CategoryResponse[]>>('/categories');
+		return response.data.data;
+	}
+
+	// Get top popular categories (for home page)
+	async getTopPopularCategories(): Promise<CategoryResponse[]> {
+		const response = await apiClient.get<ApiResponse<CategoryResponse[]>>(
+			'/categories/top-popular',
+		);
 		return response.data.data;
 	}
 }
