@@ -77,6 +77,20 @@ export interface CartItem {
 	unitPrice?: number; // From database
 }
 
+export interface CartSummary {
+	totalQuantity: number;
+	subtotal: number;
+	tax?: number;
+	discount?: number;
+	shipping?: number;
+	total: number;
+}
+
+export interface CartResponse {
+	items: CartItem[];
+	summary: CartSummary;
+}
+
 export interface Address {
 	id: string;
 	fullName: string;

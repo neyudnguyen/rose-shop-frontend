@@ -65,18 +65,18 @@ export const Checkout: React.FC = () => {
 
 	const fetchData = async () => {
 		try {
-			const [cartData, addressData] = await Promise.all([
+			const [cartResponse, addressData] = await Promise.all([
 				cartService.getMyCart(),
 				addressService.getAddresses(),
 			]);
 
-			if (cartData.length === 0) {
+			if (cartResponse.items.length === 0) {
 				message.warning('Your cart is empty');
 				navigate('/cart');
 				return;
 			}
 
-			setCartItems(cartData);
+			setCartItems(cartResponse.items);
 			setAddresses(addressData);
 		} catch (err) {
 			setError('Failed to load checkout data. Please try again.');

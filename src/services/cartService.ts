@@ -1,21 +1,36 @@
-import type { ApiResponse, CartItem } from '../types';
+import type { ApiResponse, CartItem, CartResponse } from '../types';
 
 import apiClient from './api';
 
 export const cartService = {
-	getMyCart: async (): Promise<CartItem[]> => {
+	getMyCart: async (): Promise<CartResponse> => {
 		try {
 			const response =
-				await apiClient.get<ApiResponse<CartItem[]>>('/cart/my-cart');
+				await apiClient.get<ApiResponse<CartResponse>>('/cart/my-cart');
 			// Debug logging
 			console.log('Cart API Response:', response.data);
 
-			// Ensure we always return an array
+			// Extract items and summary from the new API structure
 			const data = response.data?.data;
-			return Array.isArray(data) ? data : [];
+			const items = Array.isArray(data?.items) ? data.items : [];
+			const summary = data?.summary || {
+				totalQuantity: 0,
+				subtotal: 0,
+				total: 0,
+			};
+
+			return { items, summary };
 		} catch (error) {
 			console.error('Error fetching cart:', error);
-			return []; // Return empty array on error
+			// Return empty cart response on error
+			return {
+				items: [],
+				summary: {
+					totalQuantity: 0,
+					subtotal: 0,
+					total: 0,
+				},
+			};
 		}
 	},
 
