@@ -22,7 +22,7 @@ import type { ColumnsType } from 'antd/es/table';
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 
-const { Title, Text } = Typography;
+const { Text } = Typography;
 
 export const Orders: React.FC = () => {
 	const [orders, setOrders] = useState<OrderResponse[]>([]);
@@ -189,12 +189,24 @@ export const Orders: React.FC = () => {
 			style={{
 				maxWidth: '1200px',
 				margin: '0 auto',
-				padding: '80px 16px 40px',
+				padding: '88px 16px 40px',
 			}}
 		>
-			<Title level={2} style={{ marginBottom: '24px' }}>
-				My Orders
-			</Title>
+			<div style={{ marginBottom: 32 }}>
+				<Alert
+					message={
+						<span style={{ fontWeight: 600, fontSize: 22 }}>My Orders</span>
+					}
+					description="This is your order history. You can view details and track your purchases here."
+					type="info"
+					showIcon
+					style={{
+						background: '#f0f5ff',
+						border: 'none',
+						fontSize: 16,
+					}}
+				/>
+			</div>
 
 			{orders.length === 0 ? (
 				<Card style={{ textAlign: 'center', padding: '60px 24px' }}>
@@ -222,7 +234,7 @@ export const Orders: React.FC = () => {
 					/>
 				</Card>
 			) : (
-				<Card>
+				<Card style={{ boxShadow: '0 2px 8px #f0f1f2' }}>
 					<Table
 						columns={columns}
 						dataSource={orders}
@@ -237,14 +249,6 @@ export const Orders: React.FC = () => {
 					/>
 				</Card>
 			)}
-
-			<div style={{ textAlign: 'center', marginTop: '32px' }}>
-				<Link to="/">
-					<Button type="primary" size="large" icon={<ShoppingOutlined />}>
-						Continue Shopping
-					</Button>
-				</Link>
-			</div>
 		</div>
 	);
 };
