@@ -46,14 +46,14 @@ export const UserProfileCard: React.FC<UserProfileCardProps> = ({ user }) => {
 
 	return (
 		<Card className="user-profile-card">
-			<div className="flex items-start space-x-6">
+			<div className="flex items-start space-x-16">
 				<Avatar
 					size={80}
 					src={user.userInfo?.avatar}
 					icon={<UserOutlined />}
 					style={{ backgroundColor: COLORS.primary }}
 				/>
-				<div className="flex-1 min-w-0">
+				<div className="flex-1 min-w-0 pl-6">
 					<div className="flex items-center space-x-3 mb-3">
 						<Title level={4} className="!mb-0">
 							{user.userInfo?.fullName || user.username}
@@ -99,7 +99,7 @@ export const UserProfileCard: React.FC<UserProfileCardProps> = ({ user }) => {
 
 						{user.userInfo?.gender && (
 							<div className="flex items-center space-x-3">
-								<span style={{ fontSize: '16px' }}>
+								<span style={{ fontSize: '12px' }}>
 									{getGenderIcon(user.userInfo.gender)}
 								</span>
 								<Text className="capitalize">{user.userInfo.gender}</Text>
