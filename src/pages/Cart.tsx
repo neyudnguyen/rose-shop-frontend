@@ -34,6 +34,9 @@ export const Cart: React.FC = () => {
 	const [cartData, setCartData] = useState<CartResponse>({
 		items: [],
 		summary: {
+			grandTotal: 0,
+			totalItems: 0,
+			totalTypes: 0,
 			totalQuantity: 0,
 			subtotal: 0,
 			total: 0,
@@ -62,6 +65,9 @@ export const Cart: React.FC = () => {
 			setCartData({
 				items: [],
 				summary: {
+					grandTotal: 0,
+					totalItems: 0,
+					totalTypes: 0,
 					totalQuantity: 0,
 					subtotal: 0,
 					total: 0,
@@ -128,22 +134,18 @@ export const Cart: React.FC = () => {
 					<Image
 						width={60}
 						height={60}
-						src={record.flower?.imageUrl || '/images/placeholder.jpg'}
-						alt={record.flower?.flowerName || record.flower?.name || 'Product'}
+						src={record.imageUrl || '/images/placeholder.jpg'}
+						alt={record.flowerName || 'Product'}
 						style={{ objectFit: 'cover', borderRadius: 4 }}
 						fallback="/images/placeholder.jpg"
 					/>
 					<div>
-						<Text strong>
-							{record.flower?.flowerName ||
-								record.flower?.name ||
-								'Unknown Product'}
-						</Text>
+						<Text strong>{record.flowerName || 'Unknown Product'}</Text>
 						<br />
-						<Text type="secondary">
-							{record.flower?.flowerDescription ||
-								record.flower?.description ||
-								''}
+						<Text type="secondary">{record.flowerDescription || ''}</Text>
+						<br />
+						<Text type="secondary" style={{ fontSize: '12px' }}>
+							{record.categoryName}
 						</Text>
 					</div>
 				</Space>
@@ -153,37 +155,44 @@ export const Cart: React.FC = () => {
 			title: 'Price',
 			key: 'price',
 			render: (_, record) => (
-				<Text strong>
-					${(record.unitPrice || record.flower?.price || 0).toFixed(2)}
-				</Text>
+				<Text strong>{(record.unitPrice || 0).toLocaleString('vi-VN')} ₫</Text>
 			),
 		},
 		{
 			title: 'Quantity',
 			key: 'quantity',
 			render: (_, record) => (
-				<Space.Compact>
+				<Space.Compact style={{ display: 'flex', alignItems: 'center' }}>
 					<Button
 						icon={<MinusOutlined />}
 						size="small"
-						onClick={() => handleQuantityChange(record.id, record.quantity - 1)}
-						disabled={record.quantity <= 1 || updating === record.id}
+						onClick={() =>
+							handleQuantityChange(String(record.cartId), record.quantity - 1)
+						}
+						disabled={
+							record.quantity <= 1 || updating === String(record.cartId)
+						}
+						style={{ height: '32px', minWidth: '32px' }}
 					/>
 					<InputNumber
 						min={1}
 						max={99}
 						value={record.quantity}
 						onChange={(value) =>
-							value && handleQuantityChange(record.id, value)
+							value && handleQuantityChange(String(record.cartId), value)
 						}
-						disabled={updating === record.id}
-						style={{ width: 60, textAlign: 'center' }}
+						disabled={updating === String(record.cartId)}
+						style={{ width: 60, textAlign: 'center', height: '32px' }}
+						controls={false}
 					/>
 					<Button
 						icon={<PlusOutlined />}
 						size="small"
-						onClick={() => handleQuantityChange(record.id, record.quantity + 1)}
-						disabled={updating === record.id}
+						onClick={() =>
+							handleQuantityChange(String(record.cartId), record.quantity + 1)
+						}
+						disabled={updating === String(record.cartId)}
+						style={{ height: '32px', minWidth: '32px' }}
 					/>
 				</Space.Compact>
 			),
@@ -192,9 +201,9 @@ export const Cart: React.FC = () => {
 			title: 'Subtotal',
 			key: 'subtotal',
 			render: (_, record) => {
-				const price = record.unitPrice || record.flower?.price || 0;
-				const subtotal = price * record.quantity;
-				return <Text strong>${subtotal.toFixed(2)}</Text>;
+				return (
+					<Text strong>{record.totalPrice.toLocaleString('vi-VN')} ₫</Text>
+				);
 			},
 		},
 		{
@@ -204,14 +213,14 @@ export const Cart: React.FC = () => {
 				<Popconfirm
 					title="Remove Item"
 					description="Are you sure you want to remove this item from your cart?"
-					onConfirm={() => handleRemoveItem(record.id)}
+					onConfirm={() => handleRemoveItem(String(record.cartId))}
 					okText="Yes"
 					cancelText="No"
 				>
 					<Button
 						danger
 						icon={<DeleteOutlined />}
-						loading={updating === record.id}
+						loading={updating === String(record.cartId)}
 						size="small"
 					>
 						Remove
@@ -240,14 +249,13 @@ export const Cart: React.FC = () => {
 				0,
 			);
 			const subtotal = cartData.items.reduce((sum, item) => {
-				const price = item.unitPrice || item.flower?.price || 0;
-				return sum + price * item.quantity;
+				return sum + item.totalPrice;
 			}, 0);
 
-			const tax = summary?.tax || 0;
-			const discount = summary?.discount || 0;
-			const shipping = summary?.shipping || 0;
-			const total = subtotal + tax + shipping - discount;
+			const tax = 0; // No tax from API
+			const discount = 0; // No discount from API
+			const shipping = 0; // No shipping from API
+			const total = summary?.grandTotal || subtotal;
 
 			return {
 				totalQuantity,
@@ -269,27 +277,29 @@ export const Cart: React.FC = () => {
 				<Space direction="vertical" style={{ width: '100%' }}>
 					<div style={{ display: 'flex', justifyContent: 'space-between' }}>
 						<Text>Items ({totals.totalQuantity}):</Text>
-						<Text>${totals.subtotal.toFixed(2)}</Text>
+						<Text>{totals.subtotal.toLocaleString('vi-VN')} ₫</Text>
 					</div>
 
 					{totals.discount > 0 && (
 						<div style={{ display: 'flex', justifyContent: 'space-between' }}>
 							<Text>Discount:</Text>
-							<Text type="success">-${totals.discount.toFixed(2)}</Text>
+							<Text type="success">
+								-{totals.discount.toLocaleString('vi-VN')} ₫
+							</Text>
 						</div>
 					)}
 
 					{totals.tax > 0 && (
 						<div style={{ display: 'flex', justifyContent: 'space-between' }}>
 							<Text>Tax:</Text>
-							<Text>${totals.tax.toFixed(2)}</Text>
+							<Text>{totals.tax.toLocaleString('vi-VN')} ₫</Text>
 						</div>
 					)}
 
 					{totals.shipping > 0 && (
 						<div style={{ display: 'flex', justifyContent: 'space-between' }}>
 							<Text>Shipping:</Text>
-							<Text>${totals.shipping.toFixed(2)}</Text>
+							<Text>{totals.shipping.toLocaleString('vi-VN')} ₫</Text>
 						</div>
 					)}
 
@@ -300,7 +310,7 @@ export const Cart: React.FC = () => {
 							Total:
 						</Text>
 						<Text strong style={{ fontSize: '16px' }} type="success">
-							${totals.total.toFixed(2)}
+							{totals.total.toLocaleString('vi-VN')} ₫
 						</Text>
 					</div>
 
@@ -417,7 +427,7 @@ export const Cart: React.FC = () => {
 						<Table
 							columns={columns}
 							dataSource={cartData.items}
-							rowKey="id"
+							rowKey="cartId"
 							pagination={false}
 							loading={loading}
 							scroll={{ x: 800 }}

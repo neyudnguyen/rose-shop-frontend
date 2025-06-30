@@ -68,22 +68,34 @@ export interface Flower {
 }
 
 export interface CartItem {
-	id: string;
-	cartId?: number; // From database
-	flowerId: string;
-	flower?: Flower;
+	id?: string;
+	cartId: number;
+	flowerId: number;
+	flowerName: string;
+	flowerDescription: string;
+	imageUrl: string;
 	quantity: number;
-	userId: string;
-	unitPrice?: number; // From database
+	unitPrice: number;
+	totalPrice: number;
+	currentPrice: number;
+	priceChanged: boolean;
+	categoryName: string;
+	availableQuantity: number;
+	userId?: string;
+	flower?: Flower; // Backward compatibility
 }
 
 export interface CartSummary {
-	totalQuantity: number;
-	subtotal: number;
+	grandTotal: number;
+	totalItems: number;
+	totalTypes: number;
+	// Backward compatibility fields
+	totalQuantity?: number;
+	subtotal?: number;
 	tax?: number;
 	discount?: number;
 	shipping?: number;
-	total: number;
+	total?: number;
 }
 
 export interface CartResponse {

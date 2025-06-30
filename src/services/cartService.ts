@@ -14,12 +14,16 @@ export const cartService = {
 			const data = response.data?.data;
 			const items = Array.isArray(data?.items) ? data.items : [];
 			const summary = {
-				totalQuantity: data?.summary?.totalQuantity || 0,
-				subtotal: data?.summary?.subtotal || 0,
-				total: data?.summary?.total || 0,
-				tax: data?.summary?.tax || 0,
-				discount: data?.summary?.discount || 0,
-				shipping: data?.summary?.shipping || 0,
+				grandTotal: data?.summary?.grandTotal || 0,
+				totalItems: data?.summary?.totalItems || 0,
+				totalTypes: data?.summary?.totalTypes || 0,
+				// Backward compatibility
+				totalQuantity: data?.summary?.totalItems || 0,
+				subtotal: data?.summary?.grandTotal || 0,
+				total: data?.summary?.grandTotal || 0,
+				tax: 0,
+				discount: 0,
+				shipping: 0,
 			};
 
 			return { items, summary };
@@ -29,6 +33,9 @@ export const cartService = {
 			return {
 				items: [],
 				summary: {
+					grandTotal: 0,
+					totalItems: 0,
+					totalTypes: 0,
 					totalQuantity: 0,
 					subtotal: 0,
 					total: 0,
