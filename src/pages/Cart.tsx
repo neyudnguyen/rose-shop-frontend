@@ -129,14 +129,22 @@ export const Cart: React.FC = () => {
 						width={60}
 						height={60}
 						src={record.flower?.imageUrl || '/images/placeholder.jpg'}
-						alt={record.flower?.name || 'Product'}
+						alt={record.flower?.flowerName || record.flower?.name || 'Product'}
 						style={{ objectFit: 'cover', borderRadius: 4 }}
 						fallback="/images/placeholder.jpg"
 					/>
 					<div>
-						<Text strong>{record.flower?.name || 'Unknown Product'}</Text>
+						<Text strong>
+							{record.flower?.flowerName ||
+								record.flower?.name ||
+								'Unknown Product'}
+						</Text>
 						<br />
-						<Text type="secondary">{record.flower?.description}</Text>
+						<Text type="secondary">
+							{record.flower?.flowerDescription ||
+								record.flower?.description ||
+								''}
+						</Text>
 					</div>
 				</Space>
 			),
@@ -213,58 +221,102 @@ export const Cart: React.FC = () => {
 		},
 	];
 
-	const CartSummaryCard: React.FC<{ summary: CartSummary }> = ({ summary }) => (
-		<Card title="Order Summary" style={{ marginTop: 16 }}>
-			<Space direction="vertical" style={{ width: '100%' }}>
-				<div style={{ display: 'flex', justifyContent: 'space-between' }}>
-					<Text>Items ({summary?.totalQuantity || 0}):</Text>
-					<Text>${(summary?.subtotal || 0).toFixed(2)}</Text>
-				</div>
+	const CartSummaryCard: React.FC<{ summary: CartSummary }> = ({ summary }) => {
+		// Calculate totals from cart items if summary doesn't have proper values
+		const calculateTotals = () => {
+			if (!Array.isArray(cartData.items) || cartData.items.length === 0) {
+				return {
+					totalQuantity: 0,
+					subtotal: 0,
+					tax: 0,
+					discount: 0,
+					shipping: 0,
+					total: 0,
+				};
+			}
 
-				{summary?.discount && summary.discount > 0 && (
+			const totalQuantity = cartData.items.reduce(
+				(sum, item) => sum + item.quantity,
+				0,
+			);
+			const subtotal = cartData.items.reduce((sum, item) => {
+				const price = item.unitPrice || item.flower?.price || 0;
+				return sum + price * item.quantity;
+			}, 0);
+
+			const tax = summary?.tax || 0;
+			const discount = summary?.discount || 0;
+			const shipping = summary?.shipping || 0;
+			const total = subtotal + tax + shipping - discount;
+
+			return {
+				totalQuantity,
+				subtotal,
+				tax,
+				discount,
+				shipping,
+				total,
+			};
+		};
+
+		const totals = calculateTotals();
+
+		return (
+			<Card
+				title="Order Summary"
+				style={{ marginTop: 0, height: 'fit-content' }}
+			>
+				<Space direction="vertical" style={{ width: '100%' }}>
 					<div style={{ display: 'flex', justifyContent: 'space-between' }}>
-						<Text>Discount:</Text>
-						<Text type="success">-${summary.discount.toFixed(2)}</Text>
+						<Text>Items ({totals.totalQuantity}):</Text>
+						<Text>${totals.subtotal.toFixed(2)}</Text>
 					</div>
-				)}
 
-				{summary?.tax && summary.tax > 0 && (
+					{totals.discount > 0 && (
+						<div style={{ display: 'flex', justifyContent: 'space-between' }}>
+							<Text>Discount:</Text>
+							<Text type="success">-${totals.discount.toFixed(2)}</Text>
+						</div>
+					)}
+
+					{totals.tax > 0 && (
+						<div style={{ display: 'flex', justifyContent: 'space-between' }}>
+							<Text>Tax:</Text>
+							<Text>${totals.tax.toFixed(2)}</Text>
+						</div>
+					)}
+
+					{totals.shipping > 0 && (
+						<div style={{ display: 'flex', justifyContent: 'space-between' }}>
+							<Text>Shipping:</Text>
+							<Text>${totals.shipping.toFixed(2)}</Text>
+						</div>
+					)}
+
+					<Divider style={{ margin: '12px 0' }} />
+
 					<div style={{ display: 'flex', justifyContent: 'space-between' }}>
-						<Text>Tax:</Text>
-						<Text>${summary.tax.toFixed(2)}</Text>
+						<Text strong style={{ fontSize: '16px' }}>
+							Total:
+						</Text>
+						<Text strong style={{ fontSize: '16px' }} type="success">
+							${totals.total.toFixed(2)}
+						</Text>
 					</div>
-				)}
 
-				{summary?.shipping && summary.shipping > 0 && (
-					<div style={{ display: 'flex', justifyContent: 'space-between' }}>
-						<Text>Shipping:</Text>
-						<Text>${summary.shipping.toFixed(2)}</Text>
-					</div>
-				)}
-
-				<Divider style={{ margin: '12px 0' }} />
-
-				<div style={{ display: 'flex', justifyContent: 'space-between' }}>
-					<Text strong style={{ fontSize: '16px' }}>
-						Total:
-					</Text>
-					<Text strong style={{ fontSize: '16px' }} type="success">
-						${(summary?.total || 0).toFixed(2)}
-					</Text>
-				</div>
-
-				<Button
-					type="primary"
-					size="large"
-					block
-					style={{ marginTop: 16 }}
-					disabled={cartData.items.length === 0}
-				>
-					Proceed to Checkout
-				</Button>
-			</Space>
-		</Card>
-	);
+					<Button
+						type="primary"
+						size="large"
+						block
+						style={{ marginTop: 16 }}
+						disabled={cartData.items.length === 0}
+					>
+						Proceed to Checkout
+					</Button>
+				</Space>
+			</Card>
+		);
+	};
 
 	if (loading) {
 		return (
@@ -327,11 +379,13 @@ export const Cart: React.FC = () => {
 					<ShoppingOutlined /> Shopping Cart
 				</Title>
 				<Text type="secondary">
-					You have {cartData?.summary?.totalQuantity || 0} item(s) in your cart
+					You have{' '}
+					{cartData.items.reduce((sum, item) => sum + item.quantity, 0)} item(s)
+					in your cart
 				</Text>
 			</div>
 
-			<Row gutter={24}>
+			<Row gutter={24} style={{ alignItems: 'flex-start' }}>
 				<Col xs={24} lg={16}>
 					<Card
 						title={
@@ -358,6 +412,7 @@ export const Cart: React.FC = () => {
 								)}
 							</div>
 						}
+						style={{ height: 'fit-content' }}
 					>
 						<Table
 							columns={columns}
