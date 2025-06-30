@@ -23,6 +23,7 @@ const PaymentSuccess: React.FC = () => {
 				display: 'flex',
 				justifyContent: 'center',
 				alignItems: 'center',
+				paddingTop: '88px', // Add padding top to prevent navbar overlap
 			}}
 		>
 			<Card
