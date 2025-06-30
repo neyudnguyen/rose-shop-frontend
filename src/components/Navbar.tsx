@@ -29,6 +29,7 @@ const { Search } = Input;
 
 export const Navbar: React.FC = () => {
 	const [drawerVisible, setDrawerVisible] = useState(false);
+	const [searchValue, setSearchValue] = useState('');
 	const { user, logout } = useAuth();
 	const navigate = useNavigate();
 	const location = useLocation();
@@ -39,6 +40,15 @@ export const Navbar: React.FC = () => {
 	const handleLogout = () => {
 		logout();
 		navigate('/login');
+	};
+
+	const handleNavbarSearch = (value: string) => {
+		if (value.trim()) {
+			navigate(`/flowers?search=${encodeURIComponent(value.trim())}`);
+		} else {
+			navigate('/flowers');
+		}
+		setSearchValue('');
 	};
 
 	const userMenu = (
@@ -115,9 +125,9 @@ export const Navbar: React.FC = () => {
 						<div className="flex justify-center">
 							<Search
 								placeholder="Search..."
-								onSearch={(value) =>
-									navigate(`/flowers?search=${encodeURIComponent(value)}`)
-								}
+								value={searchValue}
+								onSearch={handleNavbarSearch}
+								onChange={(e) => setSearchValue(e.target.value)}
 								style={{ width: 200 }}
 							/>
 						</div>{' '}
@@ -167,9 +177,11 @@ export const Navbar: React.FC = () => {
 					<Search
 						placeholder="Search..."
 						onSearch={(value) => {
-							navigate(`/flowers?search=${encodeURIComponent(value)}`);
+							handleNavbarSearch(value);
 							onClose();
 						}}
+						onChange={(e) => setSearchValue(e.target.value)}
+						value={searchValue}
 					/>
 				</div>
 				<div style={{ marginTop: 20 }}>

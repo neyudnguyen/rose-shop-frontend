@@ -32,9 +32,15 @@ export const FlowerList: React.FC = () => {
 	const [currentPage, setCurrentPage] = useState(1);
 	const [pageSize] = useState(12);
 	const [searchParams, setSearchParams] = useSearchParams();
+	const [searchInput, setSearchInput] = useState('');
 
 	const searchQuery = searchParams.get('search') || '';
 	const categoryFilter = searchParams.get('category') || '';
+
+	// Sync search input with URL params
+	useEffect(() => {
+		setSearchInput(searchQuery);
+	}, [searchQuery]);
 	useEffect(() => {
 		const fetchCategories = async () => {
 			try {
@@ -101,13 +107,14 @@ export const FlowerList: React.FC = () => {
 
 	const handleSearch = (value: string) => {
 		const newParams = new URLSearchParams(searchParams);
-		if (value) {
-			newParams.set('search', value);
+		if (value.trim()) {
+			newParams.set('search', value.trim());
 		} else {
 			newParams.delete('search');
 		}
 		setSearchParams(newParams);
 		setCurrentPage(1);
+		setSearchInput(value);
 	};
 
 	const handleCategoryFilter = (value: string) => {
@@ -154,9 +161,9 @@ export const FlowerList: React.FC = () => {
 								allowClear
 								enterButton={<SearchOutlined />}
 								size="large"
-								value={searchQuery}
+								value={searchInput}
 								onSearch={handleSearch}
-								onChange={(e) => !e.target.value && handleSearch('')}
+								onChange={(e) => setSearchInput(e.target.value)}
 							/>
 						</Col>
 						<Col xs={24} sm={12} md={6}>
