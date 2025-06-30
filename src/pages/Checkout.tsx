@@ -380,9 +380,18 @@ export const Checkout: React.FC = () => {
 											</Space>
 										</>
 									)}
+									optionLabelProp="label"
 								>
 									{addresses.map((address) => (
-										<Option key={address.addressId} value={address.addressId}>
+										<Option
+											key={address.addressId}
+											value={address.addressId}
+											label={
+												<span>
+													{address.userFullName} - {address.description}
+												</span>
+											}
+										>
 											<div>
 												<Text strong>{address.userFullName}</Text>
 												<div style={{ color: '#666', fontSize: '12px' }}>
