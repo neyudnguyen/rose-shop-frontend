@@ -18,6 +18,7 @@ import { Home } from './pages/Home';
 import { Login } from './pages/Login';
 import { OrderDetail } from './pages/OrderDetail';
 import { Orders } from './pages/Orders';
+import PaymentSuccess from './pages/PaymentSuccess';
 import { Profile } from './pages/Profile';
 import { Register } from './pages/Register';
 import { AdminCategory } from './pages/admin/AdminCategory';
@@ -186,6 +187,14 @@ function App() {
 													<div>Address Book Page - Coming Soon</div>
 												</MainLayout>
 											</ProtectedRoute>
+										}
+									/>
+									<Route
+										path="/payment/success"
+										element={
+											<MainLayout>
+												<PaymentSuccess />
+											</MainLayout>
 										}
 									/>
 									{/* 404 Route */}
