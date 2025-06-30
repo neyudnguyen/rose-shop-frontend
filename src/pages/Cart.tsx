@@ -33,7 +33,14 @@ const { Title, Text } = Typography;
 export const Cart: React.FC = () => {
 	const [cartData, setCartData] = useState<CartResponse>({
 		items: [],
-		summary: { totalQuantity: 0, subtotal: 0, total: 0 },
+		summary: {
+			totalQuantity: 0,
+			subtotal: 0,
+			total: 0,
+			tax: 0,
+			discount: 0,
+			shipping: 0,
+		},
 	});
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState<string | null>(null);
@@ -54,7 +61,14 @@ export const Cart: React.FC = () => {
 			console.error('Error fetching cart:', err);
 			setCartData({
 				items: [],
-				summary: { totalQuantity: 0, subtotal: 0, total: 0 },
+				summary: {
+					totalQuantity: 0,
+					subtotal: 0,
+					total: 0,
+					tax: 0,
+					discount: 0,
+					shipping: 0,
+				},
 			});
 		} finally {
 			setLoading(false);
@@ -203,25 +217,25 @@ export const Cart: React.FC = () => {
 		<Card title="Order Summary" style={{ marginTop: 16 }}>
 			<Space direction="vertical" style={{ width: '100%' }}>
 				<div style={{ display: 'flex', justifyContent: 'space-between' }}>
-					<Text>Items ({summary.totalQuantity}):</Text>
-					<Text>${summary.subtotal.toFixed(2)}</Text>
+					<Text>Items ({summary?.totalQuantity || 0}):</Text>
+					<Text>${(summary?.subtotal || 0).toFixed(2)}</Text>
 				</div>
 
-				{summary.discount && summary.discount > 0 && (
+				{summary?.discount && summary.discount > 0 && (
 					<div style={{ display: 'flex', justifyContent: 'space-between' }}>
 						<Text>Discount:</Text>
 						<Text type="success">-${summary.discount.toFixed(2)}</Text>
 					</div>
 				)}
 
-				{summary.tax && summary.tax > 0 && (
+				{summary?.tax && summary.tax > 0 && (
 					<div style={{ display: 'flex', justifyContent: 'space-between' }}>
 						<Text>Tax:</Text>
 						<Text>${summary.tax.toFixed(2)}</Text>
 					</div>
 				)}
 
-				{summary.shipping && summary.shipping > 0 && (
+				{summary?.shipping && summary.shipping > 0 && (
 					<div style={{ display: 'flex', justifyContent: 'space-between' }}>
 						<Text>Shipping:</Text>
 						<Text>${summary.shipping.toFixed(2)}</Text>
@@ -235,7 +249,7 @@ export const Cart: React.FC = () => {
 						Total:
 					</Text>
 					<Text strong style={{ fontSize: '16px' }} type="success">
-						${summary.total.toFixed(2)}
+						${(summary?.total || 0).toFixed(2)}
 					</Text>
 				</div>
 
@@ -313,7 +327,7 @@ export const Cart: React.FC = () => {
 					<ShoppingOutlined /> Shopping Cart
 				</Title>
 				<Text type="secondary">
-					You have {cartData.summary.totalQuantity} item(s) in your cart
+					You have {cartData?.summary?.totalQuantity || 0} item(s) in your cart
 				</Text>
 			</div>
 

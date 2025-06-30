@@ -13,10 +13,13 @@ export const cartService = {
 			// Extract items and summary from the new API structure
 			const data = response.data?.data;
 			const items = Array.isArray(data?.items) ? data.items : [];
-			const summary = data?.summary || {
-				totalQuantity: 0,
-				subtotal: 0,
-				total: 0,
+			const summary = {
+				totalQuantity: data?.summary?.totalQuantity || 0,
+				subtotal: data?.summary?.subtotal || 0,
+				total: data?.summary?.total || 0,
+				tax: data?.summary?.tax || 0,
+				discount: data?.summary?.discount || 0,
+				shipping: data?.summary?.shipping || 0,
 			};
 
 			return { items, summary };
@@ -29,6 +32,9 @@ export const cartService = {
 					totalQuantity: 0,
 					subtotal: 0,
 					total: 0,
+					tax: 0,
+					discount: 0,
+					shipping: 0,
 				},
 			};
 		}
