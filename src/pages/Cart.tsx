@@ -26,11 +26,12 @@ import {
 } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
 import React, { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 const { Title, Text } = Typography;
 
 export const Cart: React.FC = () => {
+	const navigate = useNavigate();
 	const [cartData, setCartData] = useState<CartResponse>({
 		items: [],
 		summary: {
@@ -318,6 +319,7 @@ export const Cart: React.FC = () => {
 						block
 						style={{ marginTop: 16 }}
 						disabled={cartData.items.length === 0}
+						onClick={() => navigate('/checkout')}
 					>
 						Proceed to Checkout
 					</Button>

@@ -37,7 +37,7 @@ import {
 } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
 import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 const { Title, Text } = Typography;
 const { TextArea } = Input;
@@ -54,6 +54,7 @@ interface CheckoutFormValues {
 
 export const Checkout: React.FC = () => {
 	const navigate = useNavigate();
+	const location = useLocation();
 	const [form] = Form.useForm();
 	const [cartItems, setCartItems] = useState<CartItem[]>([]);
 	const [addresses, setAddresses] = useState<AddressResponse[]>([]);
@@ -62,21 +63,57 @@ export const Checkout: React.FC = () => {
 	const [error, setError] = useState<string | null>(null);
 	const [newAddressModalVisible, setNewAddressModalVisible] = useState(false);
 	const [newAddressForm] = Form.useForm();
+	const [isBuyNow, setIsBuyNow] = useState(false);
 
 	const fetchData = async () => {
 		try {
-			const [cartResponse, addressData] = await Promise.all([
-				cartService.getMyCart(),
-				addressService.getAddresses(),
-			]);
+			// Check if this is a "Buy Now" flow
+			const urlParams = new URLSearchParams(location.search);
+			const buyNowFlag = urlParams.get('buyNow') === 'true';
 
-			if (cartResponse.items.length === 0) {
-				message.warning('Your cart is empty');
-				navigate('/cart');
-				return;
+			if (buyNowFlag) {
+				// Handle Buy Now flow
+				console.log('Buy now flow detected'); // Debug log
+				const buyNowItemData = localStorage.getItem('buyNowItem');
+				console.log('Buy now item data:', buyNowItemData); // Debug log
+
+				if (buyNowItemData) {
+					try {
+						const buyNowItem = JSON.parse(buyNowItemData);
+						console.log('Parsed buy now item:', buyNowItem); // Debug log
+						setCartItems([buyNowItem]);
+						setIsBuyNow(true);
+
+						// Clear the buy now item from localStorage
+						localStorage.removeItem('buyNowItem');
+					} catch (parseError) {
+						console.error('Error parsing buy now item:', parseError);
+						message.error('Invalid purchase data');
+						navigate('/flowers');
+						return;
+					}
+				} else {
+					console.log('No buy now item found in localStorage'); // Debug log
+					message.error('No item found for purchase');
+					navigate('/flowers');
+					return;
+				}
+			} else {
+				// Handle normal cart checkout flow
+				const cartResponse = await cartService.getMyCart();
+
+				if (cartResponse.items.length === 0) {
+					message.warning('Your cart is empty');
+					navigate('/cart');
+					return;
+				}
+
+				setCartItems(cartResponse.items);
+				setIsBuyNow(false);
 			}
 
-			setCartItems(cartResponse.items);
+			// Fetch addresses for both flows
+			const addressData = await addressService.getAddresses();
 			setAddresses(addressData);
 		} catch (err) {
 			setError('Failed to load checkout data. Please try again.');
@@ -109,12 +146,27 @@ export const Checkout: React.FC = () => {
 
 	const handleSubmitOrder = async (values: CheckoutFormValues) => {
 		if (cartItems.length === 0) {
-			message.error('Your cart is empty');
+			message.error('No items to order');
 			return;
 		}
 
 		setSubmitting(true);
 		try {
+			// If this is a "Buy Now" order, we need to add the item to cart first
+			if (isBuyNow && cartItems.length > 0) {
+				const buyNowItem = cartItems[0];
+				try {
+					await cartService.addToCart(
+						buyNowItem.flowerId?.toString() || '',
+						buyNowItem.quantity,
+					);
+				} catch (cartError) {
+					console.error('Error adding buy now item to cart:', cartError);
+					message.error('Failed to process order. Please try again.');
+					return;
+				}
+			}
+
 			const orderData: CreateOrderRequest = {
 				phoneNumber: values.phoneNumber,
 				paymentMethod: values.paymentMethod,
@@ -141,7 +193,9 @@ export const Checkout: React.FC = () => {
 	};
 
 	const subtotal = cartItems.reduce((sum, item) => {
-		return sum + (item.flower?.price || 0) * item.quantity;
+		// Handle both cart items and buy now items
+		const price = item.unitPrice || item.flower?.price || 0;
+		return sum + price * item.quantity;
 	}, 0);
 
 	const shippingFee = 30000; // Fixed shipping fee
@@ -152,25 +206,32 @@ export const Checkout: React.FC = () => {
 			title: 'Product',
 			dataIndex: 'flower',
 			key: 'flower',
-			render: (flower) => (
-				<Space size={12}>
-					<Image
-						width={50}
-						height={50}
-						src={flower?.imageUrl}
-						alt={flower?.flowerName}
-						style={{ borderRadius: '6px', objectFit: 'cover' }}
-					/>
-					<div>
-						<Text strong style={{ fontSize: '14px' }}>
-							{flower?.flowerName}
-						</Text>
-						<div style={{ color: '#666', fontSize: '12px' }}>
-							{flower?.price?.toLocaleString('vi-VN')} ₫
+			render: (flower, record) => {
+				// Handle both cart items and buy now items
+				const name = record.flowerName || flower?.flowerName;
+				const imageUrl = record.imageUrl || flower?.imageUrl;
+				const price = record.unitPrice || flower?.price || 0;
+
+				return (
+					<Space size={12}>
+						<Image
+							width={50}
+							height={50}
+							src={imageUrl}
+							alt={name}
+							style={{ borderRadius: '6px', objectFit: 'cover' }}
+						/>
+						<div>
+							<Text strong style={{ fontSize: '14px' }}>
+								{name}
+							</Text>
+							<div style={{ color: '#666', fontSize: '12px' }}>
+								{price.toLocaleString('vi-VN')} ₫
+							</div>
 						</div>
-					</div>
-				</Space>
-			),
+					</Space>
+				);
+			},
 		},
 		{
 			title: 'Qty',
@@ -183,14 +244,15 @@ export const Checkout: React.FC = () => {
 			title: 'Total',
 			key: 'total',
 			width: 100,
-			render: (_, record) => (
-				<Text strong style={{ color: '#52c41a' }}>
-					{((record.flower?.price || 0) * record.quantity).toLocaleString(
-						'vi-VN',
-					)}{' '}
-					₫
-				</Text>
-			),
+			render: (_, record) => {
+				// Handle both cart items and buy now items
+				const price = record.unitPrice || record.flower?.price || 0;
+				return (
+					<Text strong style={{ color: '#52c41a' }}>
+						{(price * record.quantity).toLocaleString('vi-VN')} ₫
+					</Text>
+				);
+			},
 		},
 	];
 
@@ -241,8 +303,18 @@ export const Checkout: React.FC = () => {
 			}}
 		>
 			<Title level={2} style={{ marginBottom: '32px' }}>
-				Checkout
+				{isBuyNow ? 'Quick Purchase' : 'Checkout'}
 			</Title>
+
+			{isBuyNow && (
+				<Alert
+					message="Quick Purchase"
+					description="You are purchasing this item directly. It will be temporarily added to your cart for processing."
+					type="info"
+					showIcon
+					style={{ marginBottom: '24px' }}
+				/>
+			)}
 
 			<Steps current={0} items={steps} style={{ marginBottom: '32px' }} />
 
@@ -432,7 +504,7 @@ export const Checkout: React.FC = () => {
 				<Col xs={24} lg={8}>
 					{/* Order Summary */}
 					<Card
-						title="Order Summary"
+						title={isBuyNow ? 'Purchase Summary' : 'Order Summary'}
 						style={{ position: 'sticky', top: '100px' }}
 					>
 						<Table
