@@ -142,8 +142,6 @@ export const Cart: React.FC = () => {
 					<div>
 						<Text strong>{record.flowerName || 'Unknown Product'}</Text>
 						<br />
-						<Text type="secondary">{record.flowerDescription || ''}</Text>
-						<br />
 						<Text type="secondary" style={{ fontSize: '12px' }}>
 							{record.categoryName}
 						</Text>
@@ -396,7 +394,7 @@ export const Cart: React.FC = () => {
 			</div>
 
 			<Row gutter={24} style={{ alignItems: 'flex-start' }}>
-				<Col xs={24} lg={16}>
+				<Col xs={24} lg={18}>
 					<Card
 						title={
 							<div
@@ -435,7 +433,7 @@ export const Cart: React.FC = () => {
 					</Card>
 				</Col>
 
-				<Col xs={24} lg={8}>
+				<Col xs={24} lg={6}>
 					<CartSummaryCard summary={cartData.summary} />
 				</Col>
 			</Row>
