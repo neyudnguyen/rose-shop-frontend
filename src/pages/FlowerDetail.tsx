@@ -234,36 +234,51 @@ export const FlowerDetail: React.FC = () => {
 			<div style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 16px' }}>
 				<Breadcrumb
 					style={{
-						marginBottom: '32px',
-						backgroundColor: 'white',
-						padding: '48px 16px',
-						borderRadius: '8px',
-						boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
+						marginTop: '32px',
+						padding: '20px 0px',
+						fontSize: '16px',
 					}}
 					items={[
 						{
 							title: (
-								<Link to="/" style={{ color: '#1890ff' }}>
+								<Link to="/" style={{ color: '#1890ff', fontSize: '16px' }}>
 									<HomeOutlined />
 								</Link>
 							),
 						},
 						{
 							title: (
-								<Link to="/flowers" style={{ color: '#1890ff' }}>
+								<Link
+									to="/flowers"
+									style={{ color: '#1890ff', fontSize: '16px' }}
+								>
 									Flowers
 								</Link>
 							),
 						},
 						{
 							title: (
-								<Text type="secondary">
+								<Link
+									to={`/flowers?category=${flower.categoryId || ''}`}
+									style={{ color: '#1890ff', fontSize: '16px' }}
+								>
 									{flower.categoryName || 'Category'}
-								</Text>
+								</Link>
 							),
 						},
 						{
-							title: <Text strong>{flower.flowerName}</Text>,
+							title: (
+								<Link
+									to={`/flowers/${flower.flowerId}`}
+									style={{
+										color: '#1890ff',
+										fontSize: '16px',
+										fontWeight: 'bold',
+									}}
+								>
+									{flower.flowerName}
+								</Link>
+							),
 						},
 					]}
 				/>
