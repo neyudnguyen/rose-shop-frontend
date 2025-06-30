@@ -101,7 +101,7 @@ export const Cart: React.FC = () => {
 							</Text>
 						</Link>
 						<div className="text-gray-500 text-sm">
-							${flower?.price?.toFixed(2)}
+							{flower?.price?.toLocaleString('vi-VN')} VND
 						</div>
 					</div>
 				</div>
@@ -126,7 +126,10 @@ export const Cart: React.FC = () => {
 			key: 'subtotal',
 			render: (_, record) => (
 				<Text strong>
-					${((record.flower?.price || 0) * record.quantity).toFixed(2)}
+					{((record.flower?.price || 0) * record.quantity).toLocaleString(
+						'vi-VN',
+					)}{' '}
+					VND
 				</Text>
 			),
 		},
@@ -229,7 +232,7 @@ export const Cart: React.FC = () => {
 							</Space>
 							<div className="text-right">
 								<Title level={3} className="text-red-600 !mb-0">
-									${totalAmount.toFixed(2)}
+									{totalAmount.toLocaleString('vi-VN')} VND
 								</Title>
 							</div>
 						</div>

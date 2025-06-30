@@ -15,7 +15,6 @@ import {
 	Col,
 	Image,
 	InputNumber,
-	Rate,
 	Row,
 	Spin,
 	Tag,
@@ -133,15 +132,13 @@ export const FlowerDetail: React.FC = () => {
 							</Title>
 
 							<div className="flex items-center space-x-4 mb-4">
-								<Rate disabled defaultValue={4.5} />
-								<Text className="text-gray-500">(24 reviews)</Text>
 								{flower.categoryName && (
 									<Tag color="blue">{flower.categoryName}</Tag>
 								)}
 							</div>
 
 							<Title level={2} className="text-red-600 !mb-4">
-								${flower.price.toFixed(2)}
+								{flower.price.toLocaleString('vi-VN')} VND
 							</Title>
 
 							<div className="flex items-center space-x-2 mb-4">

@@ -229,7 +229,9 @@ export const AdminFlower: React.FC = () => {
 			sorter: (a, b) => a.price - b.price,
 			align: 'center',
 			render: (price: number) => (
-				<div style={{ textAlign: 'center' }}>${price.toFixed(2)}</div>
+				<div style={{ textAlign: 'center' }}>
+					{price.toLocaleString('vi-VN')} VND
+				</div>
 			),
 		},
 		{
@@ -453,7 +455,7 @@ export const AdminFlower: React.FC = () => {
 					<Row gutter={16}>
 						<Col span={8}>
 							<Form.Item
-								label="Price ($)"
+								label="Price (VND)"
 								name="price"
 								rules={[
 									{ required: true, message: 'Please enter price' },
@@ -584,7 +586,7 @@ export const AdminFlower: React.FC = () => {
 								<div>
 									<strong className="text-gray-700">Price:</strong>
 									<p className="mt-1 text-lg font-semibold text-green-600">
-										${viewingFlower.price.toFixed(2)}
+										{viewingFlower.price.toLocaleString('vi-VN')} VND
 									</p>
 								</div>
 								<div>
