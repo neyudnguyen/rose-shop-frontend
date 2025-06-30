@@ -64,6 +64,14 @@ export const Checkout: React.FC = () => {
 	const [newAddressModalVisible, setNewAddressModalVisible] = useState(false);
 	const [newAddressForm] = Form.useForm();
 	const [isBuyNow, setIsBuyNow] = useState(false);
+	const [shippingFee, setShippingFee] = useState(30000); // Default to standard
+
+	// Set default delivery method to 'standard' and payment method to 'COD' on mount
+	useEffect(() => {
+		form.setFieldsValue({ deliveryMethod: 'standard', paymentMethod: 'COD' });
+		setShippingFee(30000);
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, []);
 
 	const fetchData = async () => {
 		try {
@@ -198,7 +206,6 @@ export const Checkout: React.FC = () => {
 		return sum + price * item.quantity;
 	}, 0);
 
-	const shippingFee = 30000; // Fixed shipping fee
 	const total = subtotal + shippingFee;
 
 	const orderSummaryColumns: ColumnsType<CartItem> = [
@@ -413,7 +420,13 @@ export const Checkout: React.FC = () => {
 									},
 								]}
 							>
-								<Radio.Group>
+								<Radio.Group
+									onChange={(e) => {
+										const value = e.target.value;
+										if (value === 'standard') setShippingFee(30000);
+										else if (value === 'express') setShippingFee(50000);
+									}}
+								>
 									<Space direction="vertical">
 										<Radio value="standard">
 											<Space>
