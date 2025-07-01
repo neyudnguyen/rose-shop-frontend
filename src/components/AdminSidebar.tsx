@@ -1,10 +1,10 @@
 import { COLORS } from '../constants/colors';
 import { useAdminAuth } from '../hooks/useAdminAuth';
 import {
-	BarChartOutlined,
 	DashboardOutlined,
 	GiftOutlined,
 	LogoutOutlined,
+	ShoppingOutlined,
 	ShopOutlined,
 	TagsOutlined,
 	UserOutlined,
@@ -92,7 +92,7 @@ export const AdminSidebar: React.FC = () => {
 		},
 		{
 			key: '/admin/orders',
-			icon: <BarChartOutlined style={{ color: COLORS.white }} />,
+			icon: <ShoppingOutlined style={{ color: COLORS.white }} />,
 			label: (
 				<Link
 					to="/admin/orders"
