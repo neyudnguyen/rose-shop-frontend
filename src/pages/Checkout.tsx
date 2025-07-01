@@ -66,9 +66,9 @@ export const Checkout: React.FC = () => {
 	const [isBuyNow, setIsBuyNow] = useState(false);
 	const [shippingFee, setShippingFee] = useState(30000); // Default to standard
 
-	// Set default delivery method to 'standard' and payment method to 'COD' on mount
+	// Set default delivery method to 'standard' and payment method to 'VNPAY' on mount
 	useEffect(() => {
-		form.setFieldsValue({ deliveryMethod: 'standard', paymentMethod: 'COD' });
+		form.setFieldsValue({ deliveryMethod: 'standard', paymentMethod: 'VNPAY' });
 		setShippingFee(30000);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
@@ -184,11 +184,10 @@ export const Checkout: React.FC = () => {
 
 			const order: OrderResponse = await orderService.createOrder(orderData);
 
-			if (values.paymentMethod === 'VNPAY' && order.paymentUrl) {
-				// Redirect to VNPay payment URL
+			// VNPay payment - redirect to payment URL
+			if (order.paymentUrl) {
 				window.location.href = order.paymentUrl;
 			} else {
-				// COD payment - redirect to success page
 				message.success('Order placed successfully!');
 				navigate(`/orders/${order.orderId}`);
 			}
@@ -421,36 +420,22 @@ export const Checkout: React.FC = () => {
 								]}
 							>
 								<Radio.Group
-									onChange={(e) => {
-										const value = e.target.value;
-										if (value === 'standard') setShippingFee(30000);
-										else if (value === 'express') setShippingFee(50000);
+									onChange={() => {
+										// Always set to standard delivery fee
+										setShippingFee(30000);
 									}}
 								>
-									<Space direction="vertical">
-										<Radio value="standard">
-											<Space>
-												<TruckOutlined />
-												<div>
-													<Text strong>Standard Delivery</Text>
-													<div style={{ color: '#666', fontSize: '12px' }}>
-														3-5 business days - 30,000 ₫
-													</div>
+									<Radio value="standard">
+										<Space>
+											<TruckOutlined />
+											<div>
+												<Text strong>Standard Delivery</Text>
+												<div style={{ color: '#666', fontSize: '12px' }}>
+													3-5 business days - 30,000 ₫
 												</div>
-											</Space>
-										</Radio>
-										<Radio value="express">
-											<Space>
-												<TruckOutlined />
-												<div>
-													<Text strong>Express Delivery</Text>
-													<div style={{ color: '#666', fontSize: '12px' }}>
-														1-2 business days - 50,000 ₫
-													</div>
-												</div>
-											</Space>
-										</Radio>
-									</Space>
+											</div>
+										</Space>
+									</Radio>
 								</Radio.Group>
 							</Form.Item>
 						</Card>
@@ -472,30 +457,17 @@ export const Checkout: React.FC = () => {
 								]}
 							>
 								<Radio.Group>
-									<Space direction="vertical">
-										<Radio value="COD">
-											<Space>
-												<TruckOutlined />
-												<div>
-													<Text strong>Cash on Delivery (COD)</Text>
-													<div style={{ color: '#666', fontSize: '12px' }}>
-														Pay when you receive your order
-													</div>
+									<Radio value="VNPAY">
+										<Space>
+											<CreditCardOutlined />
+											<div>
+												<Text strong>VNPay</Text>
+												<div style={{ color: '#666', fontSize: '12px' }}>
+													Pay online with VNPay
 												</div>
-											</Space>
-										</Radio>
-										<Radio value="VNPAY">
-											<Space>
-												<CreditCardOutlined />
-												<div>
-													<Text strong>VNPay</Text>
-													<div style={{ color: '#666', fontSize: '12px' }}>
-														Pay online with VNPay
-													</div>
-												</div>
-											</Space>
-										</Radio>
-									</Space>
+											</div>
+										</Space>
+									</Radio>
 								</Radio.Group>
 							</Form.Item>
 						</Card>
