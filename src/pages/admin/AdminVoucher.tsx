@@ -57,7 +57,7 @@ export const AdminVoucher: React.FC = () => {
 	const [form] = Form.useForm();
 
 	// Load vouchers
-	const loadVouchers = async () => {
+	const loadVouchers = React.useCallback(async () => {
 		setLoading(true);
 		try {
 			const data = await voucherService.getAllVouchers();
@@ -68,7 +68,7 @@ export const AdminVoucher: React.FC = () => {
 		} finally {
 			setLoading(false);
 		}
-	};
+	}, [notification]);
 
 	useEffect(() => {
 		loadVouchers();
@@ -266,26 +266,21 @@ export const AdminVoucher: React.FC = () => {
 			key: 'displayStatus',
 			width: 120,
 			align: 'center',
-			render: (displayStatus: string, record: VoucherResponse) => {
-				let color = 'default';
-				if (record.isExpired) color = 'red';
-				else if (record.isActive && record.canUse) color = 'green';
-				else if (record.status === 'inactive') color = 'orange';
+			render: (_, record: VoucherResponse) => {
+				const status = record.status === 'active' ? 'Active' : 'Inactive';
+				const color = record.status === 'active' ? 'green' : 'orange';
 
 				return (
 					<div style={{ textAlign: 'center' }}>
-						<Tag color={color}>{displayStatus}</Tag>
+						<Tag color={color}>{status}</Tag>
 					</div>
 				);
 			},
 			filters: [
 				{ text: 'Active', value: 'active' },
 				{ text: 'Inactive', value: 'inactive' },
-				{ text: 'Expired', value: 'expired' },
 			],
 			onFilter: (value, record) => {
-				if (value === 'expired') return record.isExpired;
-				if (value === 'active') return record.isActive && record.canUse;
 				return record.status === value;
 			},
 		},
