@@ -61,10 +61,10 @@ export interface AdminOrder {
 export interface OrderStatistics {
 	totalOrders: number;
 	pendingOrders: number;
-	confirmedOrders: number;
-	processingOrders: number;
+	acceptedOrders: number;
+	pendingDeliveryOrders: number;
 	deliveredOrders: number;
-	cancelledOrders: number;
+	canceledOrders: number;
 	totalRevenue: number;
 	monthlyRevenue: number;
 }
@@ -126,11 +126,19 @@ export const adminOrderService = {
 		reason?: string,
 	): Promise<AdminOrder> {
 		try {
+			const formData = new FormData();
+			formData.append('Status', status);
+			if (reason) {
+				formData.append('reason', reason);
+			}
+
 			const response = await adminApiClient.put(
 				`/admin/orders/${orderId}/status`,
+				formData,
 				{
-					status,
-					reason,
+					headers: {
+						'Content-Type': 'multipart/form-data',
+					},
 				},
 			);
 			notification.success({
@@ -175,17 +183,17 @@ export const adminOrderService = {
 			const pendingOrders = orders.filter(
 				(order) => order.status === 'pending',
 			).length;
-			const confirmedOrders = orders.filter(
-				(order) => order.status === 'confirmed',
+			const acceptedOrders = orders.filter(
+				(order) => order.status === 'accepted',
 			).length;
-			const processingOrders = orders.filter(
-				(order) => order.status === 'processing',
+			const pendingDeliveryOrders = orders.filter(
+				(order) => order.status === 'pending delivery',
 			).length;
 			const deliveredOrders = orders.filter(
 				(order) => order.status === 'delivered',
 			).length;
-			const cancelledOrders = orders.filter(
-				(order) => order.status === 'cancelled',
+			const canceledOrders = orders.filter(
+				(order) => order.status === 'canceled',
 			).length;
 			const totalRevenue = orders
 				.filter((order) => order.statusPayment === 'paid')
@@ -205,10 +213,10 @@ export const adminOrderService = {
 			return {
 				totalOrders,
 				pendingOrders,
-				confirmedOrders,
-				processingOrders,
+				acceptedOrders,
+				pendingDeliveryOrders,
 				deliveredOrders,
-				cancelledOrders,
+				canceledOrders,
 				totalRevenue,
 				monthlyRevenue,
 			};

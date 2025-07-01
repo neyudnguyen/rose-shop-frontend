@@ -41,20 +41,18 @@ const { Option } = Select;
 
 const statusColors = {
 	pending: 'gold',
-	confirmed: 'blue',
-	processing: 'purple',
-	shipped: 'cyan',
+	accepted: 'blue',
+	'pending delivery': 'purple',
 	delivered: 'green',
-	cancelled: 'red',
+	canceled: 'red',
 };
 
 const statusLabels = {
 	pending: 'Pending',
-	confirmed: 'Confirmed',
-	processing: 'Processing',
-	shipped: 'Shipped',
+	accepted: 'Accepted',
+	'pending delivery': 'Pending Delivery',
 	delivered: 'Delivered',
-	cancelled: 'Cancelled',
+	canceled: 'Canceled',
 };
 
 const paymentStatusColors = {
@@ -539,11 +537,10 @@ export const AdminOrders: React.FC = () => {
 							style={{ width: '100%' }}
 						>
 							<Option value="pending">Pending</Option>
-							<Option value="confirmed">Confirmed</Option>
-							<Option value="processing">Processing</Option>
-							<Option value="shipped">Shipped</Option>
+							<Option value="accepted">Accepted</Option>
+							<Option value="pending delivery">Pending Delivery</Option>
 							<Option value="delivered">Delivered</Option>
-							<Option value="cancelled">Cancelled</Option>
+							<Option value="canceled">Canceled</Option>
 						</Select>
 					</div>
 					<div>
