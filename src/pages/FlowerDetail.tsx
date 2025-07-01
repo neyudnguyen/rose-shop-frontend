@@ -4,7 +4,6 @@ import { cartService } from '../services/cartService';
 import { flowerService } from '../services/flowerService';
 import type { Flower } from '../types';
 import {
-	DollarOutlined,
 	HeartOutlined,
 	HomeOutlined,
 	MinusOutlined,
@@ -385,7 +384,7 @@ export const FlowerDetail: React.FC = () => {
 											value={quantity}
 											onChange={(value) => setQuantity(Number(value) || 1)}
 											controls={false}
-											style={{ width: '80px' }}
+											style={{ width: '80px', textAlign: 'center' }}
 											size="large"
 											disabled={!isAvailable}
 										/>
@@ -406,42 +405,21 @@ export const FlowerDetail: React.FC = () => {
 									size="middle"
 									style={{ width: '100%' }}
 								>
-									<Row gutter={16}>
-										<Col span={12}>
-											<Button
-												type="primary"
-												size="large"
-												icon={<ShoppingCartOutlined />}
-												onClick={handleAddToCart}
-												loading={addingToCart}
-												disabled={!isAvailable}
-												style={{
-													width: '100%',
-													height: '48px',
-													fontSize: '16px',
-												}}
-											>
-												Add to Cart
-											</Button>
-										</Col>
-										<Col span={12}>
-											<Button
-												type="primary"
-												size="large"
-												icon={<DollarOutlined />}
-												disabled={!isAvailable}
-												style={{
-													width: '100%',
-													height: '48px',
-													fontSize: '16px',
-													backgroundColor: '#52c41a',
-													borderColor: '#52c41a',
-												}}
-											>
-												Buy Now
-											</Button>
-										</Col>
-									</Row>
+									<Button
+										type="primary"
+										size="large"
+										icon={<ShoppingCartOutlined />}
+										onClick={handleAddToCart}
+										loading={addingToCart}
+										disabled={!isAvailable}
+										style={{
+											width: '100%',
+											height: '48px',
+											fontSize: '16px',
+										}}
+									>
+										Add to Cart
+									</Button>
 								</Space>
 							</Space>
 						</Card>
