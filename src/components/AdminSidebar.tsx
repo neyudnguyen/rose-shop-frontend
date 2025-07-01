@@ -5,6 +5,7 @@ import {
 	DashboardOutlined,
 	GiftOutlined,
 	LogoutOutlined,
+	SettingOutlined,
 	ShopOutlined,
 	TagsOutlined,
 	UserOutlined,
@@ -99,6 +100,18 @@ export const AdminSidebar: React.FC = () => {
 					style={{ color: COLORS.white, textDecoration: 'none' }}
 				>
 					Orders
+				</Link>
+			),
+		},
+		{
+			key: '/admin/settings',
+			icon: <SettingOutlined style={{ color: COLORS.white }} />,
+			label: (
+				<Link
+					to="/admin/settings"
+					style={{ color: COLORS.white, textDecoration: 'none' }}
+				>
+					Settings
 				</Link>
 			),
 		},

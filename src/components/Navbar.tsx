@@ -1,6 +1,5 @@
 import { COLORS } from '../constants/colors';
 import { useAuth } from '../hooks/useAuth';
-import { useCart } from '../hooks/useCart';
 import {
 	AppstoreOutlined,
 	HomeOutlined,
@@ -32,7 +31,6 @@ export const Navbar: React.FC = () => {
 	const [drawerVisible, setDrawerVisible] = useState(false);
 	const [searchValue, setSearchValue] = useState('');
 	const { user, logout } = useAuth();
-	const { cartCount } = useCart();
 	const navigate = useNavigate();
 	const location = useLocation();
 
@@ -155,7 +153,7 @@ export const Navbar: React.FC = () => {
 						</div>
 						<div className="flex justify-center">
 							<Link to="/cart">
-								<Badge count={cartCount} offset={[0, 0]}>
+								<Badge count={0} offset={[0, 0]}>
 									<ShoppingCartOutlined
 										style={{ fontSize: '1.5em', cursor: 'pointer' }}
 									/>
@@ -219,7 +217,7 @@ export const Navbar: React.FC = () => {
 				</div>
 				<div style={{ marginTop: 20 }}>
 					<Link to="/cart" onClick={onClose}>
-						<Badge count={cartCount} offset={[0, 0]}>
+						<Badge count={0} offset={[0, 0]}>
 							<ShoppingCartOutlined
 								style={{ fontSize: '1.5em', cursor: 'pointer' }}
 							/>

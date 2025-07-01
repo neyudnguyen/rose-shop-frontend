@@ -1,7 +1,6 @@
-import { useCart } from '../hooks/useCart';
 import type { Flower } from '../types';
 import { EyeOutlined, ShoppingCartOutlined } from '@ant-design/icons';
-import { Button, Card, Tag, Typography, message } from 'antd';
+import { Button, Card, Tag, Typography } from 'antd';
 import React from 'react';
 import { Link } from 'react-router-dom';
 
@@ -16,22 +15,11 @@ export const FlowerCard: React.FC<FlowerCardProps> = ({
 	flower,
 	onAddToCart,
 }) => {
-	const { incrementCartCount } = useCart();
-
-	const handleAddToCart = async (e: React.MouseEvent) => {
+	const handleAddToCart = (e: React.MouseEvent) => {
 		e.stopPropagation();
 		e.preventDefault();
-
-		try {
-			if (onAddToCart) {
-				await onAddToCart(flower.flowerId?.toString() || flower.id || '');
-				// Update cart count in context
-				incrementCartCount(1);
-				message.success('Added to cart successfully!');
-			}
-		} catch (error) {
-			console.error('Error adding to cart:', error);
-			message.error('Failed to add to cart');
+		if (onAddToCart) {
+			onAddToCart(flower.flowerId?.toString() || flower.id || '');
 		}
 	};
 
