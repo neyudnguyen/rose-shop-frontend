@@ -11,35 +11,51 @@ interface ApiError {
 }
 
 export interface AdminOrderItem {
-	id: number;
+	orderDetailId: number;
+	flowerId: number;
 	flowerName: string;
-	quantity: number;
+	flowerImage: string;
 	unitPrice: number;
+	quantity: number;
 	totalPrice: number;
+	status: string;
+	createdAt: string;
+	categoryName: string;
 }
 
 export interface AdminOrder {
-	id: number;
+	orderId: number;
 	userId: number;
-	userName: string;
-	userEmail: string;
-	userPhone: string;
-	status:
-		| 'PENDING'
-		| 'CONFIRMED'
-		| 'PROCESSING'
-		| 'SHIPPED'
-		| 'DELIVERED'
-		| 'CANCELLED';
-	totalAmount: number;
-	deliveryAddress: string;
-	deliveryDate: string;
-	note?: string;
+	username: string;
+	customerName: string;
+	customerEmail: string;
+	phoneNumber: string;
 	paymentMethod: string;
-	paymentStatus: 'PENDING' | 'PAID' | 'FAILED' | 'REFUNDED';
-	createdAt: string;
-	updatedAt: string;
-	orderItems: AdminOrderItem[];
+	deliveryMethod: string;
+	createdDate: string;
+	userVoucherStatusId?: number;
+	voucherCode?: string;
+	voucherDiscount?: number;
+	addressId: number;
+	addressDescription: string;
+	status: string;
+	statusPayment: string;
+	subTotal: number;
+	shippingFee: number;
+	voucherDiscountAmount: number;
+	totalPrice: number;
+	items: AdminOrderItem[];
+	customer: {
+		userId: number;
+		username: string;
+		email: string;
+		fullName: string;
+		address: string;
+		birthDate: string;
+		sex: string;
+		createdDate: string;
+		status: string;
+	};
 }
 
 export interface OrderStatistics {
@@ -63,13 +79,10 @@ export interface OrderListParams {
 }
 
 export interface OrderListResponse {
-	content: AdminOrder[];
-	totalElements: number;
-	totalPages: number;
-	size: number;
-	number: number;
-	first: boolean;
-	last: boolean;
+	success: boolean;
+	message: string;
+	data: AdminOrder[];
+	errors?: string[] | null;
 }
 
 export const adminOrderService = {
@@ -139,8 +152,52 @@ export const adminOrderService = {
 	// Get order statistics
 	async getOrderStatistics(): Promise<OrderStatistics> {
 		try {
-			const response = await adminApiClient.get('/admin/orders/statistics');
-			return response.data;
+			// Get all orders first to calculate statistics
+			const response = await adminApiClient.get('/admin/orders');
+			const orders = response.data.data as AdminOrder[];
+
+			// Calculate statistics from orders
+			const totalOrders = orders.length;
+			const pendingOrders = orders.filter(
+				(order) => order.status === 'pending',
+			).length;
+			const confirmedOrders = orders.filter(
+				(order) => order.status === 'confirmed',
+			).length;
+			const processingOrders = orders.filter(
+				(order) => order.status === 'processing',
+			).length;
+			const deliveredOrders = orders.filter(
+				(order) => order.status === 'delivered',
+			).length;
+			const cancelledOrders = orders.filter(
+				(order) => order.status === 'cancelled',
+			).length;
+			const totalRevenue = orders
+				.filter((order) => order.statusPayment === 'paid')
+				.reduce((sum, order) => sum + order.totalPrice, 0);
+			const currentDate = new Date();
+			const monthlyRevenue = orders
+				.filter((order) => {
+					const orderDate = new Date(order.createdDate);
+					return (
+						orderDate.getMonth() === currentDate.getMonth() &&
+						orderDate.getFullYear() === currentDate.getFullYear() &&
+						order.statusPayment === 'paid'
+					);
+				})
+				.reduce((sum, order) => sum + order.totalPrice, 0);
+
+			return {
+				totalOrders,
+				pendingOrders,
+				confirmedOrders,
+				processingOrders,
+				deliveredOrders,
+				cancelledOrders,
+				totalRevenue,
+				monthlyRevenue,
+			};
 		} catch (error) {
 			const apiError = error as ApiError;
 			notification.error({

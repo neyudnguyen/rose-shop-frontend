@@ -45,28 +45,28 @@ const { RangePicker } = DatePicker;
 const { Option } = Select;
 
 const statusColors = {
-	PENDING: 'gold',
-	CONFIRMED: 'blue',
-	PROCESSING: 'purple',
-	SHIPPED: 'cyan',
-	DELIVERED: 'green',
-	CANCELLED: 'red',
+	pending: 'gold',
+	confirmed: 'blue',
+	processing: 'purple',
+	shipped: 'cyan',
+	delivered: 'green',
+	cancelled: 'red',
 };
 
 const statusLabels = {
-	PENDING: 'Pending',
-	CONFIRMED: 'Confirmed',
-	PROCESSING: 'Processing',
-	SHIPPED: 'Shipped',
-	DELIVERED: 'Delivered',
-	CANCELLED: 'Cancelled',
+	pending: 'Pending',
+	confirmed: 'Confirmed',
+	processing: 'Processing',
+	shipped: 'Shipped',
+	delivered: 'Delivered',
+	cancelled: 'Cancelled',
 };
 
 const paymentStatusColors = {
-	PENDING: 'gold',
-	PAID: 'green',
-	FAILED: 'red',
-	REFUNDED: 'orange',
+	pending: 'gold',
+	paid: 'green',
+	failed: 'red',
+	refunded: 'orange',
 };
 
 export const AdminOrders: React.FC = () => {
@@ -103,10 +103,10 @@ export const AdminOrders: React.FC = () => {
 			};
 
 			const response = await adminOrderService.getOrders(params);
-			setOrders(response.content);
+			setOrders(response.data);
 			setPagination((prev) => ({
 				...prev,
-				total: response.totalElements,
+				total: response.data.length, // Since we don't have pagination info from API
 			}));
 		} catch (error) {
 			console.error('Failed to fetch orders:', error);
@@ -146,7 +146,7 @@ export const AdminOrders: React.FC = () => {
 
 		try {
 			await adminOrderService.updateOrderStatus(
-				selectedOrder.id,
+				selectedOrder.orderId,
 				newStatus,
 				statusReason,
 			);
@@ -161,7 +161,7 @@ export const AdminOrders: React.FC = () => {
 
 	const handleCancelOrder = async (order: AdminOrder) => {
 		try {
-			await adminOrderService.cancelOrder(order.id, 'Cancelled by admin');
+			await adminOrderService.cancelOrder(order.orderId, 'Cancelled by admin');
 			fetchOrders();
 			fetchStatistics();
 			message.success('Order cancelled successfully');
@@ -215,7 +215,7 @@ export const AdminOrders: React.FC = () => {
 			>
 				Update Status
 			</Menu.Item>
-			{order.status !== 'CANCELLED' && (
+			{order.status !== 'cancelled' && (
 				<Menu.Item key="cancel" icon={<DeleteOutlined />} danger>
 					<Popconfirm
 						title="Are you sure you want to cancel this order?"
@@ -233,8 +233,8 @@ export const AdminOrders: React.FC = () => {
 	const columns: ColumnsType<AdminOrder> = [
 		{
 			title: 'Order ID',
-			dataIndex: 'id',
-			key: 'id',
+			dataIndex: 'orderId',
+			key: 'orderId',
 			width: 100,
 			render: (id: number) => `#${id}`,
 		},
@@ -244,17 +244,17 @@ export const AdminOrders: React.FC = () => {
 			width: 200,
 			render: (_, record) => (
 				<div>
-					<div className="font-medium">{record.userName}</div>
-					<div className="text-sm text-gray-500">{record.userEmail}</div>
+					<div className="font-medium">{record.customerName}</div>
+					<div className="text-sm text-gray-500">{record.customerEmail}</div>
 				</div>
 			),
 		},
 		{
 			title: 'Total Amount',
-			dataIndex: 'totalAmount',
-			key: 'totalAmount',
+			dataIndex: 'totalPrice',
+			key: 'totalPrice',
 			width: 120,
-			render: (amount: number) => `$${amount.toFixed(2)}`,
+			render: (amount: number) => `${amount.toLocaleString()} VND`,
 		},
 		{
 			title: 'Status',
@@ -269,8 +269,8 @@ export const AdminOrders: React.FC = () => {
 		},
 		{
 			title: 'Payment Status',
-			dataIndex: 'paymentStatus',
-			key: 'paymentStatus',
+			dataIndex: 'statusPayment',
+			key: 'statusPayment',
 			width: 130,
 			render: (status: string) => (
 				<Tag
@@ -278,21 +278,20 @@ export const AdminOrders: React.FC = () => {
 						paymentStatusColors[status as keyof typeof paymentStatusColors]
 					}
 				>
-					{status}
+					{status.toUpperCase()}
 				</Tag>
 			),
 		},
 		{
-			title: 'Delivery Date',
-			dataIndex: 'deliveryDate',
-			key: 'deliveryDate',
+			title: 'Payment Method',
+			dataIndex: 'paymentMethod',
+			key: 'paymentMethod',
 			width: 120,
-			render: (date: string) => dayjs(date).format('MM/DD/YYYY'),
 		},
 		{
 			title: 'Created At',
-			dataIndex: 'createdAt',
-			key: 'createdAt',
+			dataIndex: 'createdDate',
+			key: 'createdDate',
 			width: 130,
 			render: (date: string) => dayjs(date).format('MM/DD/YYYY HH:mm'),
 		},
@@ -383,12 +382,12 @@ export const AdminOrders: React.FC = () => {
 							onChange={(value) => handleFilterChange('status', value || '')}
 						>
 							<Option value="">All Status</Option>
-							<Option value="PENDING">Pending</Option>
-							<Option value="CONFIRMED">Confirmed</Option>
-							<Option value="PROCESSING">Processing</Option>
-							<Option value="SHIPPED">Shipped</Option>
-							<Option value="DELIVERED">Delivered</Option>
-							<Option value="CANCELLED">Cancelled</Option>
+							<Option value="pending">Pending</Option>
+							<Option value="confirmed">Confirmed</Option>
+							<Option value="processing">Processing</Option>
+							<Option value="shipped">Shipped</Option>
+							<Option value="delivered">Delivered</Option>
+							<Option value="cancelled">Cancelled</Option>
 						</Select>
 					</Col>
 					<Col xs={24} sm={12} md={6}>
@@ -425,7 +424,7 @@ export const AdminOrders: React.FC = () => {
 				<Table
 					columns={columns}
 					dataSource={orders}
-					rowKey="id"
+					rowKey="orderId"
 					loading={loading}
 					pagination={{
 						current: pagination.current,
@@ -449,7 +448,7 @@ export const AdminOrders: React.FC = () => {
 
 			{/* Order Detail Modal */}
 			<Modal
-				title={`Order Details - #${selectedOrder?.id}`}
+				title={`Order Details - #${selectedOrder?.orderId}`}
 				open={showOrderDetail}
 				onCancel={() => setShowOrderDetail(false)}
 				footer={null}
@@ -459,7 +458,7 @@ export const AdminOrders: React.FC = () => {
 					<div>
 						<Descriptions column={2} bordered>
 							<Descriptions.Item label="Order ID">
-								#{selectedOrder.id}
+								#{selectedOrder.orderId}
 							</Descriptions.Item>
 							<Descriptions.Item label="Status">
 								<Tag
@@ -477,13 +476,13 @@ export const AdminOrders: React.FC = () => {
 								</Tag>
 							</Descriptions.Item>
 							<Descriptions.Item label="Customer Name">
-								{selectedOrder.userName}
+								{selectedOrder.customerName}
 							</Descriptions.Item>
 							<Descriptions.Item label="Customer Email">
-								{selectedOrder.userEmail}
+								{selectedOrder.customerEmail}
 							</Descriptions.Item>
 							<Descriptions.Item label="Customer Phone">
-								{selectedOrder.userPhone}
+								{selectedOrder.phoneNumber}
 							</Descriptions.Item>
 							<Descriptions.Item label="Payment Method">
 								{selectedOrder.paymentMethod}
@@ -492,28 +491,32 @@ export const AdminOrders: React.FC = () => {
 								<Tag
 									color={
 										paymentStatusColors[
-											selectedOrder.paymentStatus as keyof typeof paymentStatusColors
+											selectedOrder.statusPayment as keyof typeof paymentStatusColors
 										]
 									}
 								>
-									{selectedOrder.paymentStatus}
+									{selectedOrder.statusPayment.toUpperCase()}
 								</Tag>
 							</Descriptions.Item>
 							<Descriptions.Item label="Total Amount">
-								${selectedOrder.totalAmount.toFixed(2)}
+								{selectedOrder.totalPrice.toLocaleString()} VND
 							</Descriptions.Item>
-							<Descriptions.Item label="Delivery Date">
-								{dayjs(selectedOrder.deliveryDate).format('MMMM DD, YYYY')}
+							<Descriptions.Item label="Subtotal">
+								{selectedOrder.subTotal.toLocaleString()} VND
+							</Descriptions.Item>
+							<Descriptions.Item label="Shipping Fee">
+								{selectedOrder.shippingFee.toLocaleString()} VND
 							</Descriptions.Item>
 							<Descriptions.Item label="Created At">
-								{dayjs(selectedOrder.createdAt).format('MMMM DD, YYYY HH:mm')}
+								{dayjs(selectedOrder.createdDate).format('MMMM DD, YYYY HH:mm')}
 							</Descriptions.Item>
 							<Descriptions.Item label="Delivery Address" span={2}>
-								{selectedOrder.deliveryAddress}
+								{selectedOrder.addressDescription}
 							</Descriptions.Item>
-							{selectedOrder.note && (
-								<Descriptions.Item label="Note" span={2}>
-									{selectedOrder.note}
+							{selectedOrder.voucherCode && (
+								<Descriptions.Item label="Voucher Code" span={2}>
+									{selectedOrder.voucherCode} (-
+									{selectedOrder.voucherDiscountAmount.toLocaleString()} VND)
 								</Descriptions.Item>
 							)}
 						</Descriptions>
@@ -524,9 +527,32 @@ export const AdminOrders: React.FC = () => {
 						<Table
 							columns={[
 								{
+									title: 'Image',
+									dataIndex: 'flowerImage',
+									key: 'flowerImage',
+									width: 80,
+									render: (image: string) => (
+										<img
+											src={image}
+											alt="Flower"
+											style={{
+												width: 50,
+												height: 50,
+												objectFit: 'cover',
+												borderRadius: 4,
+											}}
+										/>
+									),
+								},
+								{
 									title: 'Flower Name',
 									dataIndex: 'flowerName',
 									key: 'flowerName',
+								},
+								{
+									title: 'Category',
+									dataIndex: 'categoryName',
+									key: 'categoryName',
 								},
 								{
 									title: 'Quantity',
@@ -537,17 +563,17 @@ export const AdminOrders: React.FC = () => {
 									title: 'Unit Price',
 									dataIndex: 'unitPrice',
 									key: 'unitPrice',
-									render: (price: number) => `$${price.toFixed(2)}`,
+									render: (price: number) => `${price.toLocaleString()} VND`,
 								},
 								{
 									title: 'Total Price',
 									dataIndex: 'totalPrice',
 									key: 'totalPrice',
-									render: (price: number) => `$${price.toFixed(2)}`,
+									render: (price: number) => `${price.toLocaleString()} VND`,
 								},
 							]}
-							dataSource={selectedOrder.orderItems}
-							rowKey="id"
+							dataSource={selectedOrder.items}
+							rowKey="orderDetailId"
 							pagination={false}
 							size="small"
 						/>
@@ -573,12 +599,12 @@ export const AdminOrders: React.FC = () => {
 							onChange={setNewStatus}
 							style={{ width: '100%' }}
 						>
-							<Option value="PENDING">Pending</Option>
-							<Option value="CONFIRMED">Confirmed</Option>
-							<Option value="PROCESSING">Processing</Option>
-							<Option value="SHIPPED">Shipped</Option>
-							<Option value="DELIVERED">Delivered</Option>
-							<Option value="CANCELLED">Cancelled</Option>
+							<Option value="pending">Pending</Option>
+							<Option value="confirmed">Confirmed</Option>
+							<Option value="processing">Processing</Option>
+							<Option value="shipped">Shipped</Option>
+							<Option value="delivered">Delivered</Option>
+							<Option value="cancelled">Cancelled</Option>
 						</Select>
 					</div>
 					<div>
