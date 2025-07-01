@@ -1,4 +1,5 @@
 import { FlowerCard } from '../components/FlowerCard';
+import { useCart } from '../hooks/useCart';
 import { cartService } from '../services/cartService';
 import { flowerService } from '../services/flowerService';
 import type { Flower } from '../types';
@@ -33,6 +34,7 @@ const { Title, Text, Paragraph } = Typography;
 
 export const FlowerDetail: React.FC = () => {
 	const { id } = useParams<{ id: string }>();
+	const { incrementCartCount } = useCart();
 	const [flower, setFlower] = useState<Flower | null>(null);
 	const [suggestedFlowers, setSuggestedFlowers] = useState<Flower[]>([]);
 	const [loading, setLoading] = useState(true);
@@ -82,6 +84,8 @@ export const FlowerDetail: React.FC = () => {
 		setAddingToCart(true);
 		try {
 			await cartService.addToCart(flower.flowerId?.toString() || '', quantity);
+			// Update cart count in context
+			incrementCartCount(quantity);
 			message.success('Added to cart successfully!');
 		} catch (err) {
 			console.error('Error adding to cart:', err);
