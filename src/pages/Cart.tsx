@@ -1,3 +1,4 @@
+import { useCart } from '../hooks/useCart';
 import { cartService } from '../services/cartService';
 import type { CartItem, CartResponse, CartSummary } from '../types';
 import {
@@ -32,6 +33,7 @@ const { Title, Text } = Typography;
 
 export const Cart: React.FC = () => {
 	const navigate = useNavigate();
+	const { refreshCartCount } = useCart();
 	const [cartData, setCartData] = useState<CartResponse>({
 		items: [],
 		summary: {
@@ -52,7 +54,8 @@ export const Cart: React.FC = () => {
 
 	useEffect(() => {
 		fetchCartData();
-	}, []);
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, []); // Only run on mount
 
 	const fetchCartData = async () => {
 		try {
@@ -60,6 +63,8 @@ export const Cart: React.FC = () => {
 			const data = await cartService.getMyCart();
 			setCartData(data);
 			setError(null);
+			// Also refresh cart count in navbar
+			await refreshCartCount();
 		} catch (err) {
 			setError('Failed to load cart. Please try again.');
 			console.error('Error fetching cart:', err);

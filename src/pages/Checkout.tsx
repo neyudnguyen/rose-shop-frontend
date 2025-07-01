@@ -1,5 +1,9 @@
 import { addressService } from '../services/addressService';
 import { cartService } from '../services/cartService';
+import {
+	type VoucherValidationResponse,
+	customerVoucherService,
+} from '../services/customerVoucherService';
 import { orderService } from '../services/orderService';
 import type {
 	AddressResponse,
@@ -65,6 +69,10 @@ export const Checkout: React.FC = () => {
 	const [newAddressForm] = Form.useForm();
 	const [isBuyNow, setIsBuyNow] = useState(false);
 	const [shippingFee, setShippingFee] = useState(30000); // Default to standard
+	const [appliedVoucher, setAppliedVoucher] =
+		useState<VoucherValidationResponse | null>(null);
+	const [voucherLoading, setVoucherLoading] = useState(false);
+	const [voucherDiscount, setVoucherDiscount] = useState(0);
 
 	// Set default delivery method to 'standard' and payment method to 'COD' on mount
 	useEffect(() => {
@@ -152,6 +160,73 @@ export const Checkout: React.FC = () => {
 		}
 	};
 
+	const handleApplyVoucher = async () => {
+		console.log('Apply voucher clicked'); // Debug log
+		const voucherCode = form.getFieldValue('voucherCode');
+		console.log('Voucher code:', voucherCode); // Debug log
+
+		if (!voucherCode || !voucherCode.trim()) {
+			message.warning('Please enter a voucher code');
+			return;
+		}
+
+		// Calculate subtotal here to ensure it's up to date
+		const currentSubtotal = cartItems.reduce((sum, item) => {
+			const price = item.unitPrice || item.flower?.price || 0;
+			return sum + price * item.quantity;
+		}, 0);
+		console.log('Current subtotal:', currentSubtotal); // Debug log
+
+		setVoucherLoading(true);
+		try {
+			console.log('Calling voucher API...'); // Debug log
+			const voucher = await customerVoucherService.validateVoucherByCode(
+				voucherCode.trim(),
+			);
+			console.log('Voucher response:', voucher); // Debug log
+
+			if (!voucher.canUse) {
+				message.error(`Voucher cannot be used: ${voucher.displayStatus}`);
+				setVoucherLoading(false);
+				return;
+			}
+
+			if (voucher.isExpired) {
+				message.error('This voucher has expired');
+				setVoucherLoading(false);
+				return;
+			}
+
+			if (!voucher.isActive) {
+				message.error('This voucher is not active');
+				setVoucherLoading(false);
+				return;
+			}
+
+			setAppliedVoucher(voucher);
+
+			// Calculate discount amount based on voucher discount percentage
+			const discountAmount = (currentSubtotal * voucher.discount) / 100;
+			setVoucherDiscount(discountAmount);
+
+			message.success(
+				`Voucher applied! You save ${discountAmount.toLocaleString('vi-VN')} ₫`,
+			);
+		} catch (err) {
+			console.error('Error applying voucher:', err);
+			message.error('Invalid voucher code or voucher cannot be used');
+		} finally {
+			setVoucherLoading(false);
+		}
+	};
+
+	const handleRemoveVoucher = () => {
+		setAppliedVoucher(null);
+		setVoucherDiscount(0);
+		form.setFieldsValue({ voucherCode: '' });
+		message.success('Voucher removed');
+	};
+
 	const handleSubmitOrder = async (values: CheckoutFormValues) => {
 		if (cartItems.length === 0) {
 			message.error('No items to order');
@@ -180,6 +255,7 @@ export const Checkout: React.FC = () => {
 				paymentMethod: values.paymentMethod,
 				deliveryMethod: values.deliveryMethod,
 				addressId: values.addressId,
+				userVoucherStatusId: appliedVoucher?.userVoucherStatusId,
 			};
 
 			const order: OrderResponse = await orderService.createOrder(orderData);
@@ -206,7 +282,7 @@ export const Checkout: React.FC = () => {
 		return sum + price * item.quantity;
 	}, 0);
 
-	const total = subtotal + shippingFee;
+	const total = subtotal + shippingFee - voucherDiscount;
 
 	const orderSummaryColumns: ColumnsType<CartItem> = [
 		{
@@ -510,15 +586,60 @@ export const Checkout: React.FC = () => {
 							}
 							style={{ marginBottom: '24px' }}
 						>
-							<Form.Item name="voucherCode" label="Voucher Code">
-								<Input.Group compact>
-									<Input
-										style={{ width: 'calc(100% - 100px)' }}
-										placeholder="Enter voucher code"
-									/>
-									<Button type="primary">Apply</Button>
-								</Input.Group>
-							</Form.Item>
+							{appliedVoucher ? (
+								<div>
+									<div
+										style={{
+											padding: '12px',
+											background: '#f6ffed',
+											border: '1px solid #b7eb8f',
+											borderRadius: '6px',
+											marginBottom: '16px',
+										}}
+									>
+										<Space
+											style={{ width: '100%', justifyContent: 'space-between' }}
+										>
+											<div>
+												<Text strong style={{ color: '#52c41a' }}>
+													{appliedVoucher.voucherCode}
+												</Text>
+												<div style={{ fontSize: '12px', color: '#666' }}>
+													{appliedVoucher.description}
+												</div>
+												<div style={{ fontSize: '12px', color: '#52c41a' }}>
+													Discount: {appliedVoucher.discount}% (
+													{voucherDiscount.toLocaleString('vi-VN')} ₫)
+												</div>
+											</div>
+											<Button
+												type="text"
+												size="small"
+												danger
+												onClick={handleRemoveVoucher}
+											>
+												Remove
+											</Button>
+										</Space>
+									</div>
+								</div>
+							) : (
+								<Form.Item name="voucherCode" label="Voucher Code">
+									<Input.Group compact>
+										<Input
+											style={{ width: 'calc(100% - 100px)' }}
+											placeholder="Enter voucher code"
+										/>
+										<Button
+											type="primary"
+											loading={voucherLoading}
+											onClick={handleApplyVoucher}
+										>
+											Apply
+										</Button>
+									</Input.Group>
+								</Form.Item>
+							)}
 						</Card>
 					</Form>
 				</Col>
@@ -549,6 +670,16 @@ export const Checkout: React.FC = () => {
 								<Text>Shipping:</Text>
 								<Text>{shippingFee.toLocaleString('vi-VN')} ₫</Text>
 							</div>
+							{voucherDiscount > 0 && (
+								<div
+									style={{ display: 'flex', justifyContent: 'space-between' }}
+								>
+									<Text style={{ color: '#52c41a' }}>Voucher Discount:</Text>
+									<Text style={{ color: '#52c41a' }}>
+										-{voucherDiscount.toLocaleString('vi-VN')} ₫
+									</Text>
+								</div>
+							)}
 							<Divider style={{ margin: '12px 0' }} />
 							<div style={{ display: 'flex', justifyContent: 'space-between' }}>
 								<Text strong style={{ fontSize: '16px' }}>
