@@ -211,8 +211,6 @@ export const Orders: React.FC = () => {
 			{orders.length === 0 ? (
 				<Card style={{ textAlign: 'center', padding: '60px 24px' }}>
 					<Empty
-						image="/images/picture/4.png"
-						imageStyle={{ height: '160px' }}
 						description={
 							<div>
 								<Text style={{ color: '#666', fontSize: '18px' }}>
