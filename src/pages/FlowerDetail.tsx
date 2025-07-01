@@ -4,7 +4,6 @@ import { flowerService } from '../services/flowerService';
 import { useUserNotification } from '../services/userNotification';
 import type { Flower } from '../types';
 import {
-	DollarOutlined,
 	HeartOutlined,
 	HomeOutlined,
 	MinusOutlined,
