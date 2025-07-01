@@ -1,6 +1,7 @@
 import { addressService } from '../services/addressService';
 import { cartService } from '../services/cartService';
 import { orderService } from '../services/orderService';
+import { useUserNotification } from '../services/userNotification';
 import type {
 	AddressResponse,
 	CartItem,
@@ -33,7 +34,6 @@ import {
 	Steps,
 	Table,
 	Typography,
-	message,
 } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
 import React, { useEffect, useState } from 'react';
@@ -55,6 +55,7 @@ interface CheckoutFormValues {
 export const Checkout: React.FC = () => {
 	const navigate = useNavigate();
 	const location = useLocation();
+	const notification = useUserNotification();
 	const [form] = Form.useForm();
 	const [cartItems, setCartItems] = useState<CartItem[]>([]);
 	const [addresses, setAddresses] = useState<AddressResponse[]>([]);
@@ -96,13 +97,13 @@ export const Checkout: React.FC = () => {
 						localStorage.removeItem('buyNowItem');
 					} catch (parseError) {
 						console.error('Error parsing buy now item:', parseError);
-						message.error('Invalid purchase data');
+						notification.error('Invalid purchase data');
 						navigate('/flowers');
 						return;
 					}
 				} else {
 					console.log('No buy now item found in localStorage'); // Debug log
-					message.error('No item found for purchase');
+					notification.error('No item found for purchase');
 					navigate('/flowers');
 					return;
 				}
@@ -111,7 +112,7 @@ export const Checkout: React.FC = () => {
 				const cartResponse = await cartService.getMyCart();
 
 				if (cartResponse.items.length === 0) {
-					message.warning('Your cart is empty');
+					notification.warning('Your cart is empty');
 					navigate('/cart');
 					return;
 				}
@@ -145,16 +146,16 @@ export const Checkout: React.FC = () => {
 			form.setFieldsValue({ addressId: newAddress.addressId });
 			setNewAddressModalVisible(false);
 			newAddressForm.resetFields();
-			message.success('Address added successfully');
+			notification.success('Address added successfully');
 		} catch (err) {
 			console.error('Error creating address:', err);
-			message.error('Failed to create address');
+			notification.actionFailed('Create address', 'Failed to create address');
 		}
 	};
 
 	const handleSubmitOrder = async (values: CheckoutFormValues) => {
 		if (cartItems.length === 0) {
-			message.error('No items to order');
+			notification.error('No items to order');
 			return;
 		}
 
@@ -170,7 +171,10 @@ export const Checkout: React.FC = () => {
 					);
 				} catch (cartError) {
 					console.error('Error adding buy now item to cart:', cartError);
-					message.error('Failed to process order. Please try again.');
+					notification.actionFailed(
+						'Process order',
+						'Failed to process order. Please try again.',
+					);
 					return;
 				}
 			}
@@ -188,12 +192,15 @@ export const Checkout: React.FC = () => {
 			if (order.paymentUrl) {
 				window.location.href = order.paymentUrl;
 			} else {
-				message.success('Order placed successfully!');
+				notification.orderSuccess(order.orderId);
 				navigate(`/orders/${order.orderId}`);
 			}
 		} catch (err) {
 			console.error('Error creating order:', err);
-			message.error('Failed to create order. Please try again.');
+			notification.actionFailed(
+				'Create order',
+				'Failed to create order. Please try again.',
+			);
 		} finally {
 			setSubmitting(false);
 		}

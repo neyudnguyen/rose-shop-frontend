@@ -1,6 +1,7 @@
 import { FlowerCard } from '../components/FlowerCard';
 import { cartService } from '../services/cartService';
 import { flowerService } from '../services/flowerService';
+import { useUserNotification } from '../services/userNotification';
 import type { Flower } from '../types';
 import {
 	DollarOutlined,
@@ -24,7 +25,6 @@ import {
 	Spin,
 	Tag,
 	Typography,
-	message,
 } from 'antd';
 import React, { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
@@ -33,6 +33,7 @@ const { Title, Text, Paragraph } = Typography;
 
 export const FlowerDetail: React.FC = () => {
 	const { id } = useParams<{ id: string }>();
+	const notification = useUserNotification();
 	const [flower, setFlower] = useState<Flower | null>(null);
 	const [suggestedFlowers, setSuggestedFlowers] = useState<Flower[]>([]);
 	const [loading, setLoading] = useState(true);
@@ -82,10 +83,13 @@ export const FlowerDetail: React.FC = () => {
 		setAddingToCart(true);
 		try {
 			await cartService.addToCart(flower.flowerId?.toString() || '', quantity);
-			message.success('Added to cart successfully!');
+			notification.addToCartSuccess(flower.flowerName);
 		} catch (err) {
 			console.error('Error adding to cart:', err);
-			message.error('Failed to add to cart. Please try again.');
+			notification.actionFailed(
+				'Add to cart',
+				'Failed to add to cart. Please try again.',
+			);
 		} finally {
 			setAddingToCart(false);
 		}
@@ -93,7 +97,7 @@ export const FlowerDetail: React.FC = () => {
 
 	const handleAddToFavorites = () => {
 		setIsFavorite(!isFavorite);
-		message.success(
+		notification.success(
 			isFavorite ? 'Removed from favorites' : 'Added to favorites',
 		);
 	};
@@ -107,17 +111,20 @@ export const FlowerDetail: React.FC = () => {
 			});
 		} else {
 			navigator.clipboard.writeText(window.location.href);
-			message.success('Link copied to clipboard!');
+			notification.success('Link copied to clipboard!');
 		}
 	};
 
 	const handleSuggestedAddToCart = async (flowerId: string) => {
 		try {
 			await cartService.addToCart(flowerId, 1);
-			message.success('Added to cart successfully!');
+			notification.addToCartSuccess();
 		} catch (err) {
 			console.error('Error adding to cart:', err);
-			message.error('Failed to add to cart. Please try again.');
+			notification.actionFailed(
+				'Add to cart',
+				'Failed to add to cart. Please try again.',
+			);
 		}
 	};
 

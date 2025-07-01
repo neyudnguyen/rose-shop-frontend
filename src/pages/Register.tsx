@@ -1,5 +1,6 @@
 import { COLORS } from '../constants/colors';
 import { useAuth } from '../hooks/useAuth';
+import { useUserNotification } from '../services/userNotification';
 import {
 	ArrowLeftOutlined,
 	LockOutlined,
@@ -23,6 +24,7 @@ export const Register: React.FC = () => {
 	const [loading, setLoading] = useState(false);
 	const [error, setError] = useState<string | null>(null);
 	const { register } = useAuth();
+	const notification = useUserNotification();
 	const navigate = useNavigate();
 	const onFinish = async (values: RegisterForm) => {
 		setLoading(true);
@@ -34,12 +36,14 @@ export const Register: React.FC = () => {
 				email: values.email,
 				password: values.password,
 			});
+			notification.registerSuccess(values.username);
 			navigate('/');
 		} catch (err: unknown) {
 			const errorMessage =
 				(err as { response?: { data?: { message?: string } } })?.response?.data
 					?.message || 'Registration failed. Please try again.';
 			setError(errorMessage);
+			notification.actionFailed('Registration', errorMessage);
 		} finally {
 			setLoading(false);
 		}

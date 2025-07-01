@@ -1,4 +1,5 @@
 import { cartService } from '../services/cartService';
+import { useUserNotification } from '../services/userNotification';
 import type { CartItem, CartResponse, CartSummary } from '../types';
 import {
 	ClearOutlined,
@@ -22,7 +23,6 @@ import {
 	Spin,
 	Table,
 	Typography,
-	message,
 } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
 import React, { useEffect, useState } from 'react';
@@ -32,6 +32,7 @@ const { Title, Text } = Typography;
 
 export const Cart: React.FC = () => {
 	const navigate = useNavigate();
+	const notification = useUserNotification();
 	const [cartData, setCartData] = useState<CartResponse>({
 		items: [],
 		summary: {
@@ -89,9 +90,9 @@ export const Cart: React.FC = () => {
 		try {
 			await cartService.updateCartItem(cartId, quantity);
 			await fetchCartData(); // Refresh cart data
-			message.success('Cart updated successfully');
+			notification.success('Cart updated successfully');
 		} catch (err) {
-			message.error('Failed to update cart item');
+			notification.actionFailed('Update cart', 'Failed to update cart item');
 			console.error('Error updating cart item:', err);
 		} finally {
 			setUpdating(null);
@@ -103,9 +104,12 @@ export const Cart: React.FC = () => {
 		try {
 			await cartService.removeFromCart(cartId);
 			await fetchCartData(); // Refresh cart data
-			message.success('Item removed from cart');
+			notification.success('Item removed from cart');
 		} catch (err) {
-			message.error('Failed to remove item from cart');
+			notification.actionFailed(
+				'Remove item',
+				'Failed to remove item from cart',
+			);
 			console.error('Error removing cart item:', err);
 		} finally {
 			setUpdating(null);
@@ -117,9 +121,9 @@ export const Cart: React.FC = () => {
 		try {
 			await cartService.clearCart();
 			await fetchCartData(); // Refresh cart data
-			message.success('Cart cleared successfully');
+			notification.success('Cart cleared successfully');
 		} catch (err) {
-			message.error('Failed to clear cart');
+			notification.actionFailed('Clear cart', 'Failed to clear cart');
 			console.error('Error clearing cart:', err);
 		} finally {
 			setLoading(false);

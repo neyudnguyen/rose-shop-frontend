@@ -1,5 +1,6 @@
 import { COLORS } from '../constants/colors';
 import { useAuth } from '../hooks/useAuth';
+import { useUserNotification } from '../services/userNotification';
 import {
 	AppstoreOutlined,
 	HomeOutlined,
@@ -31,6 +32,7 @@ export const Navbar: React.FC = () => {
 	const [drawerVisible, setDrawerVisible] = useState(false);
 	const [searchValue, setSearchValue] = useState('');
 	const { user, logout } = useAuth();
+	const notification = useUserNotification();
 	const navigate = useNavigate();
 	const location = useLocation();
 
@@ -39,6 +41,7 @@ export const Navbar: React.FC = () => {
 
 	const handleLogout = () => {
 		logout();
+		notification.logoutSuccess();
 		navigate('/login');
 	};
 

@@ -1,6 +1,7 @@
 import { COLORS } from '../constants/colors';
 import { useAuth } from '../hooks/useAuth';
 import { authService } from '../services/authService';
+import { useUserNotification } from '../services/userNotification';
 import type { User } from '../types';
 import {
 	CalendarOutlined,
@@ -30,7 +31,6 @@ import {
 	Spin,
 	Typography,
 	Upload,
-	message,
 } from 'antd';
 import type { UploadFile, UploadProps } from 'antd/es/upload/interface';
 import dayjs from 'dayjs';
@@ -56,6 +56,7 @@ const getBase64 = (file: File): Promise<string> =>
 
 export const Profile: React.FC = () => {
 	const { user, updateUser } = useAuth();
+	const notification = useUserNotification();
 	const [form] = Form.useForm();
 	const [loading, setLoading] = useState(false);
 	const [avatarLoading, setAvatarLoading] = useState(false);
@@ -108,16 +109,15 @@ export const Profile: React.FC = () => {
 				formData.append('BirthDate', values.birthDate.format('YYYY-MM-DD'));
 			}
 			if (values.sex) formData.append('Sex', values.sex);
-
 			await updateUser(formData);
 			setSuccess('Profile updated successfully!');
-			message.success('Profile updated successfully!');
+			notification.updateProfileSuccess();
 		} catch (err: unknown) {
 			const errorMessage =
 				(err as { response?: { data?: { message?: string } } })?.response?.data
 					?.message || 'Failed to update profile. Please try again.';
 			setError(errorMessage);
-			message.error(errorMessage);
+			notification.error(errorMessage);
 		} finally {
 			setLoading(false);
 		}
@@ -125,7 +125,7 @@ export const Profile: React.FC = () => {
 
 	const handleAvatarUpdate = async () => {
 		if (avatarFileList.length === 0 || !avatarFileList[0].originFileObj) {
-			message.warning('Please select an image first!');
+			notification.warning('Please select an image first!');
 			return;
 		}
 
@@ -135,7 +135,7 @@ export const Profile: React.FC = () => {
 			formData.append('Avatar', avatarFileList[0].originFileObj);
 
 			await updateUser(formData);
-			message.success('Avatar updated successfully!');
+			notification.success('Avatar updated successfully!');
 			setAvatarFileList([]); // Reload profile to get updated avatar
 			const updatedProfile = await authService.getCurrentUser();
 			setProfileData(updatedProfile);
@@ -148,7 +148,7 @@ export const Profile: React.FC = () => {
 			const errorMessage =
 				(err as { response?: { data?: { message?: string } } })?.response?.data
 					?.message || 'Failed to update avatar. Please try again.';
-			message.error(errorMessage);
+			notification.error(errorMessage);
 		} finally {
 			setAvatarLoading(false);
 		}
@@ -174,12 +174,12 @@ export const Profile: React.FC = () => {
 			const isJpgOrPng =
 				file.type === 'image/jpeg' || file.type === 'image/png';
 			if (!isJpgOrPng) {
-				message.error('You can only upload JPG/PNG files!');
+				notification.error('You can only upload JPG/PNG files!');
 				return false;
 			}
 			const isLt2M = file.size / 1024 / 1024 < 2;
 			if (!isLt2M) {
-				message.error('Image must smaller than 2MB!');
+				notification.error('Image must smaller than 2MB!');
 				return false;
 			}
 			return false; // Prevent auto upload

@@ -1,5 +1,6 @@
 import { COLORS } from '../constants/colors';
 import { useAuth } from '../hooks/useAuth';
+import { useUserNotification } from '../services/userNotification';
 import {
 	ArrowLeftOutlined,
 	LockOutlined,
@@ -20,6 +21,7 @@ export const Login: React.FC = () => {
 	const [loading, setLoading] = useState(false);
 	const [error, setError] = useState<string | null>(null);
 	const { login } = useAuth();
+	const notification = useUserNotification();
 	const navigate = useNavigate();
 	const location = useLocation();
 	const from =
@@ -29,13 +31,17 @@ export const Login: React.FC = () => {
 		setError(null);
 
 		try {
-			await login(values.username, values.password);
+			const response = await login(values.username, values.password);
+			notification.loginSuccess(
+				response?.userInfo?.fullName || response?.username || values.username,
+			);
 			navigate(from, { replace: true });
 		} catch (err: unknown) {
 			const errorMessage =
 				(err as { response?: { data?: { message?: string } } })?.response?.data
 					?.message || 'Login failed. Please try again.';
 			setError(errorMessage);
+			notification.actionFailed('Login', errorMessage);
 		} finally {
 			setLoading(false);
 		}
