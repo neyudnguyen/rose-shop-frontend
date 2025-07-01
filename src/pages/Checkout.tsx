@@ -1,3 +1,4 @@
+import { useAuth } from '../hooks/useAuth';
 import { addressService } from '../services/addressService';
 import { cartService } from '../services/cartService';
 import { orderService } from '../services/orderService';
@@ -56,6 +57,7 @@ export const Checkout: React.FC = () => {
 	const navigate = useNavigate();
 	const location = useLocation();
 	const notification = useUserNotification();
+	const { user } = useAuth();
 	const [form] = Form.useForm();
 	const [cartItems, setCartItems] = useState<CartItem[]>([]);
 	const [addresses, setAddresses] = useState<AddressResponse[]>([]);
@@ -66,6 +68,31 @@ export const Checkout: React.FC = () => {
 	const [newAddressForm] = Form.useForm();
 	const [isBuyNow, setIsBuyNow] = useState(false);
 	const [shippingFee, setShippingFee] = useState(30000); // Default to standard
+
+	// Check if user has complete profile information
+	useEffect(() => {
+		if (user) {
+			// Check if user has userInfo and required fields
+			const hasCompleteInfo =
+				user.userInfo &&
+				user.userInfo.fullName &&
+				user.userInfo.fullName.trim() !== '' &&
+				user.userInfo.address &&
+				user.userInfo.address.trim() !== '';
+
+			if (!hasCompleteInfo) {
+				notification.warning(
+					'Complete Profile Required',
+					'Please update your full name and address in your profile before checkout',
+				);
+				navigate('/profile', {
+					replace: true,
+					state: { from: location.pathname },
+				});
+				return;
+			}
+		}
+	}, [user, navigate, notification, location.pathname]);
 
 	// Set default delivery method to 'standard' and payment method to 'VNPAY' on mount
 	useEffect(() => {

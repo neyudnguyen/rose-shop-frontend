@@ -35,6 +35,7 @@ import {
 import type { UploadFile, UploadProps } from 'antd/es/upload/interface';
 import dayjs from 'dayjs';
 import React, { useEffect, useState } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 const { Title, Text } = Typography;
 const { Option } = Select;
@@ -57,6 +58,8 @@ const getBase64 = (file: File): Promise<string> =>
 export const Profile: React.FC = () => {
 	const { user, updateUser } = useAuth();
 	const notification = useUserNotification();
+	const navigate = useNavigate();
+	const location = useLocation();
 	const [form] = Form.useForm();
 	const [loading, setLoading] = useState(false);
 	const [avatarLoading, setAvatarLoading] = useState(false);
@@ -65,6 +68,9 @@ export const Profile: React.FC = () => {
 	const [avatarFileList, setAvatarFileList] = useState<UploadFile[]>([]);
 	const [previewImage, setPreviewImage] = useState<string>('');
 	const [profileData, setProfileData] = useState<Partial<User> | null>(null);
+
+	// Check if user came from checkout
+	const from = (location.state as { from?: string })?.from;
 	// Load profile data from API
 	useEffect(() => {
 		const loadProfile = async () => {
@@ -112,6 +118,13 @@ export const Profile: React.FC = () => {
 			await updateUser(formData);
 			setSuccess('Profile updated successfully!');
 			notification.updateProfileSuccess();
+
+			// If user came from checkout, redirect back after successful update
+			if (from === '/checkout') {
+				setTimeout(() => {
+					navigate('/checkout');
+				}, 1500); // Small delay to show success message
+			}
 		} catch (err: unknown) {
 			const errorMessage =
 				(err as { response?: { data?: { message?: string } } })?.response?.data
@@ -226,6 +239,22 @@ export const Profile: React.FC = () => {
 			<div
 				style={{ maxWidth: '800px', margin: '0 auto', padding: '40px 20px' }}
 			>
+				{/* Show alert if user came from checkout */}
+				{from === '/checkout' && (
+					<Alert
+						message="Complete Your Profile"
+						description="Please update your full name and address to continue with checkout."
+						type="info"
+						showIcon
+						style={{
+							marginBottom: '24px',
+							borderRadius: '8px',
+							border: `1px solid ${COLORS.primary}`,
+							backgroundColor: '#f0f9ff',
+						}}
+					/>
+				)}
+
 				<Row gutter={[24, 24]}>
 					{/* Profile Header */}
 					<Col span={24}>
