@@ -1,3 +1,4 @@
+import { COLORS } from '../../constants/colors';
 import { adminOrderService } from '../../services/adminOrderService';
 import type {
 	AdminOrder,
@@ -6,12 +7,9 @@ import type {
 import {
 	CheckCircleOutlined,
 	ClockCircleOutlined,
-	DeleteOutlined,
 	DollarOutlined,
 	EditOutlined,
 	EyeOutlined,
-	FilterOutlined,
-	MoreOutlined,
 	ReloadOutlined,
 	SearchOutlined,
 	ShoppingCartOutlined,
@@ -20,13 +18,10 @@ import {
 	Button,
 	Card,
 	Col,
-	DatePicker,
+	// DatePicker, // Commented out for now
 	Descriptions,
-	Dropdown,
 	Input,
-	Menu,
 	Modal,
-	Popconfirm,
 	Row,
 	Select,
 	Space,
@@ -41,7 +36,7 @@ import dayjs from 'dayjs';
 import React, { useEffect, useState } from 'react';
 
 const { Title, Text } = Typography;
-const { RangePicker } = DatePicker;
+// const { RangePicker } = DatePicker; // Commented out for now
 const { Option } = Select;
 
 const statusColors = {
@@ -79,55 +74,56 @@ export const AdminOrders: React.FC = () => {
 	const [newStatus, setNewStatus] = useState<string>('');
 	const [statusReason, setStatusReason] = useState<string>('');
 	const [filters, setFilters] = useState({
-		status: '',
 		search: '',
-		startDate: '',
-		endDate: '',
-	});
-	const [pagination, setPagination] = useState({
-		current: 1,
-		pageSize: 10,
-		total: 0,
+		// startDate: '',
+		// endDate: '',
 	});
 
-	const fetchOrders = React.useCallback(async () => {
+	// Separate functions to avoid useCallback issues
+	const fetchOrders = async () => {
 		setLoading(true);
 		try {
-			const params = {
-				page: pagination.current - 1,
-				size: pagination.pageSize,
-				status: filters.status || undefined,
-				search: filters.search || undefined,
-				startDate: filters.startDate || undefined,
-				endDate: filters.endDate || undefined,
-			};
-
-			const response = await adminOrderService.getOrders(params);
+			// Get all orders without search parameter
+			const response = await adminOrderService.getOrders({});
 			setOrders(response.data);
-			setPagination((prev) => ({
-				...prev,
-				total: response.data.length, // Since we don't have pagination info from API
-			}));
 		} catch (error) {
 			console.error('Failed to fetch orders:', error);
 		} finally {
 			setLoading(false);
 		}
-	}, [pagination, filters]);
+	};
 
-	const fetchStatistics = React.useCallback(async () => {
+	const fetchStatistics = async () => {
 		try {
-			const stats = await adminOrderService.getOrderStatistics();
+			// Get statistics without parameters
+			const stats = await adminOrderService.getOrderStatistics({});
 			setStatistics(stats);
 		} catch (error) {
 			console.error('Failed to fetch statistics:', error);
 		}
-	}, []);
+	};
 
+	// Effect for initial load only
 	useEffect(() => {
 		fetchOrders();
 		fetchStatistics();
 	}, []);
+
+	// Filter orders based on search term (local filtering)
+	const filteredOrders = orders.filter((order) => {
+		if (!filters.search) return true;
+
+		const searchTerm = filters.search.toLowerCase();
+		const orderId = order.orderId.toString();
+		const customerName = order.customerName.toLowerCase();
+		const customerEmail = order.customerEmail.toLowerCase();
+
+		return (
+			orderId.includes(searchTerm) ||
+			customerName.includes(searchTerm) ||
+			customerEmail.includes(searchTerm)
+		);
+	});
 
 	const handleViewOrder = (order: AdminOrder) => {
 		setSelectedOrder(order);
@@ -151,84 +147,35 @@ export const AdminOrders: React.FC = () => {
 				statusReason,
 			);
 			setShowStatusModal(false);
-			fetchOrders();
-			fetchStatistics();
+			// Refresh both orders and statistics after update
+			await fetchOrders();
+			await fetchStatistics();
 			message.success('Order status updated successfully');
 		} catch (error) {
 			console.error('Failed to update order status:', error);
 		}
 	};
 
-	const handleCancelOrder = async (order: AdminOrder) => {
-		try {
-			await adminOrderService.cancelOrder(order.orderId, 'Cancelled by admin');
-			fetchOrders();
-			fetchStatistics();
-			message.success('Order cancelled successfully');
-		} catch (error) {
-			console.error('Failed to cancel order:', error);
-		}
+	const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
+		setFilters({ search: e.target.value });
 	};
 
-	const handleSearch = (value: string) => {
-		setFilters((prev) => ({ ...prev, search: value }));
-		setPagination((prev) => ({ ...prev, current: 1 }));
-	};
-
-	const handleFilterChange = (key: string, value: string) => {
-		setFilters((prev) => ({ ...prev, [key]: value }));
-		setPagination((prev) => ({ ...prev, current: 1 }));
-	};
-
-	const handleDateRangeChange = (
-		dates: [dayjs.Dayjs | null, dayjs.Dayjs | null] | null,
-	) => {
-		if (dates && dates[0] && dates[1]) {
-			setFilters((prev) => ({
-				...prev,
-				startDate: dates[0]!.format('YYYY-MM-DD'),
-				endDate: dates[1]!.format('YYYY-MM-DD'),
-			}));
-		} else {
-			setFilters((prev) => ({
-				...prev,
-				startDate: '',
-				endDate: '',
-			}));
-		}
-		setPagination((prev) => ({ ...prev, current: 1 }));
-	};
-
-	const getActionMenu = (order: AdminOrder) => (
-		<Menu>
-			<Menu.Item
-				key="view"
-				icon={<EyeOutlined />}
-				onClick={() => handleViewOrder(order)}
-			>
-				View Details
-			</Menu.Item>
-			<Menu.Item
-				key="edit"
-				icon={<EditOutlined />}
-				onClick={() => handleUpdateStatus(order)}
-			>
-				Update Status
-			</Menu.Item>
-			{order.status !== 'cancelled' && (
-				<Menu.Item key="cancel" icon={<DeleteOutlined />} danger>
-					<Popconfirm
-						title="Are you sure you want to cancel this order?"
-						onConfirm={() => handleCancelOrder(order)}
-						okText="Yes"
-						cancelText="No"
-					>
-						Cancel Order
-					</Popconfirm>
-				</Menu.Item>
-			)}
-		</Menu>
-	);
+	// Comment out date range handler
+	// const handleDateRangeChange = (
+	// 	dates: [dayjs.Dayjs | null, dayjs.Dayjs | null] | null,
+	// ) => {
+	// 	if (dates && dates[0] && dates[1]) {
+	// 		setFilters({
+	// 			startDate: dates[0]!.format('YYYY-MM-DD'),
+	// 			endDate: dates[1]!.format('YYYY-MM-DD'),
+	// 		});
+	// 	} else {
+	// 		setFilters({
+	// 			startDate: '',
+	// 			endDate: '',
+	// 		});
+	// 	}
+	// };
 
 	const columns: ColumnsType<AdminOrder> = [
 		{
@@ -254,7 +201,7 @@ export const AdminOrders: React.FC = () => {
 			dataIndex: 'totalPrice',
 			key: 'totalPrice',
 			width: 120,
-			render: (amount: number) => `${amount.toLocaleString()} VND`,
+			render: (amount: number) => `${amount.toLocaleString('vi-VN')} ₫`,
 		},
 		{
 			title: 'Status',
@@ -296,13 +243,32 @@ export const AdminOrders: React.FC = () => {
 			render: (date: string) => dayjs(date).format('MM/DD/YYYY HH:mm'),
 		},
 		{
-			title: 'Actions',
+			title: <div style={{ textAlign: 'center' }}>Actions</div>,
 			key: 'actions',
-			width: 80,
+			width: 150,
+			align: 'center',
 			render: (_, record) => (
-				<Dropdown overlay={getActionMenu(record)} trigger={['click']}>
-					<Button type="text" icon={<MoreOutlined />} />
-				</Dropdown>
+				<Space
+					size="small"
+					style={{ display: 'flex', justifyContent: 'center' }}
+				>
+					<Button
+						type="text"
+						icon={<EyeOutlined />}
+						onClick={() => handleViewOrder(record)}
+						style={{ color: COLORS.info }}
+					>
+						View
+					</Button>
+					<Button
+						type="text"
+						icon={<EditOutlined />}
+						onClick={() => handleUpdateStatus(record)}
+						style={{ color: COLORS.primary }}
+					>
+						Update
+					</Button>
+				</Space>
 			),
 		},
 	];
@@ -355,8 +321,10 @@ export const AdminOrders: React.FC = () => {
 								title="Total Revenue"
 								value={statistics.totalRevenue}
 								prefix={<DollarOutlined />}
-								precision={2}
 								valueStyle={{ color: '#3f8600' }}
+								formatter={(value) =>
+									`${Number(value).toLocaleString('vi-VN')} ₫`
+								}
 							/>
 						</Card>
 					</Col>
@@ -366,50 +334,32 @@ export const AdminOrders: React.FC = () => {
 			{/* Filters */}
 			<Card className="mb-6">
 				<Row gutter={[16, 16]} align="middle">
-					<Col xs={24} sm={12} md={6}>
-						<Input.Search
-							placeholder="Search orders..."
+					<Col xs={24} sm={12} md={8}>
+						<Input
+							placeholder="Search orders by customer name, email, or order ID..."
 							allowClear
-							onSearch={handleSearch}
+							onChange={handleSearch}
+							value={filters.search}
 							prefix={<SearchOutlined />}
+							style={{ width: '100%' }}
 						/>
 					</Col>
-					<Col xs={24} sm={12} md={4}>
-						<Select
-							placeholder="Filter by status"
-							allowClear
-							style={{ width: '100%' }}
-							onChange={(value) => handleFilterChange('status', value || '')}
-						>
-							<Option value="">All Status</Option>
-							<Option value="pending">Pending</Option>
-							<Option value="confirmed">Confirmed</Option>
-							<Option value="processing">Processing</Option>
-							<Option value="shipped">Shipped</Option>
-							<Option value="delivered">Delivered</Option>
-							<Option value="cancelled">Cancelled</Option>
-						</Select>
-					</Col>
-					<Col xs={24} sm={12} md={6}>
+					{/* Comment out date range picker */}
+					{/* <Col xs={24} sm={12} md={8}>
 						<RangePicker
 							style={{ width: '100%' }}
 							onChange={handleDateRangeChange}
 							placeholder={['Start date', 'End date']}
 						/>
-					</Col>
+					</Col> */}
 					<Col xs={24} sm={12} md={4}>
 						<Space>
 							<Button
-								type="primary"
-								icon={<FilterOutlined />}
-								onClick={fetchOrders}
-								loading={loading}
-							>
-								Filter
-							</Button>
-							<Button
 								icon={<ReloadOutlined />}
-								onClick={fetchOrders}
+								onClick={async () => {
+									await fetchOrders();
+									await fetchStatistics();
+								}}
 								loading={loading}
 							>
 								Refresh
@@ -423,25 +373,9 @@ export const AdminOrders: React.FC = () => {
 			<Card>
 				<Table
 					columns={columns}
-					dataSource={orders}
+					dataSource={filteredOrders}
 					rowKey="orderId"
 					loading={loading}
-					pagination={{
-						current: pagination.current,
-						pageSize: pagination.pageSize,
-						total: pagination.total,
-						showSizeChanger: true,
-						showQuickJumper: true,
-						showTotal: (total, range) =>
-							`${range[0]}-${range[1]} of ${total} items`,
-						onChange: (page, size) => {
-							setPagination((prev) => ({
-								...prev,
-								current: page,
-								pageSize: size || 10,
-							}));
-						},
-					}}
 					scroll={{ x: 1200 }}
 				/>
 			</Card>
@@ -499,13 +433,13 @@ export const AdminOrders: React.FC = () => {
 								</Tag>
 							</Descriptions.Item>
 							<Descriptions.Item label="Total Amount">
-								{selectedOrder.totalPrice.toLocaleString()} VND
+								{selectedOrder.totalPrice.toLocaleString('vi-VN')} ₫
 							</Descriptions.Item>
 							<Descriptions.Item label="Subtotal">
-								{selectedOrder.subTotal.toLocaleString()} VND
+								{selectedOrder.subTotal.toLocaleString('vi-VN')} ₫
 							</Descriptions.Item>
 							<Descriptions.Item label="Shipping Fee">
-								{selectedOrder.shippingFee.toLocaleString()} VND
+								{selectedOrder.shippingFee.toLocaleString('vi-VN')} ₫
 							</Descriptions.Item>
 							<Descriptions.Item label="Created At">
 								{dayjs(selectedOrder.createdDate).format('MMMM DD, YYYY HH:mm')}
@@ -516,7 +450,10 @@ export const AdminOrders: React.FC = () => {
 							{selectedOrder.voucherCode && (
 								<Descriptions.Item label="Voucher Code" span={2}>
 									{selectedOrder.voucherCode} (-
-									{selectedOrder.voucherDiscountAmount.toLocaleString()} VND)
+									{selectedOrder.voucherDiscountAmount.toLocaleString(
+										'vi-VN',
+									)}{' '}
+									₫)
 								</Descriptions.Item>
 							)}
 						</Descriptions>
@@ -563,13 +500,15 @@ export const AdminOrders: React.FC = () => {
 									title: 'Unit Price',
 									dataIndex: 'unitPrice',
 									key: 'unitPrice',
-									render: (price: number) => `${price.toLocaleString()} VND`,
+									render: (price: number) =>
+										`${price.toLocaleString('vi-VN')} ₫`,
 								},
 								{
 									title: 'Total Price',
 									dataIndex: 'totalPrice',
 									key: 'totalPrice',
-									render: (price: number) => `${price.toLocaleString()} VND`,
+									render: (price: number) =>
+										`${price.toLocaleString('vi-VN')} ₫`,
 								},
 							]}
 							dataSource={selectedOrder.items}

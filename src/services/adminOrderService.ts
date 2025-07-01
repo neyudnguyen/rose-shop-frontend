@@ -150,11 +150,25 @@ export const adminOrderService = {
 	},
 
 	// Get order statistics
-	async getOrderStatistics(): Promise<OrderStatistics> {
+	async getOrderStatistics(
+		params: { startDate?: string; endDate?: string } = {},
+	): Promise<OrderStatistics> {
 		try {
-			// Get all orders first to calculate statistics
-			const response = await adminApiClient.get('/admin/orders');
-			const orders = response.data.data as AdminOrder[];
+			// Call the statistics API with optional date parameters
+			const response = await adminApiClient.get('/admin/orders/statistics', {
+				params,
+			});
+
+			// If the API returns statistics directly, use them
+			if (response.data.totalOrders !== undefined) {
+				return response.data;
+			}
+
+			// Fallback: Get all orders and calculate statistics client-side
+			const ordersResponse = await adminApiClient.get('/admin/orders', {
+				params,
+			});
+			const orders = ordersResponse.data.data as AdminOrder[];
 
 			// Calculate statistics from orders
 			const totalOrders = orders.length;
