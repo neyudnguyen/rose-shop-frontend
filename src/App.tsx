@@ -11,8 +11,10 @@ import { AdminAuthProvider } from './contexts/AdminAuthContext';
 import { AuthProvider } from './contexts/AuthContext';
 import { Cart } from './pages/Cart';
 import { Checkout } from './pages/Checkout';
+import { EnterResetToken } from './pages/EnterResetToken';
 import { FlowerDetail } from './pages/FlowerDetail';
 import { FlowerList } from './pages/FlowerList';
+import { ForgotPassword } from './pages/ForgotPassword';
 // Pages
 import { Home } from './pages/Home';
 import { Login } from './pages/Login';
@@ -21,6 +23,7 @@ import { Orders } from './pages/Orders';
 import PaymentSuccess from './pages/PaymentSuccess';
 import { Profile } from './pages/Profile';
 import { Register } from './pages/Register';
+import { ResetPassword } from './pages/ResetPassword';
 import { AdminCategory } from './pages/admin/AdminCategory';
 import { AdminDashboard } from './pages/admin/AdminDashboard';
 import { AdminFlower } from './pages/admin/AdminFlower';
@@ -103,6 +106,18 @@ function App() {
 										{/* Public Routes */}
 										<Route path="/login" element={<Login />} />
 										<Route path="/register" element={<Register />} />
+										<Route
+											path="/forgot-password"
+											element={<ForgotPassword />}
+										/>
+										<Route
+											path="/enter-reset-token"
+											element={<EnterResetToken />}
+										/>
+										<Route
+											path="/reset-password/:token"
+											element={<ResetPassword />}
+										/>
 
 										{/* Main Layout Routes */}
 										<Route

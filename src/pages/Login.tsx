@@ -126,6 +126,26 @@ export const Login: React.FC = () => {
 							</Button>
 						</Form.Item>
 					</Form>
+
+					<div className="text-center mb-4">
+						<Link
+							to="/forgot-password"
+							style={{
+								color: COLORS.primary,
+								textDecoration: 'none',
+								fontSize: '14px',
+							}}
+							onMouseEnter={(e) =>
+								(e.currentTarget.style.color = COLORS.primaryDark)
+							}
+							onMouseLeave={(e) =>
+								(e.currentTarget.style.color = COLORS.primary)
+							}
+						>
+							Forgot your password?
+						</Link>
+					</div>
+
 					<Divider>Or</Divider>
 					<div className="text-center space-y-2">
 						<div>

@@ -7,6 +7,7 @@ export { cartService } from './cartService';
 export { categoryService } from './categoryService';
 export { flowerService } from './flowerService';
 export { orderService } from './orderService';
+export { passwordResetService } from './passwordResetService';
 export { userManagementService } from './userManagementService';
 export { voucherService } from './voucherService';
 
