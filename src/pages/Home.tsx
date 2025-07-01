@@ -3,6 +3,7 @@ import { COLORS } from '../constants/colors';
 import { cartService } from '../services/cartService';
 import { categoryService } from '../services/categoryService';
 import { flowerService } from '../services/flowerService';
+import { useUserNotification } from '../services/userNotification';
 import type { Category, Flower } from '../types';
 import {
 	ArrowRightOutlined,
@@ -51,6 +52,7 @@ const features = [
 ];
 
 export const Home: React.FC = () => {
+	const notification = useUserNotification();
 	const [topCategories, setTopCategories] = useState<Category[]>([]);
 	const [featuredFlowers, setFeaturedFlowers] = useState<Flower[]>([]);
 	const [loading, setLoading] = useState(true);
@@ -81,8 +83,10 @@ export const Home: React.FC = () => {
 	const handleAddToCart = async (flowerId: string) => {
 		try {
 			await cartService.addToCart(flowerId, 1);
+			notification.addToCartSuccess();
 		} catch (err) {
 			console.error('Error adding to cart:', err);
+			notification.actionFailed('Add to Cart');
 		}
 	};
 

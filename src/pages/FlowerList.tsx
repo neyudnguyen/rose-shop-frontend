@@ -2,6 +2,7 @@ import { FlowerCard } from '../components/FlowerCard';
 import apiClient from '../services/api';
 import { cartService } from '../services/cartService';
 import { flowerService } from '../services/flowerService';
+import { useUserNotification } from '../services/userNotification';
 import type { Category, Flower } from '../types';
 import { SearchOutlined } from '@ant-design/icons';
 import {
@@ -24,6 +25,7 @@ const { Search } = Input;
 const { Option } = Select;
 
 export const FlowerList: React.FC = () => {
+	const notification = useUserNotification();
 	const [flowers, setFlowers] = useState<Flower[]>([]);
 	const [categories, setCategories] = useState<Category[]>([]);
 	const [loading, setLoading] = useState(true);
@@ -131,10 +133,10 @@ export const FlowerList: React.FC = () => {
 	const handleAddToCart = async (flowerId: string) => {
 		try {
 			await cartService.addToCart(flowerId, 1);
-			// You might want to show a success message here
+			notification.addToCartSuccess();
 		} catch (err) {
 			console.error('Error adding to cart:', err);
-			// You might want to show an error message here
+			notification.actionFailed('Add to Cart');
 		}
 	};
 
