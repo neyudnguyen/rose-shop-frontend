@@ -410,24 +410,24 @@ export const FlowerDetail: React.FC = () => {
 									style={{ width: '100%' }}
 								>
 									<Row gutter={16}>
-										<Col span={12}>
-											<Button
-												type="primary"
-												size="large"
-												icon={<ShoppingCartOutlined />}
-												onClick={handleAddToCart}
-												loading={addingToCart}
-												disabled={!isAvailable}
-												style={{
-													width: '100%',
-													height: '48px',
-													fontSize: '16px',
-												}}
-											>
-												Add to Cart
-											</Button>
-										</Col>
-										<Col span={12}>
+										{/* <Col span={12}> */}
+										<Button
+											type="primary"
+											size="large"
+											icon={<ShoppingCartOutlined />}
+											onClick={handleAddToCart}
+											loading={addingToCart}
+											disabled={!isAvailable}
+											style={{
+												width: '100%',
+												height: '48px',
+												fontSize: '16px',
+											}}
+										>
+											Add to Cart
+										</Button>
+										{/* </Col> */}
+										{/* <Col span={12}>
 											<Button
 												type="primary"
 												size="large"
@@ -443,7 +443,7 @@ export const FlowerDetail: React.FC = () => {
 											>
 												Buy Now
 											</Button>
-										</Col>
+										</Col> */}
 									</Row>
 								</Space>
 							</Space>
