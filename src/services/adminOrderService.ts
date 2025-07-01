@@ -1,5 +1,6 @@
-import adminApiClient from './adminApi';
 import { notification } from 'antd';
+
+import adminApiClient from './adminApi';
 
 interface ApiError {
 	response?: {
@@ -23,7 +24,13 @@ export interface AdminOrder {
 	userName: string;
 	userEmail: string;
 	userPhone: string;
-	status: 'PENDING' | 'CONFIRMED' | 'PROCESSING' | 'SHIPPED' | 'DELIVERED' | 'CANCELLED';
+	status:
+		| 'PENDING'
+		| 'CONFIRMED'
+		| 'PROCESSING'
+		| 'SHIPPED'
+		| 'DELIVERED'
+		| 'CANCELLED';
 	totalAmount: number;
 	deliveryAddress: string;
 	deliveryDate: string;
@@ -73,7 +80,8 @@ export const adminOrderService = {
 			return response.data;
 		} catch (error) {
 			const apiError = error as ApiError;
-			const errorMessage = apiError.response?.data?.message || 'Failed to fetch orders';
+			const errorMessage =
+				apiError.response?.data?.message || 'Failed to fetch orders';
 			notification.error({
 				message: 'Error',
 				description: errorMessage,
@@ -91,19 +99,27 @@ export const adminOrderService = {
 			const apiError = error as ApiError;
 			notification.error({
 				message: 'Error',
-				description: apiError.response?.data?.message || 'Failed to fetch order details',
+				description:
+					apiError.response?.data?.message || 'Failed to fetch order details',
 			});
 			throw error;
 		}
 	},
 
 	// Update order status
-	async updateOrderStatus(orderId: number, status: string, reason?: string): Promise<AdminOrder> {
+	async updateOrderStatus(
+		orderId: number,
+		status: string,
+		reason?: string,
+	): Promise<AdminOrder> {
 		try {
-			const response = await adminApiClient.put(`/admin/orders/${orderId}/status`, {
-				status,
-				reason,
-			});
+			const response = await adminApiClient.put(
+				`/admin/orders/${orderId}/status`,
+				{
+					status,
+					reason,
+				},
+			);
 			notification.success({
 				message: 'Success',
 				description: 'Order status updated successfully',
@@ -113,7 +129,8 @@ export const adminOrderService = {
 			const apiError = error as ApiError;
 			notification.error({
 				message: 'Error',
-				description: apiError.response?.data?.message || 'Failed to update order status',
+				description:
+					apiError.response?.data?.message || 'Failed to update order status',
 			});
 			throw error;
 		}
@@ -128,14 +145,20 @@ export const adminOrderService = {
 			const apiError = error as ApiError;
 			notification.error({
 				message: 'Error',
-				description: apiError.response?.data?.message || 'Failed to fetch order statistics',
+				description:
+					apiError.response?.data?.message ||
+					'Failed to fetch order statistics',
 			});
 			throw error;
 		}
 	},
 
 	// Get orders by status
-	async getOrdersByStatus(status: string, page = 0, size = 20): Promise<OrderListResponse> {
+	async getOrdersByStatus(
+		status: string,
+		page = 0,
+		size = 20,
+	): Promise<OrderListResponse> {
 		try {
 			const response = await adminApiClient.get('/admin/orders', {
 				params: { status, page, size },
@@ -145,7 +168,9 @@ export const adminOrderService = {
 			const apiError = error as ApiError;
 			notification.error({
 				message: 'Error',
-				description: apiError.response?.data?.message || 'Failed to fetch orders by status',
+				description:
+					apiError.response?.data?.message ||
+					'Failed to fetch orders by status',
 			});
 			throw error;
 		}
@@ -154,9 +179,12 @@ export const adminOrderService = {
 	// Cancel order
 	async cancelOrder(orderId: number, reason: string): Promise<AdminOrder> {
 		try {
-			const response = await adminApiClient.put(`/admin/orders/${orderId}/cancel`, {
-				reason,
-			});
+			const response = await adminApiClient.put(
+				`/admin/orders/${orderId}/cancel`,
+				{
+					reason,
+				},
+			);
 			notification.success({
 				message: 'Success',
 				description: 'Order cancelled successfully',
@@ -166,7 +194,8 @@ export const adminOrderService = {
 			const apiError = error as ApiError;
 			notification.error({
 				message: 'Error',
-				description: apiError.response?.data?.message || 'Failed to cancel order',
+				description:
+					apiError.response?.data?.message || 'Failed to cancel order',
 			});
 			throw error;
 		}

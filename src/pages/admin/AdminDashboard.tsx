@@ -3,12 +3,12 @@ import { adminOrderService } from '../../services/adminOrderService';
 import type { OrderStatistics } from '../../services/adminOrderService';
 import {
 	AppstoreOutlined,
+	CheckCircleOutlined,
+	ClockCircleOutlined,
+	DollarOutlined,
 	ShoppingCartOutlined,
 	ShoppingOutlined,
 	TagsOutlined,
-	DollarOutlined,
-	ClockCircleOutlined,
-	CheckCircleOutlined,
 } from '@ant-design/icons';
 import { Card, Col, Row, Statistic, Typography } from 'antd';
 import React, { useEffect, useState } from 'react';
@@ -97,7 +97,11 @@ export const AdminDashboard: React.FC = () => {
 				<Col xs={24} lg={12}>
 					<Card
 						title="Recent Orders"
-						extra={<a href="#!" onClick={() => navigate('/admin/orders')}>View All</a>}
+						extra={
+							<a href="#!" onClick={() => navigate('/admin/orders')}>
+								View All
+							</a>
+						}
 						style={{ height: '300px' }}
 					>
 						<div className="flex items-center justify-center h-full text-gray-500">
@@ -114,7 +118,7 @@ export const AdminDashboard: React.FC = () => {
 				<Col xs={24} lg={12}>
 					<Card title="Quick Actions" style={{ height: '300px' }}>
 						<div className="space-y-4">
-							<div 
+							<div
 								className="p-4 bg-blue-50 rounded-lg hover:bg-blue-100 cursor-pointer transition-colors"
 								onClick={() => navigate('/admin/flowers')}
 							>
@@ -128,7 +132,7 @@ export const AdminDashboard: React.FC = () => {
 									</div>
 								</div>
 							</div>
-							<div 
+							<div
 								className="p-4 bg-green-50 rounded-lg hover:bg-green-100 cursor-pointer transition-colors"
 								onClick={() => navigate('/admin/categories')}
 							>
@@ -142,7 +146,7 @@ export const AdminDashboard: React.FC = () => {
 									</div>
 								</div>
 							</div>
-							<div 
+							<div
 								className="p-4 bg-purple-50 rounded-lg hover:bg-purple-100 cursor-pointer transition-colors"
 								onClick={() => navigate('/admin/vouchers')}
 							>
@@ -156,7 +160,7 @@ export const AdminDashboard: React.FC = () => {
 									</div>
 								</div>
 							</div>
-							<div 
+							<div
 								className="p-4 bg-orange-50 rounded-lg hover:bg-orange-100 cursor-pointer transition-colors"
 								onClick={() => navigate('/admin/orders')}
 							>

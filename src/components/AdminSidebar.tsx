@@ -4,8 +4,8 @@ import {
 	DashboardOutlined,
 	GiftOutlined,
 	LogoutOutlined,
-	ShoppingOutlined,
 	ShopOutlined,
+	ShoppingOutlined,
 	TagsOutlined,
 	UserOutlined,
 } from '@ant-design/icons';

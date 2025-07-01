@@ -1,41 +1,44 @@
-import React, { useState, useEffect } from 'react';
+import { adminOrderService } from '../../services/adminOrderService';
+import type {
+	AdminOrder,
+	OrderStatistics,
+} from '../../services/adminOrderService';
 import {
-	Table,
+	CheckCircleOutlined,
+	ClockCircleOutlined,
+	DeleteOutlined,
+	DollarOutlined,
+	EditOutlined,
+	EyeOutlined,
+	FilterOutlined,
+	MoreOutlined,
+	ReloadOutlined,
+	SearchOutlined,
+	ShoppingCartOutlined,
+} from '@ant-design/icons';
+import {
 	Button,
 	Card,
-	Space,
-	Tag,
-	Input,
-	Select,
-	DatePicker,
-	Modal,
-	Descriptions,
-	Typography,
-	Row,
 	Col,
-	Statistic,
-	message,
+	DatePicker,
+	Descriptions,
 	Dropdown,
+	Input,
 	Menu,
+	Modal,
 	Popconfirm,
+	Row,
+	Select,
+	Space,
+	Statistic,
+	Table,
+	Tag,
+	Typography,
+	message,
 } from 'antd';
-import {
-	EyeOutlined,
-	EditOutlined,
-	DeleteOutlined,
-	MoreOutlined,
-	SearchOutlined,
-	FilterOutlined,
-	ReloadOutlined,
-	ShoppingCartOutlined,
-	DollarOutlined,
-	ClockCircleOutlined,
-	CheckCircleOutlined,
-} from '@ant-design/icons';
 import type { ColumnsType } from 'antd/es/table';
-import { adminOrderService } from '../../services/adminOrderService';
-import type { AdminOrder, OrderStatistics } from '../../services/adminOrderService';
 import dayjs from 'dayjs';
+import React, { useEffect, useState } from 'react';
 
 const { Title, Text } = Typography;
 const { RangePicker } = DatePicker;
@@ -142,7 +145,11 @@ export const AdminOrders: React.FC = () => {
 		if (!selectedOrder) return;
 
 		try {
-			await adminOrderService.updateOrderStatus(selectedOrder.id, newStatus, statusReason);
+			await adminOrderService.updateOrderStatus(
+				selectedOrder.id,
+				newStatus,
+				statusReason,
+			);
 			setShowStatusModal(false);
 			fetchOrders();
 			fetchStatistics();
@@ -173,7 +180,9 @@ export const AdminOrders: React.FC = () => {
 		setPagination((prev) => ({ ...prev, current: 1 }));
 	};
 
-	const handleDateRangeChange = (dates: [dayjs.Dayjs | null, dayjs.Dayjs | null] | null) => {
+	const handleDateRangeChange = (
+		dates: [dayjs.Dayjs | null, dayjs.Dayjs | null] | null,
+	) => {
 		if (dates && dates[0] && dates[1]) {
 			setFilters((prev) => ({
 				...prev,
@@ -192,10 +201,18 @@ export const AdminOrders: React.FC = () => {
 
 	const getActionMenu = (order: AdminOrder) => (
 		<Menu>
-			<Menu.Item key="view" icon={<EyeOutlined />} onClick={() => handleViewOrder(order)}>
+			<Menu.Item
+				key="view"
+				icon={<EyeOutlined />}
+				onClick={() => handleViewOrder(order)}
+			>
 				View Details
 			</Menu.Item>
-			<Menu.Item key="edit" icon={<EditOutlined />} onClick={() => handleUpdateStatus(order)}>
+			<Menu.Item
+				key="edit"
+				icon={<EditOutlined />}
+				onClick={() => handleUpdateStatus(order)}
+			>
 				Update Status
 			</Menu.Item>
 			{order.status !== 'CANCELLED' && (
@@ -256,7 +273,11 @@ export const AdminOrders: React.FC = () => {
 			key: 'paymentStatus',
 			width: 130,
 			render: (status: string) => (
-				<Tag color={paymentStatusColors[status as keyof typeof paymentStatusColors]}>
+				<Tag
+					color={
+						paymentStatusColors[status as keyof typeof paymentStatusColors]
+					}
+				>
 					{status}
 				</Tag>
 			),
@@ -291,7 +312,9 @@ export const AdminOrders: React.FC = () => {
 		<div className="p-6">
 			<div className="mb-6">
 				<Title level={2}>Order Management</Title>
-				<Text className="text-gray-600">Manage and track all customer orders</Text>
+				<Text className="text-gray-600">
+					Manage and track all customer orders
+				</Text>
 			</div>
 
 			{/* Statistics Cards */}
@@ -385,7 +408,11 @@ export const AdminOrders: React.FC = () => {
 							>
 								Filter
 							</Button>
-							<Button icon={<ReloadOutlined />} onClick={fetchOrders} loading={loading}>
+							<Button
+								icon={<ReloadOutlined />}
+								onClick={fetchOrders}
+								loading={loading}
+							>
 								Refresh
 							</Button>
 						</Space>
@@ -431,10 +458,22 @@ export const AdminOrders: React.FC = () => {
 				{selectedOrder && (
 					<div>
 						<Descriptions column={2} bordered>
-							<Descriptions.Item label="Order ID">#{selectedOrder.id}</Descriptions.Item>
+							<Descriptions.Item label="Order ID">
+								#{selectedOrder.id}
+							</Descriptions.Item>
 							<Descriptions.Item label="Status">
-								<Tag color={statusColors[selectedOrder.status as keyof typeof statusColors]}>
-									{statusLabels[selectedOrder.status as keyof typeof statusLabels]}
+								<Tag
+									color={
+										statusColors[
+											selectedOrder.status as keyof typeof statusColors
+										]
+									}
+								>
+									{
+										statusLabels[
+											selectedOrder.status as keyof typeof statusLabels
+										]
+									}
 								</Tag>
 							</Descriptions.Item>
 							<Descriptions.Item label="Customer Name">
@@ -450,7 +489,13 @@ export const AdminOrders: React.FC = () => {
 								{selectedOrder.paymentMethod}
 							</Descriptions.Item>
 							<Descriptions.Item label="Payment Status">
-								<Tag color={paymentStatusColors[selectedOrder.paymentStatus as keyof typeof paymentStatusColors]}>
+								<Tag
+									color={
+										paymentStatusColors[
+											selectedOrder.paymentStatus as keyof typeof paymentStatusColors
+										]
+									}
+								>
 									{selectedOrder.paymentStatus}
 								</Tag>
 							</Descriptions.Item>
@@ -473,7 +518,9 @@ export const AdminOrders: React.FC = () => {
 							)}
 						</Descriptions>
 
-						<Title level={4} className="mt-6 mb-4">Order Items</Title>
+						<Title level={4} className="mt-6 mb-4">
+							Order Items
+						</Title>
 						<Table
 							columns={[
 								{
