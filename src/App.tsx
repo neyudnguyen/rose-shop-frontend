@@ -26,6 +26,8 @@ import { AdminCategory } from './pages/admin/AdminCategory';
 import { AdminDashboard } from './pages/admin/AdminDashboard';
 import { AdminFlower } from './pages/admin/AdminFlower';
 import { AdminLogin } from './pages/admin/AdminLogin';
+import { AdminOrderDetail } from './pages/admin/AdminOrderDetail';
+import { AdminOrders } from './pages/admin/AdminOrders';
 import { AdminUsers } from './pages/admin/AdminUsers';
 import { AdminVoucher } from './pages/admin/AdminVoucher';
 
@@ -85,6 +87,11 @@ function App() {
 											<Route
 												path="/vouchers/stats/:code"
 												element={<div>Voucher Stats - Coming Soon</div>}
+											/>
+											<Route path="/orders" element={<AdminOrders />} />
+											<Route
+												path="/orders/:orderId"
+												element={<AdminOrderDetail />}
 											/>
 											<Route path="/users" element={<AdminUsers />} />
 										</Routes>
