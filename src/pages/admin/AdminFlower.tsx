@@ -461,7 +461,7 @@ export const AdminFlower: React.FC = () => {
 					<Row gutter={16}>
 						<Col span={8}>
 							<Form.Item
-								label="Price (VND)"
+								label="Price (₫)"
 								name="price"
 								rules={[
 									{ required: true, message: 'Please enter price' },
