@@ -5,6 +5,7 @@ export { addressService } from './addressService';
 export { authService } from './authService';
 export { cartService } from './cartService';
 export { categoryService } from './categoryService';
+export { customerVoucherService } from './customerVoucherService';
 export { flowerService } from './flowerService';
 export { orderService } from './orderService';
 export { userManagementService } from './userManagementService';
