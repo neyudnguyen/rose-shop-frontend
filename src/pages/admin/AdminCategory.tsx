@@ -1,25 +1,17 @@
 import { COLORS } from '../../constants/colors';
+import { useAdminNotification } from '../../services/adminNotification';
 import {
 	type CategoryCreateRequest,
 	type CategoryResponse,
 	categoryService,
 } from '../../services/categoryService';
 import { EditOutlined, PlusOutlined, SearchOutlined } from '@ant-design/icons';
-import {
-	Button,
-	Card,
-	Form,
-	Input,
-	Modal,
-	Space,
-	Table,
-	Tag,
-	message,
-} from 'antd';
+import { Button, Card, Form, Input, Modal, Space, Table, Tag } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
 import React, { useEffect, useState } from 'react';
 
 export const AdminCategory: React.FC = () => {
+	const notification = useAdminNotification();
 	const [categories, setCategories] = useState<CategoryResponse[]>([]);
 	const [loading, setLoading] = useState(false);
 	const [isModalVisible, setIsModalVisible] = useState(false);
@@ -35,7 +27,10 @@ export const AdminCategory: React.FC = () => {
 			const data = await categoryService.getCategories();
 			setCategories(data);
 		} catch (error) {
-			message.error('Failed to load categories');
+			notification.error(
+				'Failed to load categories',
+				'Please try refreshing the page or contact support if the problem persists',
+			);
 			console.error('Error loading categories:', error);
 		} finally {
 			setLoading(false);
@@ -64,11 +59,11 @@ export const AdminCategory: React.FC = () => {
 					editingCategory.categoryId,
 					requestData,
 				);
-				message.success('Category updated successfully');
+				notification.updated('Category', editingCategory.categoryId);
 			} else {
 				// Create category
 				await categoryService.createCategory(requestData);
-				message.success('Category created successfully');
+				notification.created('Category');
 			}
 
 			setIsModalVisible(false);
@@ -76,10 +71,10 @@ export const AdminCategory: React.FC = () => {
 			form.resetFields();
 			loadCategories();
 		} catch (error) {
-			message.error(
-				editingCategory
-					? 'Failed to update category'
-					: 'Failed to create category',
+			notification.operationFailed(
+				editingCategory ? 'update' : 'create',
+				'Category',
+				error instanceof Error ? error.message : undefined,
 			);
 			console.error('Error saving category:', error);
 		}

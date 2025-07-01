@@ -1,6 +1,7 @@
 import { UserProfileCard } from '../../components/admin/UserProfileCard';
 import { UserStatsCards } from '../../components/admin/UserStatsCards';
 import { COLORS } from '../../constants/colors';
+import { useAdminNotification } from '../../services/adminNotification';
 import { userManagementService } from '../../services/userManagementService';
 import type { UserDetailResponse, UserListRequest } from '../../types';
 import {
@@ -9,17 +10,7 @@ import {
 	SearchOutlined,
 	StopOutlined,
 } from '@ant-design/icons';
-import {
-	Button,
-	Card,
-	Form,
-	Input,
-	Modal,
-	Space,
-	Table,
-	Tag,
-	message,
-} from 'antd';
+import { Button, Card, Form, Input, Modal, Space, Table, Tag } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
 import React, { useEffect, useState } from 'react';
 
@@ -35,6 +26,7 @@ interface UserStats {
 }
 
 export const AdminUsers: React.FC = () => {
+	const notification = useAdminNotification();
 	const [users, setUsers] = useState<UserListRequest[]>([]);
 	const [loading, setLoading] = useState(false);
 	const [searchText, setSearchText] = useState('');
@@ -71,7 +63,7 @@ export const AdminUsers: React.FC = () => {
 				),
 			);
 		} catch (error) {
-			message.error('Failed to fetch users');
+			notification.error('Failed to fetch users');
 			console.error('Error fetching users:', error);
 		} finally {
 			setLoading(false);
@@ -94,7 +86,7 @@ export const AdminUsers: React.FC = () => {
 			setSelectedUser(userDetail);
 			setDetailModalVisible(true);
 		} catch {
-			message.error('Failed to fetch user details');
+			notification.error('Failed to fetch user details');
 		} finally {
 			setLoading(false);
 		}
@@ -117,7 +109,7 @@ export const AdminUsers: React.FC = () => {
 				values.reason,
 			);
 
-			message.success(
+			notification.success(
 				`User ${selectedUser.isActive ? 'deactivated' : 'activated'} successfully`,
 			);
 
@@ -126,7 +118,7 @@ export const AdminUsers: React.FC = () => {
 			await fetchUsers();
 			await fetchUserStats();
 		} catch (error) {
-			message.error('Failed to update user status');
+			notification.error('Failed to update user status');
 			console.error('Error updating user status:', error);
 		} finally {
 			setLoading(false);

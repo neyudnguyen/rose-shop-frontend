@@ -1,4 +1,5 @@
 import { COLORS } from '../../constants/colors';
+import { useAdminNotification } from '../../services/adminNotification';
 import {
 	type VoucherManageRequest,
 	type VoucherResponse,
@@ -27,7 +28,6 @@ import {
 	Space,
 	Table,
 	Tag,
-	message,
 } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
 import dayjs from 'dayjs';
@@ -38,6 +38,7 @@ const { Option } = Select;
 const { RangePicker } = DatePicker;
 
 export const AdminVoucher: React.FC = () => {
+	const notification = useAdminNotification();
 	const [vouchers, setVouchers] = useState<VoucherResponse[]>([]);
 	const [loading, setLoading] = useState(false);
 	const [isModalVisible, setIsModalVisible] = useState(false);
@@ -62,7 +63,7 @@ export const AdminVoucher: React.FC = () => {
 			const data = await voucherService.getAllVouchers();
 			setVouchers(data);
 		} catch (error) {
-			message.error('Failed to load vouchers');
+			notification.error('Failed to load vouchers');
 			console.error('Error loading vouchers:', error);
 		} finally {
 			setLoading(false);
@@ -105,7 +106,7 @@ export const AdminVoucher: React.FC = () => {
 
 			await voucherService.manageVoucher(requestData);
 
-			message.success(
+			notification.success(
 				editingVoucher
 					? 'Voucher updated successfully'
 					: 'Voucher created successfully',
@@ -116,7 +117,7 @@ export const AdminVoucher: React.FC = () => {
 			form.resetFields();
 			loadVouchers();
 		} catch (error) {
-			message.error(
+			notification.error(
 				editingVoucher
 					? 'Failed to update voucher'
 					: 'Failed to create voucher',
@@ -153,7 +154,7 @@ export const AdminVoucher: React.FC = () => {
 			setVoucherStats(stats);
 			setIsStatsModalVisible(true);
 		} catch (error) {
-			message.error('Failed to load voucher statistics');
+			notification.error('Failed to load voucher statistics');
 			console.error('Error loading voucher stats:', error);
 		}
 	};

@@ -1,4 +1,4 @@
-import { ConfigProvider, Layout } from 'antd';
+import { App as AntApp, ConfigProvider, Layout } from 'antd';
 import React from 'react';
 import { Route, BrowserRouter as Router, Routes } from 'react-router-dom';
 
@@ -59,166 +59,168 @@ function App() {
 				},
 			}}
 		>
-			<Router>
-				<Routes>
-					{/* Admin Routes with separate context */}
-					<Route
-						path="/admin/login"
-						element={
-							<AdminAuthProvider>
-								<AdminLogin />
-							</AdminAuthProvider>
-						}
-					/>
-					<Route
-						path="/admin/*"
-						element={
-							<AdminAuthProvider>
-								<AdminProtectedRoute>
-									<AdminLayout>
-										<Routes>
-											<Route path="/" element={<AdminDashboard />} />
-											<Route path="/flowers" element={<AdminFlower />} />
-											<Route path="/categories" element={<AdminCategory />} />
-											<Route path="/vouchers" element={<AdminVoucher />} />
-											<Route
-												path="/vouchers/stats/:code"
-												element={<div>Voucher Stats - Coming Soon</div>}
-											/>
-											<Route path="/users" element={<AdminUsers />} />
-										</Routes>
-									</AdminLayout>
-								</AdminProtectedRoute>
-							</AdminAuthProvider>
-						}
-					/>
+			<AntApp>
+				<Router>
+					<Routes>
+						{/* Admin Routes with separate context */}
+						<Route
+							path="/admin/login"
+							element={
+								<AdminAuthProvider>
+									<AdminLogin />
+								</AdminAuthProvider>
+							}
+						/>
+						<Route
+							path="/admin/*"
+							element={
+								<AdminAuthProvider>
+									<AdminProtectedRoute>
+										<AdminLayout>
+											<Routes>
+												<Route path="/" element={<AdminDashboard />} />
+												<Route path="/flowers" element={<AdminFlower />} />
+												<Route path="/categories" element={<AdminCategory />} />
+												<Route path="/vouchers" element={<AdminVoucher />} />
+												<Route
+													path="/vouchers/stats/:code"
+													element={<div>Voucher Stats - Coming Soon</div>}
+												/>
+												<Route path="/users" element={<AdminUsers />} />
+											</Routes>
+										</AdminLayout>
+									</AdminProtectedRoute>
+								</AdminAuthProvider>
+							}
+						/>
 
-					{/* User Routes with user context - ALL routes wrapped in AuthProvider */}
-					<Route
-						path="/*"
-						element={
-							<AuthProvider>
-								<Routes>
-									{/* Public Routes */}
-									<Route path="/login" element={<Login />} />
-									<Route path="/register" element={<Register />} />
+						{/* User Routes with user context - ALL routes wrapped in AuthProvider */}
+						<Route
+							path="/*"
+							element={
+								<AuthProvider>
+									<Routes>
+										{/* Public Routes */}
+										<Route path="/login" element={<Login />} />
+										<Route path="/register" element={<Register />} />
 
-									{/* Main Layout Routes */}
-									<Route
-										path="/"
-										element={
-											<MainLayout>
-												<Home />
-											</MainLayout>
-										}
-									/>
-									<Route
-										path="/flowers"
-										element={
-											<MainLayout>
-												<FlowerList />
-											</MainLayout>
-										}
-									/>
-									<Route
-										path="/flowers/:id"
-										element={
-											<MainLayout>
-												<FlowerDetail />
-											</MainLayout>
-										}
-									/>
-									{/* Protected Routes */}
-									<Route
-										path="/cart"
-										element={
-											<ProtectedRoute>
+										{/* Main Layout Routes */}
+										<Route
+											path="/"
+											element={
 												<MainLayout>
-													<Cart />
+													<Home />
 												</MainLayout>
-											</ProtectedRoute>
-										}
-									/>
-									<Route
-										path="/checkout"
-										element={
-											<ProtectedRoute>
+											}
+										/>
+										<Route
+											path="/flowers"
+											element={
 												<MainLayout>
-													<Checkout />
+													<FlowerList />
 												</MainLayout>
-											</ProtectedRoute>
-										}
-									/>
-									<Route
-										path="/orders"
-										element={
-											<ProtectedRoute>
+											}
+										/>
+										<Route
+											path="/flowers/:id"
+											element={
 												<MainLayout>
-													<Orders />
+													<FlowerDetail />
 												</MainLayout>
-											</ProtectedRoute>
-										}
-									/>
-									<Route
-										path="/orders/:orderId"
-										element={
-											<ProtectedRoute>
+											}
+										/>
+										{/* Protected Routes */}
+										<Route
+											path="/cart"
+											element={
+												<ProtectedRoute>
+													<MainLayout>
+														<Cart />
+													</MainLayout>
+												</ProtectedRoute>
+											}
+										/>
+										<Route
+											path="/checkout"
+											element={
+												<ProtectedRoute>
+													<MainLayout>
+														<Checkout />
+													</MainLayout>
+												</ProtectedRoute>
+											}
+										/>
+										<Route
+											path="/orders"
+											element={
+												<ProtectedRoute>
+													<MainLayout>
+														<Orders />
+													</MainLayout>
+												</ProtectedRoute>
+											}
+										/>
+										<Route
+											path="/orders/:orderId"
+											element={
+												<ProtectedRoute>
+													<MainLayout>
+														<OrderDetail />
+													</MainLayout>
+												</ProtectedRoute>
+											}
+										/>
+										<Route
+											path="/profile"
+											element={
+												<ProtectedRoute>
+													<MainLayout>
+														<Profile />
+													</MainLayout>
+												</ProtectedRoute>
+											}
+										/>
+										<Route
+											path="/addresses"
+											element={
+												<ProtectedRoute>
+													<MainLayout>
+														<div>Address Book Page - Coming Soon</div>
+													</MainLayout>
+												</ProtectedRoute>
+											}
+										/>
+										<Route
+											path="/payment/success"
+											element={
 												<MainLayout>
-													<OrderDetail />
+													<PaymentSuccess />
 												</MainLayout>
-											</ProtectedRoute>
-										}
-									/>
-									<Route
-										path="/profile"
-										element={
-											<ProtectedRoute>
+											}
+										/>
+										{/* 404 Route */}
+										<Route
+											path="*"
+											element={
 												<MainLayout>
-													<Profile />
+													<div className="text-center py-16">
+														<h1 className="text-4xl font-bold text-gray-800 mb-4">
+															404 - Page Not Found
+														</h1>
+														<p className="text-gray-600">
+															The page you're looking for doesn't exist.
+														</p>
+													</div>
 												</MainLayout>
-											</ProtectedRoute>
-										}
-									/>
-									<Route
-										path="/addresses"
-										element={
-											<ProtectedRoute>
-												<MainLayout>
-													<div>Address Book Page - Coming Soon</div>
-												</MainLayout>
-											</ProtectedRoute>
-										}
-									/>
-									<Route
-										path="/payment/success"
-										element={
-											<MainLayout>
-												<PaymentSuccess />
-											</MainLayout>
-										}
-									/>
-									{/* 404 Route */}
-									<Route
-										path="*"
-										element={
-											<MainLayout>
-												<div className="text-center py-16">
-													<h1 className="text-4xl font-bold text-gray-800 mb-4">
-														404 - Page Not Found
-													</h1>
-													<p className="text-gray-600">
-														The page you're looking for doesn't exist.
-													</p>
-												</div>
-											</MainLayout>
-										}
-									/>
-								</Routes>
-							</AuthProvider>
-						}
-					/>
-				</Routes>
-			</Router>
+											}
+										/>
+									</Routes>
+								</AuthProvider>
+							}
+						/>
+					</Routes>
+				</Router>
+			</AntApp>
 		</ConfigProvider>
 	);
 }

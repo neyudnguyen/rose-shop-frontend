@@ -1,4 +1,5 @@
 import { COLORS } from '../../constants/colors';
+import { useAdminNotification } from '../../services/adminNotification';
 import {
 	type CategoryResponse,
 	categoryService,
@@ -30,7 +31,6 @@ import {
 	Table,
 	Tag,
 	Upload,
-	message,
 } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
 import type { UploadFile } from 'antd/es/upload/interface';
@@ -40,6 +40,7 @@ const { TextArea } = Input;
 const { Option } = Select;
 
 export const AdminFlower: React.FC = () => {
+	const notification = useAdminNotification();
 	const [flowers, setFlowers] = useState<FlowerResponse[]>([]);
 	const [categories, setCategories] = useState<CategoryResponse[]>([]);
 	const [loading, setLoading] = useState(false);
@@ -62,7 +63,10 @@ export const AdminFlower: React.FC = () => {
 			const data = await flowerService.getAdminFlowers();
 			setFlowers(data);
 		} catch (error) {
-			message.error('Failed to load flowers');
+			notification.error(
+				'Failed to load flowers',
+				'Please try refreshing the page or contact support if the problem persists',
+			);
 			console.error('Error loading flowers:', error);
 		} finally {
 			setLoading(false);
@@ -119,11 +123,11 @@ export const AdminFlower: React.FC = () => {
 
 			await flowerService.manageFlower(requestData);
 
-			message.success(
-				editingFlower
-					? 'Flower updated successfully'
-					: 'Flower created successfully',
-			);
+			if (editingFlower) {
+				notification.updated('Flower', editingFlower.flowerId);
+			} else {
+				notification.created('Flower');
+			}
 
 			setIsModalVisible(false);
 			setEditingFlower(null);
@@ -131,8 +135,10 @@ export const AdminFlower: React.FC = () => {
 			form.resetFields();
 			loadFlowers();
 		} catch (error) {
-			message.error(
-				editingFlower ? 'Failed to update flower' : 'Failed to create flower',
+			notification.operationFailed(
+				editingFlower ? 'update' : 'create',
+				'Flower',
+				error instanceof Error ? error.message : undefined,
 			);
 			console.error('Error saving flower:', error);
 		}
