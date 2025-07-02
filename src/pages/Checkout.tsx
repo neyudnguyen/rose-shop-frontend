@@ -94,9 +94,9 @@ export const Checkout: React.FC = () => {
 		}
 	}, [user, navigate, notification, location.pathname]);
 
-	// Set default delivery method to 'standard' and payment method to 'VNPAY' on mount
+	// Set default delivery method to 'standard' and payment method to 'COD' on mount
 	useEffect(() => {
-		form.setFieldsValue({ deliveryMethod: 'standard', paymentMethod: 'VNPAY' });
+		form.setFieldsValue({ deliveryMethod: 'standard', paymentMethod: 'COD' });
 		setShippingFee(30000);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
@@ -215,10 +215,19 @@ export const Checkout: React.FC = () => {
 
 			const order: OrderResponse = await orderService.createOrder(orderData);
 
-			// VNPay payment - redirect to payment URL
-			if (order.paymentUrl) {
+			// Handle different payment methods
+			if (values.paymentMethod === 'VNPAY' && order.paymentUrl) {
+				// VNPay payment - redirect to payment URL
 				window.location.href = order.paymentUrl;
+			} else if (values.paymentMethod === 'COD') {
+				// COD payment - show success message and redirect to order details
+				notification.success(
+					'Order Placed Successfully',
+					'Your order has been placed. You will pay cash on delivery.',
+				);
+				navigate(`/orders/${order.orderId}`);
 			} else {
+				// Fallback for other cases
 				notification.orderSuccess(order.orderId);
 				navigate(`/orders/${order.orderId}`);
 			}
@@ -491,17 +500,36 @@ export const Checkout: React.FC = () => {
 								]}
 							>
 								<Radio.Group>
-									<Radio value="VNPAY">
-										<Space>
-											<CreditCardOutlined />
-											<div>
-												<Text strong>VNPay</Text>
-												<div style={{ color: '#666', fontSize: '12px' }}>
-													Pay online with VNPay
+									<div
+										style={{
+											display: 'flex',
+											flexDirection: 'column',
+											gap: '16px',
+										}}
+									>
+										<Radio value="VNPAY">
+											<Space>
+												<CreditCardOutlined />
+												<div>
+													<Text strong>VNPay</Text>
+													<div style={{ color: '#666', fontSize: '12px' }}>
+														Pay online with VNPay
+													</div>
 												</div>
-											</div>
-										</Space>
-									</Radio>
+											</Space>
+										</Radio>
+										<Radio value="COD">
+											<Space>
+												<TruckOutlined />
+												<div>
+													<Text strong>Cash on Delivery (COD)</Text>
+													<div style={{ color: '#666', fontSize: '12px' }}>
+														Pay with cash when you receive your order
+													</div>
+												</div>
+											</Space>
+										</Radio>
+									</div>
 								</Radio.Group>
 							</Form.Item>
 						</Card>
