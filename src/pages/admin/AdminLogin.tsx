@@ -26,7 +26,7 @@ export const AdminLogin: React.FC = () => {
 	// Redirect if already logged in as admin
 	useEffect(() => {
 		if (user && user.type === 'admin') {
-			navigate('/admin', { replace: true });
+			navigate('/admin/flowers', { replace: true });
 		} else if (user && user.type !== 'admin') {
 			// If logged in as regular user, redirect to regular login
 			navigate('/login', { replace: true });
@@ -42,7 +42,7 @@ export const AdminLogin: React.FC = () => {
 
 			// Check if the logged in user is an admin
 			if (userData.type === 'admin') {
-				navigate('/admin', { replace: true });
+				navigate('/admin/flowers', { replace: true });
 			} else {
 				setError('Access denied. This portal is for administrators only.');
 				// Optionally logout the user if they're not admin
@@ -187,27 +187,10 @@ export const AdminLogin: React.FC = () => {
 						</Form.Item>
 					</Form>
 
-					{/* Security notice */}
-					<div className="text-center mt-6 p-4 bg-gray-50 rounded-lg">
-						<Text className="text-gray-600 text-sm">
-							🔒 This is a secure area. All access attempts are logged and
-							monitored.
-						</Text>
-					</div>
-
 					{/* Footer */}
 					<div className="text-center mt-4">
 						<Text className="text-gray-500 text-xs">
 							PlatformFlower Admin Portal v1.0
-						</Text>
-					</div>
-				</Card>
-
-				{/* Additional info card */}
-				<Card className="mt-4 bg-white/10 backdrop-blur-sm border-white/20">
-					<div className="text-center">
-						<Text className="text-white">
-							Need help? Contact system administrator
 						</Text>
 					</div>
 				</Card>

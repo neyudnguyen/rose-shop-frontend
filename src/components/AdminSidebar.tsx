@@ -1,7 +1,6 @@
 import { COLORS } from '../constants/colors';
 import { useAdminAuth } from '../hooks/useAdminAuth';
 import {
-	DashboardOutlined,
 	GiftOutlined,
 	LogoutOutlined,
 	ShopOutlined,
@@ -29,19 +28,17 @@ export const AdminSidebar: React.FC = () => {
 		navigate('/admin/login');
 	};
 
+	// Determine the selected key based on current path
+	const getSelectedKey = () => {
+		const path = location.pathname;
+		// If on root admin path, select flowers
+		if (path === '/admin' || path === '/admin/') {
+			return '/admin/flowers';
+		}
+		return path;
+	};
+
 	const menuItems: MenuProps['items'] = [
-		{
-			key: '/admin',
-			icon: <DashboardOutlined style={{ color: COLORS.white }} />,
-			label: (
-				<Link
-					to="/admin"
-					style={{ color: COLORS.white, textDecoration: 'none' }}
-				>
-					Dashboard
-				</Link>
-			),
-		},
 		{
 			key: '/admin/flowers',
 			icon: <ShopOutlined style={{ color: COLORS.white }} />,
@@ -198,7 +195,7 @@ export const AdminSidebar: React.FC = () => {
 			<div className="pt-4">
 				<Menu
 					mode="inline"
-					selectedKeys={[location.pathname]}
+					selectedKeys={[getSelectedKey()]}
 					items={menuItems}
 					className="border-0 h-full admin-sidebar"
 					style={{
