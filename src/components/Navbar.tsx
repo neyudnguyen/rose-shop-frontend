@@ -1,6 +1,8 @@
 import { COLORS } from '../constants/colors';
 import { useAuth } from '../hooks/useAuth';
+import { categoryService } from '../services/categoryService';
 import { useUserNotification } from '../services/userNotification';
+import type { Category } from '../types';
 import {
 	AppstoreOutlined,
 	HomeOutlined,
@@ -22,7 +24,7 @@ import {
 	Row,
 	Space,
 } from 'antd';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 
 const { Header: AntHeader } = Layout;
@@ -31,10 +33,24 @@ const { Search } = Input;
 export const Navbar: React.FC = () => {
 	const [drawerVisible, setDrawerVisible] = useState(false);
 	const [searchValue, setSearchValue] = useState('');
+	const [categories, setCategories] = useState<Category[]>([]);
 	const { user, logout } = useAuth();
 	const notification = useUserNotification();
 	const navigate = useNavigate();
 	const location = useLocation();
+
+	useEffect(() => {
+		const fetchCategories = async () => {
+			try {
+				const categoriesData = await categoryService.getTopPopularCategories();
+				setCategories(categoriesData || []);
+			} catch (error) {
+				console.error('Error fetching categories:', error);
+			}
+		};
+
+		fetchCategories();
+	}, []);
 
 	const showDrawer = () => setDrawerVisible(true);
 	const onClose = () => setDrawerVisible(false);
@@ -52,6 +68,30 @@ export const Navbar: React.FC = () => {
 			navigate('/flowers');
 		}
 		setSearchValue('');
+	};
+
+	// Function to get selected keys for menu
+	const getSelectedKeys = () => {
+		const path = location.pathname;
+		const search = location.search;
+
+		if (path === '/') {
+			return ['/'];
+		}
+
+		if (path === '/flowers') {
+			if (search) {
+				// If there's a category parameter, find matching category
+				const urlParams = new URLSearchParams(search);
+				const categoryId = urlParams.get('category');
+				if (categoryId) {
+					return [`/flowers?category=${categoryId}`];
+				}
+			}
+			return ['/flowers'];
+		}
+
+		return [path];
 	};
 
 	const userMenu = (
@@ -83,15 +123,25 @@ export const Navbar: React.FC = () => {
 	const navigationMenu = (
 		<Menu
 			mode="horizontal"
-			selectedKeys={[location.pathname]}
+			selectedKeys={getSelectedKeys()}
 			style={{ backgroundColor: COLORS.background }}
 		>
 			<Menu.Item key="/" icon={<HomeOutlined />}>
 				<Link to="/">Home</Link>
 			</Menu.Item>
 			<Menu.Item key="/flowers" icon={<AppstoreOutlined />}>
-				<Link to="/flowers">Flowers</Link>
+				<Link to="/flowers">All Flowers</Link>
 			</Menu.Item>
+			{categories.map((category) => (
+				<Menu.Item
+					key={`/flowers?category=${category.categoryId}`}
+					icon={<AppstoreOutlined />}
+				>
+					<Link to={`/flowers?category=${category.categoryId}`}>
+						{category.categoryName}
+					</Link>
+				</Menu.Item>
+			))}
 		</Menu>
 	);
 
@@ -175,7 +225,33 @@ export const Navbar: React.FC = () => {
 				onClose={onClose}
 				open={drawerVisible}
 			>
-				{navigationMenu}
+				<div style={{ marginBottom: 20 }}>
+					<Menu mode="vertical" selectedKeys={getSelectedKeys()}>
+						<Menu.Item key="/" icon={<HomeOutlined />}>
+							<Link to="/" onClick={onClose}>
+								Home
+							</Link>
+						</Menu.Item>
+						<Menu.Item key="/flowers" icon={<AppstoreOutlined />}>
+							<Link to="/flowers" onClick={onClose}>
+								All Flowers
+							</Link>
+						</Menu.Item>
+						{categories.map((category) => (
+							<Menu.Item
+								key={`/flowers?category=${category.categoryId}`}
+								icon={<AppstoreOutlined />}
+							>
+								<Link
+									to={`/flowers?category=${category.categoryId}`}
+									onClick={onClose}
+								>
+									{category.categoryName}
+								</Link>
+							</Menu.Item>
+						))}
+					</Menu>
+				</div>
 				<div style={{ marginTop: 20 }}>
 					<Search
 						placeholder="Search..."
