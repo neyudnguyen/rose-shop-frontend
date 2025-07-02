@@ -25,6 +25,7 @@ import { Profile } from './pages/Profile';
 import { Register } from './pages/Register';
 import { ResetPassword } from './pages/ResetPassword';
 import { AdminCategory } from './pages/admin/AdminCategory';
+import AdminDashboard from './pages/admin/AdminDashboard';
 import { AdminFlower } from './pages/admin/AdminFlower';
 import { AdminLogin } from './pages/admin/AdminLogin';
 import { AdminOrders } from './pages/admin/AdminOrders';
@@ -81,7 +82,8 @@ function App() {
 									<AdminProtectedRoute>
 										<AdminLayout>
 											<Routes>
-												<Route path="/" element={<AdminFlower />} />
+												<Route path="/" element={<AdminDashboard />} />
+												<Route path="/dashboard" element={<AdminDashboard />} />
 												<Route path="/flowers" element={<AdminFlower />} />
 												<Route path="/categories" element={<AdminCategory />} />
 												<Route path="/vouchers" element={<AdminVoucher />} />
