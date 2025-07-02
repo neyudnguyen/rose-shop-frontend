@@ -139,10 +139,10 @@ export const Footer: React.FC = () => {
 										(e.currentTarget.style.color = COLORS.textSecondary)
 									}
 								>
-									All Products
+									All Flowers
 								</Link>
 								<Link
-									to="/flowers?category=fresh"
+									to="/cart"
 									className="footer-link"
 									style={{
 										color: COLORS.textSecondary,
@@ -155,10 +155,10 @@ export const Footer: React.FC = () => {
 										(e.currentTarget.style.color = COLORS.textSecondary)
 									}
 								>
-									Fresh Flowers
+									Shopping Cart
 								</Link>
 								<Link
-									to="/flowers?category=dried"
+									to="/orders"
 									className="footer-link"
 									style={{
 										color: COLORS.textSecondary,
@@ -171,71 +171,7 @@ export const Footer: React.FC = () => {
 										(e.currentTarget.style.color = COLORS.textSecondary)
 									}
 								>
-									Dried Flowers
-								</Link>
-								<Link
-									to="/flowers?category=plants"
-									className="footer-link"
-									style={{
-										color: COLORS.textSecondary,
-										transition: 'color 0.3s ease',
-									}}
-									onMouseEnter={(e) =>
-										(e.currentTarget.style.color = COLORS.primary)
-									}
-									onMouseLeave={(e) =>
-										(e.currentTarget.style.color = COLORS.textSecondary)
-									}
-								>
-									Live Plants
-								</Link>{' '}
-								<Link
-									to="/flowers?category=vases"
-									className="footer-link"
-									style={{
-										color: COLORS.textSecondary,
-										transition: 'color 0.3s ease',
-									}}
-									onMouseEnter={(e) =>
-										(e.currentTarget.style.color = COLORS.primary)
-									}
-									onMouseLeave={(e) =>
-										(e.currentTarget.style.color = COLORS.textSecondary)
-									}
-								>
-									Designer Vases
-								</Link>
-								<Link
-									to="/flowers?category=candles"
-									className="footer-link"
-									style={{
-										color: COLORS.textSecondary,
-										transition: 'color 0.3s ease',
-									}}
-									onMouseEnter={(e) =>
-										(e.currentTarget.style.color = COLORS.primary)
-									}
-									onMouseLeave={(e) =>
-										(e.currentTarget.style.color = COLORS.textSecondary)
-									}
-								>
-									Aroma Candles
-								</Link>
-								<Link
-									to="/flowers?category=diffuser"
-									className="footer-link"
-									style={{
-										color: COLORS.textSecondary,
-										transition: 'color 0.3s ease',
-									}}
-									onMouseEnter={(e) =>
-										(e.currentTarget.style.color = COLORS.primary)
-									}
-									onMouseLeave={(e) =>
-										(e.currentTarget.style.color = COLORS.textSecondary)
-									}
-								>
-									Freshener Diffuser
+									My Orders
 								</Link>
 							</Space>
 						</Col>{' '}
@@ -244,11 +180,11 @@ export const Footer: React.FC = () => {
 								level={4}
 								style={{ color: COLORS.textLight, marginBottom: '16px' }}
 							>
-								Service
+								Account
 							</Title>
 							<Space direction="vertical" size="small">
 								<Link
-									to="/services/subscription"
+									to="/login"
 									className="footer-link"
 									style={{
 										color: COLORS.textSecondary,
@@ -261,10 +197,10 @@ export const Footer: React.FC = () => {
 										(e.currentTarget.style.color = COLORS.textSecondary)
 									}
 								>
-									Flower Subscription
+									Login
 								</Link>
 								<Link
-									to="/services/wedding"
+									to="/register"
 									className="footer-link"
 									style={{
 										color: COLORS.textSecondary,
@@ -277,7 +213,23 @@ export const Footer: React.FC = () => {
 										(e.currentTarget.style.color = COLORS.textSecondary)
 									}
 								>
-									Wedding & Event Decor
+									Register
+								</Link>
+								<Link
+									to="/profile"
+									className="footer-link"
+									style={{
+										color: COLORS.textSecondary,
+										transition: 'color 0.3s ease',
+									}}
+									onMouseEnter={(e) =>
+										(e.currentTarget.style.color = COLORS.primary)
+									}
+									onMouseLeave={(e) =>
+										(e.currentTarget.style.color = COLORS.textSecondary)
+									}
+								>
+									My Profile
 								</Link>
 							</Space>
 						</Col>{' '}
@@ -286,11 +238,11 @@ export const Footer: React.FC = () => {
 								level={4}
 								style={{ color: COLORS.textLight, marginBottom: '16px' }}
 							>
-								About Us
+								Information
 							</Title>
 							<Space direction="vertical" size="small">
 								<Link
-									to="/about"
+									to="/"
 									className="footer-link"
 									style={{
 										color: COLORS.textSecondary,
@@ -303,10 +255,10 @@ export const Footer: React.FC = () => {
 										(e.currentTarget.style.color = COLORS.textSecondary)
 									}
 								>
-									Our Story
+									Home
 								</Link>
 								<Link
-									to="/blog"
+									to="/flowers"
 									className="footer-link"
 									style={{
 										color: COLORS.textSecondary,
@@ -319,55 +271,7 @@ export const Footer: React.FC = () => {
 										(e.currentTarget.style.color = COLORS.textSecondary)
 									}
 								>
-									Blog
-								</Link>
-								<Link
-									to="/shipping"
-									className="footer-link"
-									style={{
-										color: COLORS.textSecondary,
-										transition: 'color 0.3s ease',
-									}}
-									onMouseEnter={(e) =>
-										(e.currentTarget.style.color = COLORS.primary)
-									}
-									onMouseLeave={(e) =>
-										(e.currentTarget.style.color = COLORS.textSecondary)
-									}
-								>
-									Shipping & Returns
-								</Link>
-								<Link
-									to="/terms"
-									className="footer-link"
-									style={{
-										color: COLORS.textSecondary,
-										transition: 'color 0.3s ease',
-									}}
-									onMouseEnter={(e) =>
-										(e.currentTarget.style.color = COLORS.primary)
-									}
-									onMouseLeave={(e) =>
-										(e.currentTarget.style.color = COLORS.textSecondary)
-									}
-								>
-									Terms & Conditions
-								</Link>
-								<Link
-									to="/privacy"
-									className="footer-link"
-									style={{
-										color: COLORS.textSecondary,
-										transition: 'color 0.3s ease',
-									}}
-									onMouseEnter={(e) =>
-										(e.currentTarget.style.color = COLORS.primary)
-									}
-									onMouseLeave={(e) =>
-										(e.currentTarget.style.color = COLORS.textSecondary)
-									}
-								>
-									Privacy Policy
+									Browse Flowers
 								</Link>
 							</Space>
 						</Col>
