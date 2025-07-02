@@ -1,58 +1,68 @@
 import { COLORS } from '../../constants/colors';
-import { useAdminAuth } from '../../hooks/useAdminAuth';
+import { useAdminNotification } from '../../services/adminNotification';
+import { adminPasswordResetService } from '../../services/adminPasswordResetService';
 import {
 	ArrowLeftOutlined,
-	LockOutlined,
+	KeyOutlined,
 	SafetyCertificateOutlined,
-	UserOutlined,
 } from '@ant-design/icons';
 import { Alert, Button, Card, Form, Input, Typography } from 'antd';
 import React, { useEffect, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 
 const { Title, Text } = Typography;
 
-interface AdminLoginForm {
-	username: string;
-	password: string;
+interface EnterResetTokenForm {
+	token: string;
 }
 
-export const AdminLogin: React.FC = () => {
+export const AdminEnterResetToken: React.FC = () => {
 	const [loading, setLoading] = useState(false);
 	const [error, setError] = useState<string | null>(null);
-	const { login, user } = useAdminAuth();
+	const [form] = Form.useForm();
+	const notification = useAdminNotification();
 	const navigate = useNavigate();
+	const [searchParams] = useSearchParams();
 
-	// Redirect if already logged in as admin
+	// Auto-fill token if provided in URL
 	useEffect(() => {
-		if (user && user.type === 'admin') {
-			navigate('/admin/dashboard', { replace: true });
-		} else if (user && user.type !== 'admin') {
-			// If logged in as regular user, redirect to regular login
-			navigate('/login', { replace: true });
+		const tokenFromUrl = searchParams.get('token');
+		if (tokenFromUrl) {
+			form.setFieldsValue({ token: tokenFromUrl });
 		}
-	}, [user, navigate]);
+	}, [searchParams, form]);
 
-	const onFinish = async (values: AdminLoginForm) => {
+	const onFinish = async (values: EnterResetTokenForm) => {
 		setLoading(true);
 		setError(null);
 
 		try {
-			const userData = await login(values.username, values.password);
+			const isValid = await adminPasswordResetService.validateResetToken(
+				values.token,
+			);
 
-			// Check if the logged in user is an admin
-			if (userData.type === 'admin') {
-				navigate('/admin/dashboard', { replace: true });
+			if (isValid) {
+				notification.success(
+					'Token Verified',
+					'Your reset token is valid. You can now reset your password.',
+				);
+				navigate(
+					`/admin/reset-password?token=${encodeURIComponent(values.token)}`,
+				);
 			} else {
-				setError('Access denied. This portal is for administrators only.');
-				// Optionally logout the user if they're not admin
-				// logout();
+				setError('Invalid or expired reset token. Please request a new one.');
 			}
 		} catch (err: unknown) {
 			const errorMessage =
 				(err as { response?: { data?: { message?: string } } })?.response?.data
-					?.message || 'Login failed. Please check your credentials.';
+					?.message ||
+				'Invalid or expired reset token. Please request a new one.';
 			setError(errorMessage);
+			notification.operationFailed(
+				'validate reset token for',
+				'Admin',
+				errorMessage,
+			);
 		} finally {
 			setLoading(false);
 		}
@@ -75,7 +85,7 @@ export const AdminLogin: React.FC = () => {
 
 			<div className="max-w-md w-full relative z-10">
 				<div className="mb-6">
-					<Link to="/">
+					<Link to="/admin/forgot-password">
 						<Button
 							type="text"
 							icon={<ArrowLeftOutlined />}
@@ -86,7 +96,7 @@ export const AdminLogin: React.FC = () => {
 							className="hover:text-gray-200 border-none"
 							size="large"
 						>
-							Back to Home
+							Back to Send Email
 						</Button>
 					</Link>
 				</div>
@@ -109,10 +119,10 @@ export const AdminLogin: React.FC = () => {
 							/>
 						</div>
 						<Title level={2} style={{ color: COLORS.white }} className="mb-2">
-							Admin Portal
+							Enter Reset Token
 						</Title>
 						<Text style={{ color: COLORS.white, opacity: 0.9 }}>
-							Secure access for administrators only
+							Enter the reset token sent to your admin email
 						</Text>
 					</div>
 
@@ -127,42 +137,34 @@ export const AdminLogin: React.FC = () => {
 					)}
 
 					<Form
-						name="adminLogin"
+						form={form}
+						name="admin-enter-reset-token"
 						onFinish={onFinish}
 						layout="vertical"
 						size="large"
 						requiredMark={false}
 					>
 						<Form.Item
-							name="username"
-							label={<Text strong>Administrator Username</Text>}
+							name="token"
+							label={<Text strong>Reset Token</Text>}
 							rules={[
+								{ required: true, message: 'Please input your reset token!' },
 								{
-									required: true,
-									message: 'Please input your admin username!',
+									min: 6,
+									message: 'Reset token must be at least 6 characters!',
 								},
-								{ min: 3, message: 'Username must be at least 3 characters!' },
 							]}
+							extra={
+								<Text type="secondary" className="text-sm">
+									Check your admin email for the reset token
+								</Text>
+							}
 						>
 							<Input
-								prefix={<UserOutlined style={{ color: '#667eea' }} />}
-								placeholder="Enter admin username"
+								prefix={<KeyOutlined style={{ color: '#667eea' }} />}
+								placeholder="Enter your reset token"
 								style={{ borderRadius: '8px', padding: '12px' }}
-							/>
-						</Form.Item>
-
-						<Form.Item
-							name="password"
-							label={<Text strong>Password</Text>}
-							rules={[
-								{ required: true, message: 'Please input your password!' },
-								{ min: 6, message: 'Password must be at least 6 characters!' },
-							]}
-						>
-							<Input.Password
-								prefix={<LockOutlined style={{ color: '#667eea' }} />}
-								placeholder="Enter admin password"
-								style={{ borderRadius: '8px', padding: '12px' }}
+								autoComplete="off"
 							/>
 						</Form.Item>
 
@@ -182,29 +184,47 @@ export const AdminLogin: React.FC = () => {
 									border: 'none',
 								}}
 							>
-								{loading ? 'Signing In...' : 'Access Admin Panel'}
+								{loading ? 'Verifying...' : 'Verify Token'}
 							</Button>
 						</Form.Item>
+					</Form>
 
-						<div className="text-center mb-4">
+					<div className="text-center space-y-2">
+						<Text style={{ color: COLORS.textSecondary }}>
+							Didn't receive the token?{' '}
 							<Link
 								to="/admin/forgot-password"
 								style={{
 									color: '#667eea',
 									textDecoration: 'none',
-									fontSize: '14px',
 									fontWeight: 500,
 								}}
 								onMouseEnter={(e) => (e.currentTarget.style.color = '#764ba2')}
 								onMouseLeave={(e) => (e.currentTarget.style.color = '#667eea')}
 							>
-								Forgot your password?
+								Send again
 							</Link>
-						</div>
-					</Form>
+						</Text>
+						<br />
+						<Text style={{ color: COLORS.textSecondary }}>
+							Remember your password?{' '}
+							<Link
+								to="/admin/login"
+								style={{
+									color: '#667eea',
+									textDecoration: 'none',
+									fontWeight: 500,
+								}}
+								onMouseEnter={(e) => (e.currentTarget.style.color = '#764ba2')}
+								onMouseLeave={(e) => (e.currentTarget.style.color = '#667eea')}
+							>
+								Back to Login
+							</Link>
+						</Text>
+					</div>
 
 					{/* Footer */}
-					<div className="text-center mt-4">
+					<div className="text-center mt-6">
 						<Text className="text-gray-500 text-xs">
 							PlatformFlower Admin Portal v1.0
 						</Text>

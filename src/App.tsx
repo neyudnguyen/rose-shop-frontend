@@ -26,9 +26,12 @@ import { Register } from './pages/Register';
 import { ResetPassword } from './pages/ResetPassword';
 import { AdminCategory } from './pages/admin/AdminCategory';
 import AdminDashboard from './pages/admin/AdminDashboard';
+import { AdminEnterResetToken } from './pages/admin/AdminEnterResetToken';
 import { AdminFlower } from './pages/admin/AdminFlower';
+import { AdminForgotPassword } from './pages/admin/AdminForgotPassword';
 import { AdminLogin } from './pages/admin/AdminLogin';
 import { AdminOrders } from './pages/admin/AdminOrders';
+import { AdminResetPassword } from './pages/admin/AdminResetPassword';
 import { AdminUsers } from './pages/admin/AdminUsers';
 import { AdminVoucher } from './pages/admin/AdminVoucher';
 
@@ -72,6 +75,30 @@ function App() {
 							element={
 								<AdminAuthProvider>
 									<AdminLogin />
+								</AdminAuthProvider>
+							}
+						/>
+						<Route
+							path="/admin/forgot-password"
+							element={
+								<AdminAuthProvider>
+									<AdminForgotPassword />
+								</AdminAuthProvider>
+							}
+						/>
+						<Route
+							path="/admin/enter-reset-token"
+							element={
+								<AdminAuthProvider>
+									<AdminEnterResetToken />
+								</AdminAuthProvider>
+							}
+						/>
+						<Route
+							path="/admin/reset-password"
+							element={
+								<AdminAuthProvider>
+									<AdminResetPassword />
 								</AdminAuthProvider>
 							}
 						/>

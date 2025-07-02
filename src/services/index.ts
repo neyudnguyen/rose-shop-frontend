@@ -2,6 +2,7 @@
 export { default as adminApi } from './adminApi';
 export { adminAuthService } from './adminAuthService';
 export { adminOrderService } from './adminOrderService';
+export { adminPasswordResetService } from './adminPasswordResetService';
 export { addressService } from './addressService';
 export { authService } from './authService';
 export { cartService } from './cartService';
