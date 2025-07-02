@@ -130,6 +130,15 @@ export const FlowerList: React.FC = () => {
 		setCurrentPage(1);
 	};
 
+	// Get category name from ID for display
+	const getCategoryDisplayValue = () => {
+		if (!categoryFilter) return undefined;
+		const category = categories.find(
+			(c) => c.categoryId === Number(categoryFilter),
+		);
+		return category ? category.categoryName : undefined;
+	};
+
 	const handleAddToCart = async (flowerId: string) => {
 		try {
 			await cartService.addToCart(flowerId, 1);
@@ -174,11 +183,26 @@ export const FlowerList: React.FC = () => {
 								allowClear
 								size="large"
 								style={{ width: '100%' }}
-								value={categoryFilter || undefined}
-								onChange={handleCategoryFilter}
+								value={getCategoryDisplayValue()}
+								onChange={(value) => {
+									// value will be the category name, we need to find the ID
+									if (value) {
+										const category = categories.find(
+											(c) => c.categoryName === value,
+										);
+										if (category) {
+											handleCategoryFilter(category.categoryId.toString());
+										}
+									} else {
+										handleCategoryFilter('');
+									}
+								}}
 							>
 								{categories.map((category) => (
-									<Option key={category.categoryId} value={category.categoryId}>
+									<Option
+										key={category.categoryId}
+										value={category.categoryName}
+									>
 										{category.categoryName}
 									</Option>
 								))}
