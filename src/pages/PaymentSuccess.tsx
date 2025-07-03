@@ -1,6 +1,7 @@
+import { cartService } from '../services/cartService';
 import { CheckCircleTwoTone } from '@ant-design/icons';
 import { Button, Card, Space, Typography } from 'antd';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 
 const { Title, Text } = Typography;
@@ -15,6 +16,24 @@ const PaymentSuccess: React.FC = () => {
 	const orderId = query.get('orderId');
 	const transactionNo = query.get('transactionNo');
 	const amount = query.get('amount');
+
+	// Clear cart after successful payment
+	useEffect(() => {
+		const clearCartAfterPayment = async () => {
+			try {
+				await cartService.clearCart();
+				console.log('Cart cleared after successful payment');
+			} catch (error) {
+				console.warn('Failed to clear cart after payment:', error);
+				// Don't show error to user as payment was successful
+			}
+		};
+
+		// Only clear cart if we have order info (indicating successful payment)
+		if (orderId && transactionNo) {
+			clearCartAfterPayment();
+		}
+	}, [orderId, transactionNo]);
 
 	return (
 		<div

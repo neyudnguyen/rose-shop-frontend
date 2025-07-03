@@ -205,7 +205,6 @@ export const Checkout: React.FC = () => {
 					return;
 				}
 			}
-
 			const orderData: CreateOrderRequest = {
 				phoneNumber: values.phoneNumber,
 				paymentMethod: values.paymentMethod,
@@ -218,16 +217,37 @@ export const Checkout: React.FC = () => {
 			// Handle different payment methods
 			if (values.paymentMethod === 'VNPAY' && order.paymentUrl) {
 				// VNPay payment - redirect to payment URL
+				// For Buy Now: cart will be cleared in PaymentSuccess page
+				// For regular checkout: cart will be cleared in PaymentSuccess page
 				window.location.href = order.paymentUrl;
 			} else if (values.paymentMethod === 'COD') {
-				// COD payment - show success message and redirect to order details
+				// COD payment - clear cart immediately and show success message
+				try {
+					if (isBuyNow) {
+						// For Buy Now, clear the temporarily added item
+						await cartService.clearCart();
+					} else {
+						// For regular checkout, clear the cart
+						await cartService.clearCart();
+					}
+				} catch (clearError) {
+					console.warn('Failed to clear cart after COD order:', clearError);
+					// Don't throw error here as the order was already created successfully
+				}
+
 				notification.success(
 					'Order Placed Successfully',
 					'Your order has been placed. You will pay cash on delivery.',
 				);
 				navigate(`/orders/${order.orderId}`);
 			} else {
-				// Fallback for other cases
+				// Fallback for other cases - clear cart immediately
+				try {
+					await cartService.clearCart();
+				} catch (clearError) {
+					console.warn('Failed to clear cart after order:', clearError);
+				}
+
 				notification.orderSuccess(order.orderId);
 				navigate(`/orders/${order.orderId}`);
 			}
