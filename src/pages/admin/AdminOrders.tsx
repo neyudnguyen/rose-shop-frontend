@@ -1,9 +1,11 @@
 import { COLORS } from '../../constants/colors';
+import { useAdminNotification } from '../../services/adminNotification';
 import { adminOrderService } from '../../services/adminOrderService';
 import type {
 	AdminOrder,
 	OrderStatistics,
 } from '../../services/adminOrderService';
+import { getApiErrorMessage } from '../../utils/apiErrorHandler';
 import {
 	CheckCircleOutlined,
 	ClockCircleOutlined,
@@ -63,6 +65,7 @@ const paymentStatusColors = {
 };
 
 export const AdminOrders: React.FC = () => {
+	const notification = useAdminNotification();
 	const [orders, setOrders] = useState<AdminOrder[]>([]);
 	const [loading, setLoading] = useState(false);
 	const [statistics, setStatistics] = useState<OrderStatistics | null>(null);
@@ -85,7 +88,9 @@ export const AdminOrders: React.FC = () => {
 			const response = await adminOrderService.getOrders({});
 			setOrders(response.data);
 		} catch (error) {
-			console.error('Failed to fetch orders:', error);
+			const errorMessage = getApiErrorMessage(error);
+			notification.error('Failed to fetch orders', errorMessage);
+			console.error('Failed to fetch orders:', error, errorMessage);
 		} finally {
 			setLoading(false);
 		}
@@ -97,7 +102,9 @@ export const AdminOrders: React.FC = () => {
 			const stats = await adminOrderService.getOrderStatistics({});
 			setStatistics(stats);
 		} catch (error) {
-			console.error('Failed to fetch statistics:', error);
+			const errorMessage = getApiErrorMessage(error);
+			notification.error('Failed to fetch statistics', errorMessage);
+			console.error('Failed to fetch statistics:', error, errorMessage);
 		}
 	};
 
@@ -150,6 +157,8 @@ export const AdminOrders: React.FC = () => {
 			await fetchStatistics();
 			message.success('Order status updated successfully');
 		} catch (error) {
+			const errorMessage = getApiErrorMessage(error);
+			notification.error('Failed to update order status', errorMessage);
 			console.error('Failed to update order status:', error);
 		}
 	};

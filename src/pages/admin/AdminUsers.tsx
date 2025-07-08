@@ -4,6 +4,7 @@ import { COLORS } from '../../constants/colors';
 import { useAdminNotification } from '../../services/adminNotification';
 import { userManagementService } from '../../services/userManagementService';
 import type { UserDetailResponse, UserListRequest } from '../../types';
+import { getApiErrorMessage } from '../../utils/apiErrorHandler';
 import {
 	CheckCircleOutlined,
 	EyeOutlined,
@@ -63,7 +64,8 @@ export const AdminUsers: React.FC = () => {
 				),
 			);
 		} catch (error) {
-			notification.error('Failed to fetch users');
+			const errorMessage = getApiErrorMessage(error);
+			notification.error('Failed to fetch users', errorMessage);
 			console.error('Error fetching users:', error);
 		} finally {
 			setLoading(false);
@@ -118,7 +120,8 @@ export const AdminUsers: React.FC = () => {
 			await fetchUsers();
 			await fetchUserStats();
 		} catch (error) {
-			notification.error('Failed to update user status');
+			const errorMessage = getApiErrorMessage(error);
+			notification.error('Failed to update user status', errorMessage);
 			console.error('Error updating user status:', error);
 		} finally {
 			setLoading(false);

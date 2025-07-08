@@ -9,6 +9,7 @@ import {
 	type FlowerResponse,
 	flowerService,
 } from '../../services/flowerService';
+import { getApiErrorMessage } from '../../utils/apiErrorHandler';
 import {
 	EditOutlined,
 	EyeOutlined,
@@ -63,10 +64,8 @@ export const AdminFlower: React.FC = () => {
 			const data = await flowerService.getAdminFlowers();
 			setFlowers(data);
 		} catch (error) {
-			notification.error(
-				'Failed to load flowers',
-				'Please try refreshing the page or contact support if the problem persists',
-			);
+			const errorMessage = getApiErrorMessage(error);
+			notification.error('Failed to load flowers', errorMessage);
 			console.error('Error loading flowers:', error);
 		} finally {
 			setLoading(false);
@@ -78,7 +77,8 @@ export const AdminFlower: React.FC = () => {
 			const data = await categoryService.getCategories();
 			setCategories(data);
 		} catch (error) {
-			console.error('Error loading categories:', error);
+			const errorMessage = getApiErrorMessage(error);
+			console.error('Error loading categories:', error, errorMessage);
 		}
 	};
 
@@ -135,10 +135,11 @@ export const AdminFlower: React.FC = () => {
 			form.resetFields();
 			loadFlowers();
 		} catch (error) {
+			const errorMessage = getApiErrorMessage(error);
 			notification.operationFailed(
 				editingFlower ? 'update' : 'create',
 				'Flower',
-				error instanceof Error ? error.message : undefined,
+				errorMessage,
 			);
 			console.error('Error saving flower:', error);
 		}

@@ -6,6 +6,7 @@ import {
 	type VoucherStatsResponse,
 	voucherService,
 } from '../../services/voucherService';
+import { getApiErrorMessage } from '../../utils/apiErrorHandler';
 import {
 	BarChartOutlined,
 	EditOutlined,
@@ -63,7 +64,8 @@ export const AdminVoucher: React.FC = () => {
 			const data = await voucherService.getAllVouchers();
 			setVouchers(data);
 		} catch (error) {
-			notification.error('Failed to load vouchers');
+			const errorMessage = getApiErrorMessage(error);
+			notification.error('Failed to load vouchers', errorMessage);
 			console.error('Error loading vouchers:', error);
 		} finally {
 			setLoading(false);
@@ -117,10 +119,12 @@ export const AdminVoucher: React.FC = () => {
 			form.resetFields();
 			loadVouchers();
 		} catch (error) {
+			const errorMessage = getApiErrorMessage(error);
 			notification.error(
 				editingVoucher
 					? 'Failed to update voucher'
 					: 'Failed to create voucher',
+				errorMessage,
 			);
 			console.error('Error saving voucher:', error);
 		}
@@ -154,7 +158,8 @@ export const AdminVoucher: React.FC = () => {
 			setVoucherStats(stats);
 			setIsStatsModalVisible(true);
 		} catch (error) {
-			notification.error('Failed to load voucher statistics');
+			const errorMessage = getApiErrorMessage(error);
+			notification.error('Failed to load voucher statistics', errorMessage);
 			console.error('Error loading voucher stats:', error);
 		}
 	};

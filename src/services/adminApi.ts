@@ -33,6 +33,7 @@ adminApiClient.interceptors.response.use(
 			localStorage.removeItem('adminUser');
 			window.location.href = '/admin/login';
 		}
+		// Let the error bubble up with the full response for proper error handling
 		return Promise.reject(error);
 	},
 );

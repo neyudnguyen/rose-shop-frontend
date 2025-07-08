@@ -5,10 +5,11 @@ import {
 	type CategoryResponse,
 	categoryService,
 } from '../../services/categoryService';
+import { getApiErrorMessage } from '../../utils/apiErrorHandler';
 import { EditOutlined, PlusOutlined, SearchOutlined } from '@ant-design/icons';
 import { Button, Card, Form, Input, Modal, Space, Table, Tag } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 
 export const AdminCategory: React.FC = () => {
 	const notification = useAdminNotification();
@@ -21,21 +22,19 @@ export const AdminCategory: React.FC = () => {
 	const [form] = Form.useForm();
 
 	// Load categories
-	const loadCategories = async () => {
+	const loadCategories = useCallback(async () => {
 		setLoading(true);
 		try {
 			const data = await categoryService.getCategories();
 			setCategories(data);
 		} catch (error) {
-			notification.error(
-				'Failed to load categories',
-				'Please try refreshing the page or contact support if the problem persists',
-			);
+			const errorMessage = getApiErrorMessage(error);
+			notification.error('Failed to load categories', errorMessage);
 			console.error('Error loading categories:', error);
 		} finally {
 			setLoading(false);
 		}
-	};
+	}, [notification]);
 
 	useEffect(() => {
 		loadCategories();
@@ -71,10 +70,11 @@ export const AdminCategory: React.FC = () => {
 			form.resetFields();
 			loadCategories();
 		} catch (error) {
+			const errorMessage = getApiErrorMessage(error);
 			notification.operationFailed(
 				editingCategory ? 'update' : 'create',
 				'Category',
-				error instanceof Error ? error.message : undefined,
+				errorMessage,
 			);
 			console.error('Error saving category:', error);
 		}
