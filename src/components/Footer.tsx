@@ -56,7 +56,7 @@ export const Footer: React.FC = () => {
 								<Space>
 									<MailOutlined style={{ color: COLORS.primary }} />
 									<Text style={{ color: COLORS.textLight }}>
-										Kiev.Florist.Studio@gmail.com
+										flowershopplatform@gmail.com
 									</Text>
 								</Space>
 							</Space>
