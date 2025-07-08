@@ -45,6 +45,7 @@ export const AdminFlower: React.FC = () => {
 	const [flowers, setFlowers] = useState<FlowerResponse[]>([]);
 	const [categories, setCategories] = useState<CategoryResponse[]>([]);
 	const [loading, setLoading] = useState(false);
+	const [submitting, setSubmitting] = useState(false);
 	const [isModalVisible, setIsModalVisible] = useState(false);
 	const [isViewModalVisible, setIsViewModalVisible] = useState(false);
 	const [viewingFlower, setViewingFlower] = useState<FlowerResponse | null>(
@@ -104,6 +105,7 @@ export const AdminFlower: React.FC = () => {
 		status?: string;
 		imageUrl?: string;
 	}) => {
+		setSubmitting(true);
 		try {
 			const requestData: FlowerManageRequest = {
 				FlowerId: editingFlower?.flowerId,
@@ -142,6 +144,8 @@ export const AdminFlower: React.FC = () => {
 				errorMessage,
 			);
 			console.error('Error saving flower:', error);
+		} finally {
+			setSubmitting(false);
 		}
 	};
 
@@ -527,13 +531,18 @@ export const AdminFlower: React.FC = () => {
 					</Form.Item>
 
 					<div className="flex justify-end gap-3 mt-6">
-						<Button onClick={handleModalClose} size="large">
+						<Button
+							onClick={handleModalClose}
+							size="large"
+							disabled={submitting}
+						>
 							Cancel
 						</Button>
 						<Button
 							type="primary"
 							htmlType="submit"
 							size="large"
+							loading={submitting}
 							style={{
 								background: COLORS.gradient.primary,
 								border: 'none',

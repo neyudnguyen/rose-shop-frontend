@@ -42,6 +42,7 @@ export const AdminVoucher: React.FC = () => {
 	const notification = useAdminNotification();
 	const [vouchers, setVouchers] = useState<VoucherResponse[]>([]);
 	const [loading, setLoading] = useState(false);
+	const [submitting, setSubmitting] = useState(false);
 	const [isModalVisible, setIsModalVisible] = useState(false);
 	const [isViewModalVisible, setIsViewModalVisible] = useState(false);
 	const [isStatsModalVisible, setIsStatsModalVisible] = useState(false);
@@ -93,6 +94,7 @@ export const AdminVoucher: React.FC = () => {
 		status: string;
 		dateRange: [dayjs.Dayjs, dayjs.Dayjs];
 	}) => {
+		setSubmitting(true);
 		try {
 			const requestData: VoucherManageRequest = {
 				UserVoucherStatusId: editingVoucher?.userVoucherStatusId,
@@ -127,6 +129,8 @@ export const AdminVoucher: React.FC = () => {
 				errorMessage,
 			);
 			console.error('Error saving voucher:', error);
+		} finally {
+			setSubmitting(false);
 		}
 	};
 
@@ -522,13 +526,18 @@ export const AdminVoucher: React.FC = () => {
 					</Row>
 
 					<div className="flex justify-end gap-3 mt-6">
-						<Button onClick={handleModalClose} size="large">
+						<Button
+							onClick={handleModalClose}
+							size="large"
+							disabled={submitting}
+						>
 							Cancel
 						</Button>
 						<Button
 							type="primary"
 							htmlType="submit"
 							size="large"
+							loading={submitting}
 							style={{
 								background: COLORS.gradient.primary,
 								border: 'none',

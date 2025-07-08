@@ -15,6 +15,7 @@ export const AdminCategory: React.FC = () => {
 	const notification = useAdminNotification();
 	const [categories, setCategories] = useState<CategoryResponse[]>([]);
 	const [loading, setLoading] = useState(false);
+	const [submitting, setSubmitting] = useState(false);
 	const [isModalVisible, setIsModalVisible] = useState(false);
 	const [editingCategory, setEditingCategory] =
 		useState<CategoryResponse | null>(null);
@@ -47,6 +48,7 @@ export const AdminCategory: React.FC = () => {
 
 	// Handle create/update category
 	const handleSubmit = async (values: { categoryName: string }) => {
+		setSubmitting(true);
 		try {
 			const requestData: CategoryCreateRequest = {
 				categoryName: values.categoryName,
@@ -77,6 +79,8 @@ export const AdminCategory: React.FC = () => {
 				errorMessage,
 			);
 			console.error('Error saving category:', error);
+		} finally {
+			setSubmitting(false);
 		}
 	};
 
@@ -282,13 +286,18 @@ export const AdminCategory: React.FC = () => {
 					</Form.Item>
 
 					<div className="flex justify-end gap-3 mt-6">
-						<Button onClick={handleModalClose} size="large">
+						<Button
+							onClick={handleModalClose}
+							size="large"
+							disabled={submitting}
+						>
 							Cancel
 						</Button>
 						<Button
 							type="primary"
 							htmlType="submit"
 							size="large"
+							loading={submitting}
 							style={{
 								background: COLORS.gradient.primary,
 								border: 'none',

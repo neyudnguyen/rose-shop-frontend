@@ -68,6 +68,7 @@ export const AdminOrders: React.FC = () => {
 	const notification = useAdminNotification();
 	const [orders, setOrders] = useState<AdminOrder[]>([]);
 	const [loading, setLoading] = useState(false);
+	const [updatingStatus, setUpdatingStatus] = useState(false);
 	const [statistics, setStatistics] = useState<OrderStatistics | null>(null);
 	const [selectedOrder, setSelectedOrder] = useState<AdminOrder | null>(null);
 	const [showOrderDetail, setShowOrderDetail] = useState(false);
@@ -145,6 +146,7 @@ export const AdminOrders: React.FC = () => {
 	const handleStatusUpdate = async () => {
 		if (!selectedOrder) return;
 
+		setUpdatingStatus(true);
 		try {
 			await adminOrderService.updateOrderStatus(
 				selectedOrder.orderId,
@@ -160,6 +162,8 @@ export const AdminOrders: React.FC = () => {
 			const errorMessage = getApiErrorMessage(error);
 			notification.error('Failed to update order status', errorMessage);
 			console.error('Failed to update order status:', error);
+		} finally {
+			setUpdatingStatus(false);
 		}
 	};
 
@@ -533,6 +537,7 @@ export const AdminOrders: React.FC = () => {
 				open={showStatusModal}
 				onOk={handleStatusUpdate}
 				onCancel={() => setShowStatusModal(false)}
+				confirmLoading={updatingStatus}
 				okText="Update"
 			>
 				<div className="space-y-4">
