@@ -11,6 +11,7 @@ import type {
 } from '../types';
 import {
 	CreditCardOutlined,
+	DeleteOutlined,
 	EnvironmentOutlined,
 	GiftOutlined,
 	PhoneOutlined,
@@ -34,6 +35,7 @@ import {
 	Spin,
 	Steps,
 	Table,
+	Tooltip,
 	Typography,
 } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
@@ -65,6 +67,11 @@ export const Checkout: React.FC = () => {
 	const [submitting, setSubmitting] = useState(false);
 	const [error, setError] = useState<string | null>(null);
 	const [newAddressModalVisible, setNewAddressModalVisible] = useState(false);
+	const [deleteAddressModalVisible, setDeleteAddressModalVisible] =
+		useState(false);
+	const [selectedAddressToDelete, setSelectedAddressToDelete] =
+		useState<AddressResponse | null>(null);
+	const [deletingAddress, setDeletingAddress] = useState(false);
 	const [newAddressForm] = Form.useForm();
 	const [isBuyNow, setIsBuyNow] = useState(false);
 	const [shippingFee, setShippingFee] = useState(30000); // Default to standard
@@ -178,6 +185,52 @@ export const Checkout: React.FC = () => {
 			console.error('Error creating address:', err);
 			notification.actionFailed('Create address', 'Failed to create address');
 		}
+	};
+
+	const handleDeleteAddress = async () => {
+		if (!selectedAddressToDelete) return;
+
+		setDeletingAddress(true);
+		try {
+			await addressService.manageAddress({
+				AddressId: selectedAddressToDelete.addressId,
+				Description: selectedAddressToDelete.description || '',
+				IsDeleted: true,
+			});
+
+			// Remove the deleted address from the list
+			const updatedAddresses = addresses.filter(
+				(addr) => addr.addressId !== selectedAddressToDelete.addressId,
+			);
+			setAddresses(updatedAddresses);
+
+			// Clear the form field if the deleted address was selected
+			const currentAddressId = form.getFieldValue('addressId');
+			if (currentAddressId === selectedAddressToDelete.addressId) {
+				form.setFieldsValue({ addressId: undefined });
+			}
+
+			setDeleteAddressModalVisible(false);
+			setSelectedAddressToDelete(null);
+			notification.success('Address deleted successfully');
+		} catch (err) {
+			console.error('Error deleting address:', err);
+			notification.actionFailed('Delete address', 'Failed to delete address');
+		} finally {
+			setDeletingAddress(false);
+		}
+	};
+
+	const handleShowDeleteConfirm = (address: AddressResponse) => {
+		if (addresses.length === 1) {
+			notification.warning(
+				'Cannot delete address',
+				'You must have at least one address for delivery',
+			);
+			return;
+		}
+		setSelectedAddressToDelete(address);
+		setDeleteAddressModalVisible(true);
 	};
 
 	const handleSubmitOrder = async (values: CheckoutFormValues) => {
@@ -461,11 +514,39 @@ export const Checkout: React.FC = () => {
 												</span>
 											}
 										>
-											<div>
-												<Text strong>{address.userFullName}</Text>
-												<div style={{ color: '#666', fontSize: '12px' }}>
-													{address.description}
-												</div>
+											<div
+												style={{
+													display: 'flex',
+													justifyContent: 'space-between',
+													alignItems: 'center',
+												}}
+											>
+												<div style={{ flex: 1 }}>
+													<Text strong>{address.userFullName}</Text>
+													<div style={{ color: '#666', fontSize: '12px' }}>
+														{address.description}
+													</div>
+												</div>{' '}
+												<Tooltip
+													title={
+														addresses.length === 1
+															? 'Cannot delete the last address'
+															: 'Delete this address'
+													}
+												>
+													<Button
+														type="text"
+														size="small"
+														danger
+														disabled={addresses.length === 1}
+														icon={<DeleteOutlined />}
+														onClick={(e) => {
+															e.stopPropagation();
+															handleShowDeleteConfirm(address);
+														}}
+														style={{ marginLeft: '8px' }}
+													/>
+												</Tooltip>
 											</div>
 										</Option>
 									))}
@@ -672,6 +753,64 @@ export const Checkout: React.FC = () => {
 						</Button>
 					</div>
 				</Form>
+			</Modal>
+
+			{/* Delete Address Confirmation Modal */}
+			<Modal
+				title="Delete Address"
+				open={deleteAddressModalVisible}
+				onCancel={() => {
+					setDeleteAddressModalVisible(false);
+					setSelectedAddressToDelete(null);
+				}}
+				footer={null}
+			>
+				{selectedAddressToDelete && (
+					<div>
+						<p>Are you sure you want to delete this address?</p>
+						<div
+							style={{
+								background: '#f5f5f5',
+								padding: '12px',
+								borderRadius: '6px',
+								margin: '16px 0',
+							}}
+						>
+							<Text strong>{selectedAddressToDelete.userFullName}</Text>
+							<div style={{ color: '#666', fontSize: '14px' }}>
+								{selectedAddressToDelete.description}
+							</div>
+						</div>
+						<p style={{ color: '#ff4d4f', fontSize: '14px' }}>
+							This action cannot be undone.
+						</p>
+						<div
+							style={{
+								display: 'flex',
+								justifyContent: 'flex-end',
+								gap: '12px',
+								marginTop: '24px',
+							}}
+						>
+							<Button
+								onClick={() => {
+									setDeleteAddressModalVisible(false);
+									setSelectedAddressToDelete(null);
+								}}
+							>
+								Cancel
+							</Button>
+							<Button
+								type="primary"
+								danger
+								loading={deletingAddress}
+								onClick={handleDeleteAddress}
+							>
+								Delete Address
+							</Button>
+						</div>
+					</div>
+				)}
 			</Modal>
 		</div>
 	);
