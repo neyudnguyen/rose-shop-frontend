@@ -722,9 +722,13 @@ export const Checkout: React.FC = () => {
 									<Input.Group compact>
 										<Form.Item
 											name="voucherCode"
-											style={{ width: 'calc(100% - 100px)', marginBottom: 0 }}
+											noStyle
+											getValueFromEvent={(e) => e.target.value}
 										>
-											<Input placeholder="Enter voucher code" />
+											<Input
+												style={{ width: 'calc(100% - 100px)' }}
+												placeholder="Enter voucher code"
+											/>
 										</Form.Item>
 										<Button
 											type="primary"
