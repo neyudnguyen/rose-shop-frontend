@@ -1,4 +1,5 @@
 import adminApi from './adminApi';
+import api from './api';
 
 // Types based on OpenAPI spec
 export interface VoucherResponse {
@@ -109,4 +110,12 @@ export const voucherService = {
 		});
 		return response.data.data;
 	},
+
+	// Validate voucher code
+	validateVoucher: async (voucherCode: string): Promise<VoucherResponse> => {
+		const response = await api.get(`/user/vouchers/validate/${voucherCode}`);
+		return response.data.data;
+	},
 };
+
+export default voucherService;

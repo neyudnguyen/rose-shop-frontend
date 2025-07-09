@@ -3,11 +3,13 @@ import { addressService } from '../services/addressService';
 import { cartService } from '../services/cartService';
 import { orderService } from '../services/orderService';
 import { useUserNotification } from '../services/userNotification';
+import voucherService from '../services/voucherService';
 import type {
 	AddressResponse,
 	CartItem,
 	CreateOrderRequest,
 	OrderResponse,
+	VoucherResponse,
 } from '../types';
 import {
 	CreditCardOutlined,
@@ -75,6 +77,8 @@ export const Checkout: React.FC = () => {
 	const [newAddressForm] = Form.useForm();
 	const [isBuyNow, setIsBuyNow] = useState(false);
 	const [shippingFee, setShippingFee] = useState(30000); // Default to standard
+	const [voucherData, setVoucherData] = useState<VoucherResponse | null>(null);
+	const [applyingVoucher, setApplyingVoucher] = useState(false);
 
 	// Check if user has complete profile information
 	useEffect(() => {
@@ -233,6 +237,39 @@ export const Checkout: React.FC = () => {
 		setDeleteAddressModalVisible(true);
 	};
 
+	const handleApplyVoucher = async () => {
+		const voucherCode = form.getFieldValue('voucherCode');
+		console.log(voucherCode);
+		if (!voucherCode || !voucherCode.trim()) {
+			notification.warning(
+				'Enter a voucher code',
+				'Please enter a voucher code',
+			);
+			return;
+		}
+
+		setApplyingVoucher(true);
+		try {
+			const response = await voucherService.validateVoucher(voucherCode);
+			setVoucherData(response);
+			notification.success(
+				'Voucher applied',
+				`Voucher ${voucherCode} has been applied`,
+			);
+		} catch (err) {
+			console.error('Error applying voucher:', err);
+			notification.actionFailed('Apply voucher', 'Failed to apply voucher');
+		} finally {
+			setApplyingVoucher(false);
+		}
+	};
+
+	const handleRemoveVoucher = () => {
+		setVoucherData(null);
+		form.setFieldsValue({ voucherCode: '' });
+		notification.success('Voucher removed', 'The voucher has been removed');
+	};
+
 	const handleSubmitOrder = async (values: CheckoutFormValues) => {
 		if (cartItems.length === 0) {
 			notification.error('No items to order');
@@ -263,6 +300,7 @@ export const Checkout: React.FC = () => {
 				paymentMethod: values.paymentMethod,
 				deliveryMethod: values.deliveryMethod,
 				addressId: values.addressId,
+				userVoucherStatusId: voucherData?.userVoucherStatusId,
 			};
 
 			const order: OrderResponse = await orderService.createOrder(orderData);
@@ -321,7 +359,10 @@ export const Checkout: React.FC = () => {
 		return sum + price * item.quantity;
 	}, 0);
 
-	const total = subtotal + shippingFee;
+	const voucherDiscountAmount = voucherData
+		? (subtotal * voucherData.discount) / 100
+		: 0;
+	const total = subtotal + shippingFee - voucherDiscountAmount;
 
 	const orderSummaryColumns: ColumnsType<CartItem> = [
 		{
@@ -645,15 +686,56 @@ export const Checkout: React.FC = () => {
 							}
 							style={{ marginBottom: '24px' }}
 						>
-							<Form.Item name="voucherCode" label="Voucher Code">
-								<Input.Group compact>
-									<Input
-										style={{ width: 'calc(100% - 100px)' }}
-										placeholder="Enter voucher code"
-									/>
-									<Button type="primary">Apply</Button>
-								</Input.Group>
-							</Form.Item>
+							{voucherData ? (
+								<Form.Item label="Voucher Code">
+									<div
+										style={{
+											padding: '12px',
+											background: '#f6ffed',
+											border: '1px solid #b7eb8f',
+											borderRadius: '6px',
+											display: 'flex',
+											justifyContent: 'space-between',
+											alignItems: 'center',
+										}}
+									>
+										<div>
+											<Text strong style={{ color: '#52c41a' }}>
+												{voucherData.voucherCode}
+											</Text>
+											<div style={{ fontSize: '12px', color: '#666' }}>
+												{voucherData.description} - {voucherData.discount}% off
+											</div>
+										</div>
+										<Button
+											type="text"
+											danger
+											size="small"
+											onClick={handleRemoveVoucher}
+										>
+											Remove
+										</Button>
+									</div>
+								</Form.Item>
+							) : (
+								<Form.Item name="voucherCode" label="Voucher Code">
+									<Input.Group compact>
+										<Form.Item
+											name="voucherCode"
+											style={{ width: 'calc(100% - 100px)', marginBottom: 0 }}
+										>
+											<Input placeholder="Enter voucher code" />
+										</Form.Item>
+										<Button
+											type="primary"
+											loading={applyingVoucher}
+											onClick={handleApplyVoucher}
+										>
+											Apply
+										</Button>
+									</Input.Group>
+								</Form.Item>
+							)}
 						</Card>
 					</Form>
 				</Col>
@@ -684,6 +766,16 @@ export const Checkout: React.FC = () => {
 								<Text>Shipping:</Text>
 								<Text>{shippingFee.toLocaleString('vi-VN')} ₫</Text>
 							</div>
+							{voucherData && (
+								<div
+									style={{ display: 'flex', justifyContent: 'space-between' }}
+								>
+									<Text>Discount:</Text>
+									<Text style={{ color: '#52c41a' }}>
+										-{voucherDiscountAmount.toLocaleString('vi-VN')} ₫
+									</Text>
+								</div>
+							)}
 							<Divider style={{ margin: '12px 0' }} />
 							<div style={{ display: 'flex', justifyContent: 'space-between' }}>
 								<Text strong style={{ fontSize: '16px' }}>
