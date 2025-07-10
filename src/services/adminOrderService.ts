@@ -196,7 +196,11 @@ export const adminOrderService = {
 				(order) => order.status === 'canceled',
 			).length;
 			const totalRevenue = orders
-				.filter((order) => order.statusPayment === 'paid')
+				.filter(
+					(order) =>
+						order.statusPayment === 'paid' ||
+						order.statusPayment === 'completed',
+				)
 				.reduce((sum, order) => sum + order.totalPrice, 0);
 			const currentDate = new Date();
 			const monthlyRevenue = orders
@@ -205,7 +209,8 @@ export const adminOrderService = {
 					return (
 						orderDate.getMonth() === currentDate.getMonth() &&
 						orderDate.getFullYear() === currentDate.getFullYear() &&
-						order.statusPayment === 'paid'
+						(order.statusPayment === 'paid' ||
+							order.statusPayment === 'completed')
 					);
 				})
 				.reduce((sum, order) => sum + order.totalPrice, 0);

@@ -171,7 +171,7 @@ const AdminDashboard: React.FC = () => {
 									prefix={card.prefix}
 									formatter={
 										card.isRevenue
-											? (value) => `$${Number(value).toLocaleString()}`
+											? (value) => `${Number(value).toLocaleString('vi-VN')} ₫`
 											: undefined
 									}
 									valueStyle={{ color: card.color }}
