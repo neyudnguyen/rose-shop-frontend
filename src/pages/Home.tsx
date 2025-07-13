@@ -123,17 +123,17 @@ export const Home: React.FC = () => {
 							<div
 								className="h-[60vh] bg-cover bg-center relative"
 								style={{
-									backgroundImage: 'url(/images/picture/hoahongdep.jpg)',
+									backgroundImage: 'url(/images/image/camtucaujpg.jpg)',
 								}}
 							>
 								<div className="absolute inset-0 bg-opacity-100 flex items-center justify-center">
-									<div className="text-white text-center p-8">
-										<Title level={1} className="text-white !mb-4">
+									<div className="text-white text-center p-16 bg-gray-800/60">
+										<h1 className="text-white !mb-4 text-4xl font-bold">
 											Beautiful Flowers for Every Occasion
-										</Title>
-										<Text className="text-lg mb-6 block">
+										</h1>
+										<h6 className="text-lg mb-6 block">
 											Discover our stunning collection of fresh flowers
-										</Text>
+										</h6>
 										<Link to="/flowers">
 											<Button
 												type="primary"
@@ -152,17 +152,17 @@ export const Home: React.FC = () => {
 							<div
 								className="h-[60vh] bg-cover bg-center relative"
 								style={{
-									backgroundImage: 'url(/images/picture/weddingflower.jpg)',
+									backgroundImage: 'url(/images/image/hoatim.jpg)',
 								}}
 							>
 								<div className="absolute inset-0 bg-opacity-20 flex items-center justify-center">
-									<div className="text-white text-center p-8">
-										<Title level={1} className="text-white !mb-4">
+									<div className="text-white text-center p-16 bg-gray-800/60">
+										<h1 className="text-white !mb-4 text-4xl font-bold">
 											Wedding Flowers
-										</Title>
-										<Text className="text-lg mb-6 block">
+										</h1>
+										<h6 className="text-lg mb-6 block">
 											Make your special day even more beautiful
-										</Text>
+										</h6>
 										<Link to="/flowers?category=wedding">
 											<Button
 												type="primary"
@@ -180,17 +180,17 @@ export const Home: React.FC = () => {
 							<div
 								className="h-[60vh] bg-cover bg-center relative"
 								style={{
-									backgroundImage: 'url(/images/picture/hoahuongduong.jpg)',
+									backgroundImage: 'url(/images/picture/2.jpg)',
 								}}
 							>
 								<div className="absolute inset-0 bg-opacity-30 flex items-center justify-center">
-									<div className="text-white text-center p-8">
-										<Title level={1} className="text-white !mb-4">
+									<div className="text-white text-center p-16 bg-gray-800/60">
+										<h1 className="text-white !mb-4 text-4xl font-bold">
 											Premium Quality
-										</Title>
-										<Text className="text-lg mb-6 block">
+										</h1>
+										<h6 className="text-lg mb-6 block">
 											Handpicked flowers with guaranteed freshness
-										</Text>
+										</h6>
 										<Link to="/flowers">
 											<Button
 												type="primary"
