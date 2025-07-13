@@ -42,7 +42,7 @@ export const Navbar: React.FC = () => {
 	useEffect(() => {
 		const fetchCategories = async () => {
 			try {
-				const categoriesData = await categoryService.getTopPopularCategories();
+				const categoriesData = await categoryService.getPublicCategories();
 				setCategories(categoriesData || []);
 			} catch (error) {
 				console.error('Error fetching categories:', error);
