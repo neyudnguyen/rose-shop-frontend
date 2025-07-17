@@ -212,7 +212,7 @@ export const Home: React.FC = () => {
 			<section className="py-12 px-4">
 				<div className="max-w-7xl mx-auto">
 					<Title level={2} className="text-center mb-8 font-bold text-3xl">
-						Hot Categories in Shop
+						Popular Flower Categories
 					</Title>
 					{loading ? (
 						<div className="flex justify-center items-center min-h-64">
@@ -243,7 +243,7 @@ export const Home: React.FC = () => {
 											{category.categoryName}
 										</Title>
 										<Text className="text-center text-gray-600 block mb-4 text-sm">
-											{category.flowerCount} flowers available
+											{category.flowerCount} floral creations
 										</Text>
 										<Link to={`/flowers?category=${category.categoryId}`}>
 											<Button
@@ -251,7 +251,7 @@ export const Home: React.FC = () => {
 												className="border-none rounded-full bg-gradient-to-r from-rose-400 to-pink-400 hover:from-rose-500 hover:to-pink-500"
 												size="middle"
 											>
-												View Collection
+												Explore Flowers
 											</Button>
 										</Link>
 									</Card>
@@ -266,10 +266,8 @@ export const Home: React.FC = () => {
 			<section className="py-8">
 				<div className="max-w-7xl mx-auto px-4">
 					<div className="text-center mb-12">
-						<Title level={2}>Featured Flowers</Title>
-						<Text className="text-lg text-gray-600">
-							Handpicked flowers just for you
-						</Text>
+						<Title level={2}>Top Floral Creations</Title>
+						
 					</div>
 
 					{loading ? (
@@ -308,24 +306,28 @@ export const Home: React.FC = () => {
 					<Row align="middle" gutter={[32, 24]}>
 						<Col xs={24} md={12}>
 							<img
-								src="/images/picture/pic1.png"
+								src="/images/picture/xe.jpg"
 								alt="About us"
 								className="rounded-lg w-full h-auto object-cover"
 							/>
 						</Col>
 						<Col xs={24} md={12}>
 							<Title level={4} className="mb-2 font-bold">
-								Our Story
+								ROSE SHOP
 							</Title>
-							<Title level={3} className="mb-2 font-bold">
-								PlatformFlower Studio
-							</Title>
+						
 							<Paragraph className="text-sm mb-4">
-								We are a modern local floral studio specializing in the design
-								and delivery of unique bouquets. We collaborate directly with
-								farms to ensure fresh flowers at all times. Our collection
-								includes fresh bouquets, dried flower arrangements, houseplants,
-								and luxury scented candles to create the perfect atmosphere.
+								Welcome to Rose Shop – where every bouquet tells a story. We are
+								a trusted local florist offering premium floral arrangements and
+								curated gift hampers, with same-day delivery available across
+								the city. With years of experience in floral design, our team is
+								dedicated to crafting elegant, fresh, and thoughtful creations
+								that leave lasting impressions. For business clients, our
+								Corporate & Event Floral Services bring style and freshness to
+								offices, hotels, and events of all sizes. Whether it’s for a
+								celebration, a heartfelt gesture, or an everyday touch of beauty
+								– Rose Shop is here to help you express it perfectly, with
+								flowers that speak from the heart.
 							</Paragraph>
 							<Button type="primary" className="mt-4 border-none">
 								Learn More
